@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body,
+html {
+	margin: 0;
+	display: flex;
+	flex: 1;
+	min-height: 100%;
+	overflow: auto;
+}

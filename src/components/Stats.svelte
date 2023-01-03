@@ -1,0 +1,128 @@
+<script lang="ts">
+	import { combineLatest, debounceTime, fromEvent, interval, merge, NEVER, switchMap, tap, throttleTime } from 'rxjs';
+	import {
+		adjustTimerOnAfk$,
+		afkTimer$,
+		blurStats$,
+		isPaused$,
+		lineData$,
+		newLine$,
+		showCharacterCount$,
+		showLineCount$,
+		showSpeed$,
+		showTimer$,
+		timeValue$
+	} from '../stores/stores';
+	import { reduceToEmptyString, toTimeString } from '../util';
+
+	const isNotJapaneseRegex = /[^0-9A-Z○◯々-〇〻ぁ-ゖゝ-ゞァ-ヺー０-９Ａ-Ｚｦ-ﾝ\p{Radical}\p{Unified_Ideograph}]+/gimu;
+
+	const timer$ = isPaused$.pipe(
+		switchMap((isPaused) => (isPaused ? NEVER : interval(1000))),
+		tap(() => ($timeValue$ = $timeValue$ + 1)),
+		reduceToEmptyString()
+	);
+
+	const waitForIdle$ = combineLatest([isPaused$, afkTimer$]).pipe(
+		switchMap(([isPaused, afkTimer]) =>
+			isPaused || afkTimer < 1
+				? NEVER
+				: merge(
+						newLine$,
+						fromEvent<PointerEvent>(window, 'pointermove'),
+						fromEvent<Event>(document, 'selectionchange')
+				  ).pipe(throttleTime(500), debounceTime($afkTimer$ * 1000))
+		),
+		tap(() => {
+			$isPaused$ = true;
+
+			if ($adjustTimerOnAfk$) {
+				$timeValue$ = Math.max(0, $timeValue$ - $afkTimer$ + 1);
+			}
+		}),
+		reduceToEmptyString()
+	);
+
+	let timerElm: HTMLElement;
+	let speed = 0;
+	let characters = 0;
+	let statstring = '';
+
+	$: if ($showCharacterCount$ && $lineData$) {
+		let newCount = 0;
+
+		for (let index = 0, { length } = $lineData$; index < length; index += 1) {
+			newCount += getCharacterCount($lineData$[index].text);
+		}
+
+		characters = newCount;
+		speed = $timeValue$ ? Math.ceil((3600 * characters) / $timeValue$) : 0;
+	}
+
+	$: if ($timeValue$ > -1 && ($showTimer$ || $showSpeed$ || $showCharacterCount$ || $showLineCount$)) {
+		buildString($timeValue$, speed, characters, $lineData$.length);
+	} else {
+		statstring = '';
+	}
+
+	function handlePointerLeave() {
+		const selection = window.getSelection();
+
+		if (selection?.toString() && selection.getRangeAt(0).intersectsNode(timerElm)) {
+			selection.removeAllRanges();
+		}
+	}
+
+	function getCharacterCount(text: string) {
+		if (!text) return 0;
+		return countUnicodeCharacters(text.replace(isNotJapaneseRegex, ''));
+	}
+
+	function countUnicodeCharacters(s: string) {
+		return Array.from(s).length;
+	}
+
+	function buildString(currentTime: number, currentSpeed: number, currentCharacters: number, currentLines: number) {
+		let newString = '';
+
+		if ($showTimer$) {
+			newString += toTimeString(currentTime);
+		}
+
+		if ($showSpeed$) {
+			newString += ` (${currentSpeed}/h) `;
+		}
+
+		if ($showCharacterCount$) {
+			newString += ` ${currentCharacters}`;
+		}
+
+		if ($showLineCount$) {
+			newString += $showCharacterCount$ ? ' /' : '';
+			newString += ` ${currentLines}`;
+		}
+
+		statstring = newString.replace(/[ ]+/g, ' ').trim();
+	}
+</script>
+
+{$timer$ ?? ''}
+{$waitForIdle$ ?? ''}
+
+<div class="timer mr-2" class:blur={$blurStats$} bind:this={timerElm} on:pointerleave={handlePointerLeave}>
+	<div>{statstring}</div>
+</div>
+
+<style>
+	.timer {
+		transition: 0.1s filter linear;
+	}
+
+	.blur:hover {
+		filter: blur(0);
+	}
+
+	.blur:not(:hover) {
+		filter: blur(0.25rem);
+	}
+</style>
