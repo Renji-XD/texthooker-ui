@@ -511,7 +511,7 @@
 		<span class="label-text col-span-2">AFK Timer (s)</span>
 		<input
 			type="number"
-			class="input input-bordered h-8 ml-2 col-span-2"
+			class="input input-bordered h-8 ml-2 mb-2 col-span-2"
 			min="0"
 			bind:value={$afkTimer$}
 			on:blur={() => {
@@ -520,7 +520,6 @@
 				}
 			}}
 		/>
-		<div style="grid-column: 3/5;" />
 		<span class="label-text">Adjust Timer after AFK</span>
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$adjustTimerOnAfk$} />
 		<span class="label-text">Enable external Clipboard Monitor</span>
