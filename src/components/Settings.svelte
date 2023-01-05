@@ -485,13 +485,13 @@
 			</div>
 		</div>
 		<span class="label-text col-span-2">Window Title</span>
-		<input class="input input-bordered h-8 ml-2 col-span-2" bind:value={$windowTitle$} />
+		<input class="input input-bordered h-8 col-span-2" bind:value={$windowTitle$} />
 		<span class="label-text col-span-2">Websocket</span>
-		<input class="input input-bordered h-8 ml-2 col-span-2" bind:value={$websocketUrl$} />
+		<input class="input input-bordered h-8 col-span-2" bind:value={$websocketUrl$} />
 		<span class="label-text col-span-2">Font Size</span>
 		<input
 			type="number"
-			class="input input-bordered h-8 ml-2 col-span-2"
+			class="input input-bordered h-8 col-span-2"
 			min="1"
 			bind:value={$fontSize$}
 			on:blur={() => {
@@ -501,7 +501,7 @@
 			}}
 		/>
 		<span class="label-text mr-4 col-span-2">Online Font</span>
-		<select class="select ml-2 col-span-2" bind:value={$onlineFont$}>
+		<select class="select col-span-2" bind:value={$onlineFont$}>
 			{#each onlineFonts as font (font)}
 				<option value={font}>
 					{font}
@@ -511,7 +511,7 @@
 		<span class="label-text col-span-2">AFK Timer (s)</span>
 		<input
 			type="number"
-			class="input input-bordered h-8 ml-2 mb-2 col-span-2"
+			class="input input-bordered h-8 mb-2 col-span-2"
 			min="0"
 			bind:value={$afkTimer$}
 			on:blur={() => {
