@@ -410,7 +410,7 @@
 		use:clickOutside={handleSettingsClick}
 	>
 		<div class="mb-2" style="grid-column: 1/5;">
-			<div class="flex justify-between text-sm">
+			<div class="flex justify-between text-sm gap-x-5">
 				<div
 					role="button"
 					class="flex flex-col items-center hover:text-primary"
@@ -484,14 +484,14 @@
 				</div>
 			</div>
 		</div>
-		<span class="label-text">Window Title</span>
-		<input class="input input-bordered h-8 ml-2" bind:value={$windowTitle$} />
-		<span class="label-text">Websocket</span>
-		<input class="input input-bordered h-8 ml-2" bind:value={$websocketUrl$} />
-		<span class="label-text">Font Size</span>
+		<span class="label-text col-span-2">Window Title</span>
+		<input class="input input-bordered h-8 col-span-2" bind:value={$windowTitle$} />
+		<span class="label-text col-span-2">Websocket</span>
+		<input class="input input-bordered h-8 col-span-2" bind:value={$websocketUrl$} />
+		<span class="label-text col-span-2">Font Size</span>
 		<input
 			type="number"
-			class="input input-bordered h-8 ml-2"
+			class="input input-bordered h-8 col-span-2"
 			min="1"
 			bind:value={$fontSize$}
 			on:blur={() => {
@@ -500,18 +500,18 @@
 				}
 			}}
 		/>
-		<span class="label-text mr-4">Online Font</span>
-		<select class="select ml-2" bind:value={$onlineFont$}>
+		<span class="label-text mr-4 col-span-2">Online Font</span>
+		<select class="select col-span-2" bind:value={$onlineFont$}>
 			{#each onlineFonts as font (font)}
 				<option value={font}>
 					{font}
 				</option>
 			{/each}
 		</select>
-		<span class="label-text">AFK Timer (s)</span>
+		<span class="label-text col-span-2">AFK Timer (s)</span>
 		<input
 			type="number"
-			class="input input-bordered h-8 ml-2"
+			class="input input-bordered h-8 mb-2 col-span-2"
 			min="0"
 			bind:value={$afkTimer$}
 			on:blur={() => {
@@ -520,7 +520,6 @@
 				}
 			}}
 		/>
-		<div style="grid-column: 3/5;" />
 		<span class="label-text">Adjust Timer after AFK</span>
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$adjustTimerOnAfk$} />
 		<span class="label-text">Enable external Clipboard Monitor</span>
