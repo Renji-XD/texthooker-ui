@@ -17,6 +17,9 @@ pnpm install
 
 # Build the Page
 pnpm run build
+
+# Optional - serve the Page via local Server
+pnpm run preview
 ```
 
 The page can be opened via the index.html inside the "docs" folder and is useable without the need of hosting it via a server.

@@ -30,7 +30,8 @@
 		"build:lib": "vite -c vite.lib.config.ts build",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"check:types": "tsc --noEmit",
-		"dev": "vite -c vite.main.config.ts"
+		"dev": "vite -c vite.main.config.ts",
+		"preview": "vite -c vite.main.config.ts preview --host"
 	},
 	"type": "module",
 	"version": "1.0.0"
