@@ -79,9 +79,47 @@ _Note_: By default, the undo history is stored in memory only. If you want to ke
 -   Clicking on the icon will export the current time value, notes, displayed lines and action history (settings will not be exported)
 -   Clicking on the icon while holding the "ALT" key on the keyboard lets you select a previously exported file for import. Note that all existing data will be overwritten
 
+
+## Available Settings
+
+Following Section contains the Settings you can configure.
+
+<details style="cursor: pointer;">
+    <summary>Settings List</summary>
+
+- Window Title: Lets you set the current Document Title which you e. g. can use with yomichan to tag your created cards
+- WebSocket: URL of the WebSocket to which you want to connect
+- Font Size: Number of px for the Font Size
+- Online Font: Lets you select a Font from a predefined Selection (requires Online Connection in order to work)
+- AFK Timer (s): Seconds after which the timer will automatically pause without Page Interaction (No new Line, Text Selection, Pointer Move)
+- Adjust Timer after AFK: If enabled with subtract the configured AFK Timer (s) value in case Timer was paused due to idle
+- Enable external Clipboard Monitor: If enabled will handle Lines pasted by Extensions like "Clipboard Inserter" or "lap-clipboard-inserter"
+- Store Stats persistently: If enabled will store Time value etc. in your local Browser Storage so that it will be available after tab reloads etc.
+- Store Notes persistently: If enabled will store Notes in your local Browser Storage so that they will be available after tab reloads etc.
+- Store Lines persistently: If enabled will store received/pasted Lines etc. in your local Browser Storage so that they will be available after tab reloads etc.
+- Store Action History persistently: If enabled will store revertible Actions etc. in your local Browser Storage so that they will be available after tab reloads etc.
+- Enable Paste: If enabled will allow to manually paste new Lines to the Page
+- Flash on missed Line: If enabled will show a short page flash in case your Timer is paused and you received/pasted new Lines which were therefore ignored
+- Allow new Line during Pause: If enabled will allow to receive/paste new Lines even with paused Timer
+- Autostart Timer during Pause: If enabled will automatically start the timer when it is paused and new Lines were received/pasted
+- Prevent Last Line Duplicate: If enabled will prevent the insertion/pasting of a Line if the text is equal to the last Line
+- Prevent Global Duplicate: If enabled will prevent the insertion/pasting of a Line if the text line already exists in any other Line
+- Display Text vertically: If enabled will display Lines vertically instead horizontally
+- Reverse Line Order: If enabled new Lines will be appended on top (horizonal mode) / left (vertical mode) instead of bottom/right
+- Preserve Whitespace: If enabled will preserve Whitespace like new line characters inside Text instead of printing out a single Line etc.
+- Remove all Whitespace: If enabled all Whitespace (e. g. space, new Line characters, tab character etc.) will be removed from Lines before inserting them
+- Show Timer: If enabled will display the current passed (active) time on the Page in the header
+- Show Speed: If enabled will display the current characters per hour in the header
+- Show Character Count: If enabled will display the current number  of displayed characters on the Page in the header
+- Show Line Count: If enabled will display the current number  of inserted lines on the Page in the header
+- Blur Stats: If enabled will blue the displayed stats (unblur on hover)
+- Custom CSS: Lets you insert custom CSS rules to customize the Page further
+
+</details>
+
 ## Known Issues
 
--   High amount of displayed characters may slow down the page performance due to the current greedy way of counting characters etc.
+-   High number of displayed characters may slow down the page performance due to the current greedy way of counting characters etc.
 -   The horizontal reading mode performs overall better than the vertical one
 -   Line breaks added manually during editing a line are sometimes removed
 
