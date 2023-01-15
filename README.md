@@ -55,7 +55,7 @@ There are multiple ways of deleting a line:
 -   Highlight a line and press the "Delete" key on the keyboard
 -   Select a Line for deletion by holding the "CTRL" key on the keyboard and double click on it (you can press "Escape" to unselect lines again). Afterwards click on the "Remove selected Lines" icon in the header
 
-### How can I edit a Line?
+### How can I edit a line?
 
 -   You can modify the content of a line by double clicking on it. Clicking somewhere outside will exit the edit mode. Changes to the text will automatically be reflected in the character counter
 
@@ -82,38 +82,38 @@ _Note_: By default, the undo history is stored in memory only. If you want to ke
 
 ## Available Settings
 
-Following Section contains the Settings you can configure.
+The following section contains explanations and details on the settings you can configure. The settings can be accessed by clicking on the gear at the top right corner.
 
 <details style="cursor: pointer;">
     <summary>Settings List</summary>
 
-- Window Title: Lets you set the current Document Title which you e. g. can use with yomichan to tag your created cards
-- WebSocket: URL of the WebSocket to which you want to connect
-- Font Size: Number of px for the Font Size
-- Online Font: Lets you select a Font from a predefined Selection (requires Online Connection in order to work)
-- AFK Timer (s): Seconds after which the timer will automatically pause without Page Interaction (No new Line, Text Selection, Pointer Move)
-- Adjust Timer after AFK: If enabled with subtract the configured AFK Timer (s) value in case Timer was paused due to idle
-- Enable external Clipboard Monitor: If enabled will handle Lines pasted by Extensions like "Clipboard Inserter" or "lap-clipboard-inserter"
-- Store Stats persistently: If enabled will store Time value etc. in your local Browser Storage so that it will be available after tab reloads etc.
-- Store Notes persistently: If enabled will store Notes in your local Browser Storage so that they will be available after tab reloads etc.
-- Store Lines persistently: If enabled will store received/pasted Lines etc. in your local Browser Storage so that they will be available after tab reloads etc.
-- Store Action History persistently: If enabled will store revertible Actions etc. in your local Browser Storage so that they will be available after tab reloads etc.
-- Enable Paste: If enabled will allow to manually paste new Lines to the Page
-- Flash on missed Line: If enabled will show a short page flash in case your Timer is paused and you received/pasted new Lines which were therefore ignored
-- Allow new Line during Pause: If enabled will allow to receive/paste new Lines even with paused Timer
-- Autostart Timer during Pause: If enabled will automatically start the timer when it is paused and new Lines were received/pasted
-- Prevent Last Line Duplicate: If enabled will prevent the insertion/pasting of a Line if the text is equal to the last Line
-- Prevent Global Duplicate: If enabled will prevent the insertion/pasting of a Line if the text line already exists in any other Line
-- Display Text vertically: If enabled will display Lines vertically instead horizontally
-- Reverse Line Order: If enabled new Lines will be appended on top (horizonal mode) / left (vertical mode) instead of bottom/right
-- Preserve Whitespace: If enabled will preserve Whitespace like new line characters inside Text instead of printing out a single Line etc.
-- Remove all Whitespace: If enabled all Whitespace (e. g. space, new Line characters, tab character etc.) will be removed from Lines before inserting them
-- Show Timer: If enabled will display the current passed (active) time on the Page in the header
-- Show Speed: If enabled will display the current characters per hour in the header
-- Show Character Count: If enabled will display the current number  of displayed characters on the Page in the header
-- Show Line Count: If enabled will display the current number  of inserted lines on the Page in the header
-- Blur Stats: If enabled will blue the displayed stats (unblur on hover)
-- Custom CSS: Lets you insert custom CSS rules to customize the Page further
+- `Window Title`: Lets you set the current Document Title. This can be used with Yomichan to tag your created cards.
+- `WebSocket`: URL of the WebSocket to which you want to connect.
+- `Font Size`: The font size, in number of pixels.
+- `Online Font`: Lets you select a font from a predefined selection. This requires an online connection in order to work.
+- `AFK Timer (s)`: Number of seconds after which the timer will automatically pause without page interaction (no new line, text selection, or pointer move).
+- `Adjust Timer after AFK`: If enabled, the timer will be subtracted by the configured `AFK Timer (s)` value whenever the timer was paused due to no page interaction.
+- `Enable external Clipboard Monitor`: If enabled, this will allow the texthooker page to handle Lines pasted by extensions like "Clipboard Inserter" or "lap-clipboard-inserter".
+- `Store Stats persistently`: If enabled, the stats (time value, etc.) will be stored in your local browser storage. This means the stats will be available after tab reloads, etc.
+- `Store Notes persistently`: If enabled, the text within the notes section will be stored in your local browser storage.
+- `Store Lines persistently`: If enabled, the inserted/pasted lines will be stored in your local browser storage.
+- `Store Action History persistently`: If enabled, the [revertible actions](#what-is-covered-by-undo-last-action) will be stored in your local browser storage.
+- `Enable Paste`: If enabled, this will allow the user to manually paste new lines to the texthooker page (i.e. with ctrl+v).
+- `Flash on missed Line`: If enabled, the page will flash every time a line is inserted/pasted *if your timer is paused*. These lines will be ignored from stats collection.
+- `Allow new Line during Pause`: If enabled, this will allow the page to insert/paste new lines even with a paused timer.
+- `Autostart Timer during Pause`: If enabled, the time will automatically re-start if it was paused and new lines were inserted/pasted.
+- `Prevent Last Line Duplicate`: If enabled, this will prevent the insertion/pasting of a line if the text is equal to the last line.
+- `Prevent Global Duplicate`: This is the same as the above, except the line is checked against the entire document, and will not be inserted/pasted if it is found anywhere within the document.
+- `Display Text vertically`: If enabled, the lines will be displayed vertically instead horizontally.
+- `Reverse Line Order`: If enabled, the new lines will be appended on top (horizontal mode) / left (vertical mode) instead of bottom / right respectively.
+- `Preserve Whitespace`: If enabled, whitespace (such as spaces, new line characters, etc.) will preserved. TODO
+- `Remove all Whitespace`: If enabled, all whitespace will be removed from the lines before they are inserted into the page.
+- `Show Timer`: If enabled, the page will display the current passed (active) time in the header.
+- `Show Speed`: If enabled, the page will display the current characters per hour in the header.
+- `Show Character Count`: If enabled, the page will display the current number of displayed characters within the page.
+- `Show Line Count`: If enabled, the page will display the current number of inserted lines within the page.
+- `Blur Stats`: If enabled, the displayed stats will be blurred. These stats are unblurred on hover.
+- `Custom CSS`: Lets you insert custom CSS rules to customize the page further.
 
 </details>
 
