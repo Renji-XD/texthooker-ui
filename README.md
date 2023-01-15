@@ -38,7 +38,7 @@ The page can be opened via the index.html inside the "docs" folder and is usable
 
 -   Make sure your firewall is not blocking the required ports. You can also check if another extension is interfering by trying out the page with a clean temporary profile and disabled extensions
 
-### Can I use this page with extensions like "Clipboard Inserter" or "lap-clipboard-inserter"?
+### Can I use this page with extensions like [Clipboard Inserter](https://github.com/kmltml/clipboard-inserter) or [lap-clipboard-inserter](https://github.com/laplus-sadness/lap-clipboard-inserter)?
 
 -   When "Enable external Clipboard Monitor" is checked text appended as paragraph to the page body will be taken over by the app. Make sure to enable this setting before the actual extension to avoid wrongly pasted elements
 
@@ -95,8 +95,8 @@ The following section contains explanations and details on the settings you can 
 | Online Font | Lets you select a font from a predefined selection. This requires an online connection in order to work. |
 | AFK Timer (s) | Number of seconds after which the timer will automatically pause without page interaction (no new line, text selection, or pointer move). |
 | Adjust Timer after AFK | If enabled, the timer will be subtracted by the configured `AFK Timer (s)` value whenever the timer was paused due to no page interaction. |
-| Enable external Clipboard Monitor | If enabled, this will allow the texthooker page to handle Lines pasted by extensions like "Clipboard Inserter" or "lap-clipboard-inserter". |
-| Store Stats persistently | If enabled, the stats (time value, etc.) will be stored in your local browser storage. This means the stats will be available after tab reloads, etc. |
+| Enable external Clipboard Monitor | If enabled, this will allow the texthooker page to handle lines pasted by extensions like [Clipboard Inserter](https://github.com/kmltml/clipboard-inserter) or [lap-clipboard-inserter](https://github.com/laplus-sadness/lap-clipboard-inserter). |
+| Store Stats persistently | If enabled, the stats (time, speed, etc.) will be stored in your local browser storage. This means the stats will be available after tab reloads, etc. |
 | Store Notes persistently | If enabled, the text within the notes section will be stored in your local browser storage. |
 | Store Lines persistently | If enabled, the inserted/pasted lines will be stored in your local browser storage. |
 | Store Action History persistently | If enabled, the [revertible actions](#what-is-covered-by-undo-last-action) will be stored in your local browser storage. |
