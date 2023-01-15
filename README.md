@@ -92,7 +92,7 @@ The following section contains explanations and details on the settings you can 
 | Window Title | Lets you set the current document title. This can be used with Yomichan to tag your created cards. |
 | WebSocket | URL of the WebSocket to which you want to connect. |
 | Font Size | The font size, in number of pixels. |
-| Online Font | Lets you select a font from a predefined selection. This requires an online connection in order to work. |
+| Online Font | Lets you select a font from a predefined selection. An internet connection is required in order for this work. |
 | AFK Timer (s) | Number of seconds after which the timer will automatically pause without page interaction (no new line, text selection, or pointer move). |
 | Adjust Timer after AFK | If enabled, the timer will be subtracted by the configured `AFK Timer (s)` value whenever the timer was paused due to no page interaction. |
 | Enable external Clipboard Monitor | If enabled, this will allow the texthooker page to handle lines pasted by extensions like [Clipboard Inserter](https://github.com/kmltml/clipboard-inserter) or [lap-clipboard-inserter](https://github.com/laplus-sadness/lap-clipboard-inserter). |
@@ -108,7 +108,7 @@ The following section contains explanations and details on the settings you can 
 | Prevent Global Duplicate | This is the same as the above, except the line is checked against the entire document, and will not be inserted/pasted if it is found anywhere within the document. |
 | Display Text vertically | If enabled, the lines will be displayed vertically instead horizontally. |
 | Reverse Line Order | If enabled, the new lines will be appended on top (horizontal mode) / left (vertical mode) instead of bottom / right respectively. |
-| Preserve Whitespace | If enabled, whitespace (such as spaces, new line characters, etc.) will preserved. TODO |
+| Preserve Whitespace | If enabled, all existing whitespace (such as spaces, new line characters, etc.) will be displayed. If left disabled, characters such as newlines will not be displayed. This has no effect if the whitespace is already removed (i.e. with the `Remove all Whitespace` option enabled). |
 | Remove all Whitespace | If enabled, all whitespace will be removed from the lines before they are inserted into the page. |
 | Show Timer | If enabled, the page will display the current passed (active) time in the header. |
 | Show Speed | If enabled, the page will display the current characters per hour in the header. |
