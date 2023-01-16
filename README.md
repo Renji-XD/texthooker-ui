@@ -89,7 +89,7 @@ The following section contains explanations and details on the settings you can 
 
 | Setting | Description |
 |-|-|
-| Window Title | Lets you set the current document title. This can be used with Yomichan to tag your created cards. |
+| Window Title | Lets you set the current document title. This can be used with Yomichan to tag your created cards (with the `{document-title}` [marker](https://github.com/FooSoft/yomichan#markers-for-term-cards)) |
 | WebSocket | URL of the WebSocket to which you want to connect. |
 | Font Size | The font size, in number of pixels. |
 | Online Font | Lets you select a font from a predefined selection. An internet connection is required in order for this work. |
