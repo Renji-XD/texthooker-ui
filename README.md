@@ -105,7 +105,7 @@ The following section contains explanations and details on the settings you can 
 | Allow new Line during Pause | If enabled, this will allow the page to insert/paste new lines even with a paused timer. |
 | Autostart Timer during Pause | If enabled, the time will automatically re-start if it was paused and new lines were inserted/pasted. |
 | Prevent Last Line Duplicate | If enabled, this will prevent the insertion/pasting of a line if the text is equal to the last line. |
-| Prevent Global Duplicate | This is the same as the above, except the line is checked against the entire document, and will not be inserted/pasted if it is found anywhere within the document. |
+| Prevent Global Duplicate | This is the same as the above, except the line is checked against the entire document. The line will not be inserted/pasted if it is found anywhere within the document. |
 | Display Text vertically | If enabled, the lines will be displayed vertically instead horizontally. |
 | Reverse Line Order | If enabled, the new lines will be appended on top (horizontal mode) / left (vertical mode) instead of bottom / right respectively. |
 | Preserve Whitespace | If enabled, all existing whitespace (such as spaces, new line characters, etc.) within the line will be fully displayed. If left disabled, newlines and multiple spaces in a row will be collapsed to a singular space. This has no effect if the whitespace is already removed (i.e. with the `Remove all Whitespace` option enabled). |
