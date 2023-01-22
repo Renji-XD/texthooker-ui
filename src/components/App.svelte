@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { mdiCancel, mdiCog, mdiDelete, mdiDeleteForever, mdiNoteEdit, mdiPause, mdiPlay, mdiRepeat } from '@mdi/js';
+	import { mdiCancel, mdiCog, mdiDelete, mdiDeleteForever, mdiNoteEdit, mdiPause, mdiPlay, mdiArrowULeftTop } from '@mdi/js';
 	import { filter, fromEvent, map, NEVER, switchMap, tap } from 'rxjs';
 	import { onMount } from 'svelte';
 	import { quintInOut } from 'svelte/easing';
@@ -247,7 +247,7 @@
 	{/if}
 	{#if $actionHistory$.length}
 		<div role="button" title="Undo last Action" class="mr-2 hover:text-primary">
-			<Icon path={mdiRepeat} on:click={undoLastAction} />
+			<Icon path={mdiArrowULeftTop} on:click={undoLastAction} />
 		</div>
 	{/if}
 	{#if $lineData$.length}
