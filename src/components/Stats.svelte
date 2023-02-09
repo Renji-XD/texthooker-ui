@@ -34,6 +34,8 @@
 	const timer$ = isPaused$.pipe(
 		switchMap((isPaused) => {
 			if (isPaused) {
+				idleTime = 0;
+
 				return NEVER;
 			}
 
