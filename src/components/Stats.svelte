@@ -1,5 +1,16 @@
 <script lang="ts">
-	import { combineLatest, debounceTime, fromEvent, interval, merge, NEVER, switchMap, tap, throttleTime } from 'rxjs';
+	import {
+		combineLatest,
+		debounceTime,
+		fromEvent,
+		interval,
+		merge,
+		NEVER,
+		startWith,
+		switchMap,
+		tap,
+		throttleTime
+	} from 'rxjs';
 	import {
 		adjustTimerOnAfk$,
 		afkTimer$,
@@ -15,11 +26,19 @@
 	} from '../stores/stores';
 	import { reduceToEmptyString, toTimeString } from '../util';
 
+	let lastTick = performance.now();
+
 	const isNotJapaneseRegex = /[^0-9A-Z○◯々-〇〻ぁ-ゖゝ-ゞァ-ヺー０-９Ａ-Ｚｦ-ﾝ\p{Radical}\p{Unified_Ideograph}]+/gimu;
 
 	const timer$ = isPaused$.pipe(
-		switchMap((isPaused) => (isPaused ? NEVER : interval(1000))),
-		tap(() => ($timeValue$ = $timeValue$ + 1)),
+		switchMap((isPaused) => {
+			lastTick = performance.now();
+
+			return isPaused ? NEVER : interval(1000);
+		}),
+		tap(() => {
+			updateElapsedTime();
+		}),
 		reduceToEmptyString()
 	);
 
@@ -31,13 +50,15 @@
 						newLine$,
 						fromEvent<PointerEvent>(window, 'pointermove'),
 						fromEvent<Event>(document, 'selectionchange')
-				  ).pipe(throttleTime(500), debounceTime($afkTimer$ * 1000))
+				  ).pipe(startWith(true), throttleTime(500), debounceTime($afkTimer$ * 1000))
 		),
 		tap(() => {
+			updateElapsedTime(false);
+
 			$isPaused$ = true;
 
 			if ($adjustTimerOnAfk$) {
-				$timeValue$ = Math.max(0, $timeValue$ - $afkTimer$ + 1);
+				$timeValue$ = Math.max(0, $timeValue$ - $afkTimer$);
 			}
 		}),
 		reduceToEmptyString()
@@ -71,6 +92,16 @@
 		if (selection?.toString() && selection.getRangeAt(0).intersectsNode(timerElm)) {
 			selection.removeAllRanges();
 		}
+	}
+
+	function updateElapsedTime(roundElapsed = true) {
+		const now = performance.now();
+		const elapsed = roundElapsed
+			? Math.round((now - lastTick + Number.EPSILON) / 1000)
+			: Math.floor((now - lastTick + Number.EPSILON) / 1000);
+
+		lastTick = now;
+		$timeValue$ += elapsed;
 	}
 
 	function getCharacterCount(text: string) {

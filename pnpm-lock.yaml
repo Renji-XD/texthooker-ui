@@ -12,6 +12,7 @@ specifiers:
   postcss: ^8.4.20
   postcss-load-config: ^4.0.1
   prettier: ^2.8.1
+  rollup: ^3.14.0
   rxjs: ^7.8.0
   svelte: ^3.55.0
   svelte-check: ^2.10.2
@@ -34,6 +35,7 @@ devDependencies:
   postcss: 8.4.20
   postcss-load-config: 4.0.1_postcss@8.4.20
   prettier: 2.8.1
+  rollup: 3.14.0
   rxjs: 7.8.0
   svelte: 3.55.0
   svelte-check: 2.10.2_7tgmgw23w4ankk7vtabgm5xtbu
@@ -42,7 +44,7 @@ devDependencies:
   tslib: 2.4.1
   typescript: 4.9.4
   vite: 4.0.1
-  vite-plugin-singlefile: 0.13.2_vite@4.0.1
+  vite-plugin-singlefile: 0.13.2_rollup@3.14.0+vite@4.0.1
 
 packages:
 
@@ -1399,8 +1401,8 @@ packages:
       glob: 7.2.3
     dev: true
 
-  /rollup/3.7.4:
-    resolution: {integrity: sha512-jN9rx3k5pfg9H9al0r0y1EYKSeiRANZRYX32SuNXAnKzh6cVyf4LZVto1KAuDnbHT03E1CpsgqDKaqQ8FZtgxw==}
+  /rollup/3.14.0:
+    resolution: {integrity: sha512-o23sdgCLcLSe3zIplT9nQ1+r97okuaiR+vmAPZPTDYB7/f3tgWIYNyiQveMsZwshBT0is4eGax/HH83Q7CG+/Q==}
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
     optionalDependencies:
@@ -1737,7 +1739,7 @@ packages:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
     dev: true
 
-  /vite-plugin-singlefile/0.13.2_vite@4.0.1:
+  /vite-plugin-singlefile/0.13.2_rollup@3.14.0+vite@4.0.1:
     resolution: {integrity: sha512-HAvrU9mxasNMn/YF0Hb9NjsWDstCWe4iLQ6IR5ppOiNMvXjcyqU3C9SDQ32xnonx3Y04JUGjD2bGiT6q0S9T8w==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
@@ -1745,6 +1747,7 @@ packages:
       vite: '>=3.2.0'
     dependencies:
       micromatch: 4.0.5
+      rollup: 3.14.0
       vite: 4.0.1
     dev: true
 
@@ -1776,7 +1779,7 @@ packages:
       esbuild: 0.16.8
       postcss: 8.4.20
       resolve: 1.22.1
-      rollup: 3.7.4
+      rollup: 3.14.0
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
