@@ -26,19 +26,22 @@
 	} from '../stores/stores';
 	import { reduceToEmptyString, toTimeString } from '../util';
 
-	let lastTick = performance.now();
+	let lastTick = 0;
+	let idleTime = 0;
 
 	const isNotJapaneseRegex = /[^0-9A-Z○◯々-〇〻ぁ-ゖゝ-ゞァ-ヺー０-９Ａ-Ｚｦ-ﾝ\p{Radical}\p{Unified_Ideograph}]+/gimu;
 
 	const timer$ = isPaused$.pipe(
 		switchMap((isPaused) => {
+			if (isPaused) {
+				return NEVER;
+			}
+
 			lastTick = performance.now();
 
-			return isPaused ? NEVER : interval(1000);
+			return interval(1000);
 		}),
-		tap(() => {
-			updateElapsedTime();
-		}),
+		tap(updateElapsedTime),
 		reduceToEmptyString()
 	);
 
@@ -50,17 +53,13 @@
 						newLine$,
 						fromEvent<PointerEvent>(window, 'pointermove'),
 						fromEvent<Event>(document, 'selectionchange')
-				  ).pipe(startWith(true), throttleTime(500), debounceTime($afkTimer$ * 1000))
+				  ).pipe(
+						startWith(true),
+						throttleTime(1000),
+						tap(() => (idleTime = performance.now() + $afkTimer$ * 1000)),
+						debounceTime($afkTimer$ * 1000)
+				  )
 		),
-		tap(() => {
-			updateElapsedTime(false);
-
-			$isPaused$ = true;
-
-			if ($adjustTimerOnAfk$) {
-				$timeValue$ = Math.max(0, $timeValue$ - $afkTimer$);
-			}
-		}),
 		reduceToEmptyString()
 	);
 
@@ -94,14 +93,22 @@
 		}
 	}
 
-	function updateElapsedTime(roundElapsed = true) {
-		const now = performance.now();
-		const elapsed = roundElapsed
-			? Math.round((now - lastTick + Number.EPSILON) / 1000)
-			: Math.floor((now - lastTick + Number.EPSILON) / 1000);
+	function updateElapsedTime() {
+		const now = idleTime ? Math.min(idleTime, performance.now()) : performance.now();
+		const elapsed = Math.round((now - lastTick + Number.EPSILON) / 1000);
 
-		lastTick = now;
-		$timeValue$ += elapsed;
+		if (idleTime && now >= idleTime) {
+			$isPaused$ = true;
+
+			if ($adjustTimerOnAfk$) {
+				$timeValue$ = Math.max(0, $timeValue$ + elapsed - $afkTimer$);
+			} else {
+				$timeValue$ += elapsed;
+			}
+		} else {
+			lastTick = now;
+			$timeValue$ += elapsed;
+		}
 	}
 
 	function getCharacterCount(text: string) {
