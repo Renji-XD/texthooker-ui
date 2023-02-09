@@ -4,6 +4,7 @@
 		"@mdi/js": "^7.1.96",
 		"@sveltejs/vite-plugin-svelte": "^2.0.2",
 		"@tsconfig/svelte": "^3.0.0",
+		"@types/dom-screen-wake-lock": "^1.0.0",
 		"autoprefixer": "^10.4.13",
 		"daisyui": "^2.45.0",
 		"eslint": "^8.30.0",
