@@ -1,5 +1,14 @@
 <script lang="ts">
-	import { mdiCancel, mdiCog, mdiDelete, mdiDeleteForever, mdiNoteEdit, mdiPause, mdiPlay, mdiArrowULeftTop } from '@mdi/js';
+	import {
+		mdiArrowULeftTop,
+		mdiCancel,
+		mdiCog,
+		mdiDelete,
+		mdiDeleteForever,
+		mdiNoteEdit,
+		mdiPause,
+		mdiPlay
+	} from '@mdi/js';
 	import { filter, fromEvent, map, NEVER, switchMap, tap } from 'rxjs';
 	import { onMount } from 'svelte';
 	import { quintInOut } from 'svelte/easing';
@@ -43,6 +52,9 @@
 	let lineContainer: HTMLElement;
 	let lineElements: Line[] = [];
 	let lineInEdit = false;
+	let wakeLock = null;
+
+	const wakeLockAvailable = 'wakeLock' in navigator;
 
 	const uniqueLines$ = preventGlobalDuplicate$.pipe(
 		map((preventGlobalDuplicate) =>
@@ -84,7 +96,38 @@
 		reduceToEmptyString()
 	);
 
-	onMount(executeUpdateScroll);
+	const visibilityHandler$ = fromEvent(document, 'visibilitychange').pipe(
+		tap(() => {
+			if (wakeLockAvailable && wakeLock !== null && document.visibilityState === 'visible') {
+				wakeLock = navigator.wakeLock
+					.request('screen')
+					.then((lock) => {
+						return lock;
+					})
+					.catch((error) => {
+						console.error(`Unable to aquire screen lock: ${error.message}`);
+						return null;
+					});
+			}
+		}),
+		reduceToEmptyString()
+	);
+
+	onMount(() => {
+		executeUpdateScroll();
+
+		if (wakeLockAvailable) {
+			wakeLock = navigator.wakeLock
+				.request('screen')
+				.then((lock) => {
+					return lock;
+				})
+				.catch((error) => {
+					console.error(`Unable to aquire screen lock: ${error.message}`);
+					return null;
+				});
+		}
+	});
 
 	function handleKeyPress(event: KeyboardEvent) {
 		if (event.key === 'Delete') {
@@ -222,6 +265,7 @@
 
 <svelte:window on:keyup={handleKeyPress} />
 
+{$visibilityHandler$ ?? ''}
 {$handleLine$ ?? ''}
 {$pastHandler$ ?? ''}
 
