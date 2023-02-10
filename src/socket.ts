@@ -1,5 +1,7 @@
 import { newLine$, socketState$, websocketUrl$ } from './stores/stores';
 
+import { LineType } from './types';
+
 export class SocketConnection {
 	private websocketUrl: string;
 
@@ -46,6 +48,6 @@ export class SocketConnection {
 			// no-op
 		}
 
-		newLine$.next(line);
+		newLine$.next([line, LineType.SOCKET]);
 	}
 }
