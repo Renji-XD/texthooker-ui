@@ -1,4 +1,4 @@
-import { OnlineFont, Theme, type DialogResult, type LineItem } from './../types';
+import { LineType, OnlineFont, Theme, type DialogResult, type LineItem } from './../types';
 
 import { mdiHelpCircle } from '@mdi/js';
 import { Subject } from 'rxjs';
@@ -162,7 +162,7 @@ export const flashOnPauseTimeout$ = writable<number>(undefined);
 
 export const isPaused$ = writableSubject<boolean>(true);
 
-export const newLine$ = new Subject<string>();
+export const newLine$ = new Subject<[string, LineType]>();
 
 export async function resetAllData() {
 	const { canceled } = await new Promise<DialogResult>((resolve) => {

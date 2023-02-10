@@ -42,6 +42,12 @@ export interface DialogResult<T = undefined> {
 	data: T;
 }
 
+export enum LineType {
+	SOCKET = 'socket',
+	PASTE = 'paste',
+	EXTERNAL = 'external',
+}
+
 export interface LineItem {
 	id: string;
 	text: string;

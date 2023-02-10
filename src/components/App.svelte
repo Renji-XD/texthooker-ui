@@ -35,7 +35,7 @@
 		theme$,
 		websocketUrl$
 	} from '../stores/stores';
-	import { OnlineFont, Theme, type LineItem } from '../types';
+	import { LineType, OnlineFont, Theme, type LineItem } from '../types';
 	import { generateRandomUUID, newLineCharacter, reduceToEmptyString, updateScroll } from '../util';
 	import DialogManager from './DialogManager.svelte';
 	import Icon from './Icon.svelte';
@@ -63,8 +63,9 @@
 	);
 
 	const handleLine$ = newLine$.pipe(
-		filter(() => {
-			const hasNoUserInteraction = !$notesOpen$ && !$dialogOpen$ && !settingsOpen && !lineInEdit;
+		filter(([_, lineType]) => {
+			const hasNoUserInteraction =
+				lineType !== LineType.PASTE || (!$notesOpen$ && !$dialogOpen$ && !settingsOpen && !lineInEdit);
 
 			if ((!$isPaused$ || $allowNewLineDuringPause$ || $autoStartTimerDuringPause$) && hasNoUserInteraction) {
 				if ($isPaused$ && $autoStartTimerDuringPause$) {
@@ -80,8 +81,9 @@
 
 			return false;
 		}),
-		tap((newLine: string) => {
-			const text = transformLine(newLine);
+		tap((newLine: [string, string]) => {
+			const [lineContent] = newLine;
+			const text = transformLine(lineContent);
 
 			if (text) {
 				$lineData$ = [...$lineData$, { id: generateRandomUUID(), text }];
@@ -92,7 +94,7 @@
 
 	const pastHandler$ = enablePaste$.pipe(
 		switchMap((enablePaste) => (enablePaste ? fromEvent(document, 'paste') : NEVER)),
-		tap((event: ClipboardEvent) => newLine$.next(event.clipboardData.getData('text/plain'))),
+		tap((event: ClipboardEvent) => newLine$.next([event.clipboardData.getData('text/plain'), LineType.PASTE])),
 		reduceToEmptyString()
 	);
 

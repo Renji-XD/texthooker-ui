@@ -48,7 +48,7 @@
 		websocketUrl$,
 		windowTitle$
 	} from '../stores/stores';
-	import { OnlineFont, Theme, type DialogResult } from '../types';
+	import { LineType, OnlineFont, Theme, type DialogResult } from '../types';
 	import { clickOutside } from '../use-click-outside';
 	import { dummyFn, timeStringToSeconds } from '../util';
 	import Icon from './Icon.svelte';
@@ -90,7 +90,7 @@
 				const addedNode = addedNodes[index] as HTMLElement;
 
 				if (addedNode.tagName === 'P') {
-					newLine$.next(addedNode.textContent);
+					newLine$.next([addedNode.textContent, LineType.EXTERNAL]);
 					addedNode.remove();
 				}
 			}
