@@ -115,6 +115,7 @@ The following section contains explanations and details on the settings you can 
 | Show Character Count | If enabled, the page will display the current number of displayed characters within the page. |
 | Show Line Count | If enabled, the page will display the current number of inserted lines within the page. |
 | Blur Stats | If enabled, the displayed stats will be blurred. These stats are unblurred on hover. |
+| Block Copy from Page | If enabled, this will block text on the page from being copied into the clipboard. |
 | Custom CSS | Lets you insert custom CSS rules to customize the page further. |
 
 </details>
