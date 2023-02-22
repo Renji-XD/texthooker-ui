@@ -9,6 +9,7 @@
 		mdiWeatherNight,
 		mdiWhiteBalanceSunny
 	} from '@mdi/js';
+	import { fromEvent, NEVER, switchMap, tap } from 'rxjs';
 	import { createEventDispatcher, tick } from 'svelte';
 	import {
 		actionHistory$,
@@ -16,6 +17,7 @@
 		afkTimer$,
 		allowNewLineDuringPause$,
 		autoStartTimerDuringPause$,
+		blockCopyOnPage$,
 		blurStats$,
 		customCSS$,
 		dialogOpen$,
@@ -50,7 +52,7 @@
 	} from '../stores/stores';
 	import { LineType, OnlineFont, Theme, type DialogResult } from '../types';
 	import { clickOutside } from '../use-click-outside';
-	import { dummyFn, timeStringToSeconds } from '../util';
+	import { dummyFn, reduceToEmptyString, timeStringToSeconds } from '../util';
 	import Icon from './Icon.svelte';
 
 	export let selectedLineIds: string[];
@@ -63,6 +65,14 @@
 	const dispatch = createEventDispatcher<{ layoutChange: void }>();
 
 	const onlineFonts = [OnlineFont.OFF, OnlineFont.NOTO, OnlineFont.KLEE, OnlineFont.SHIPPORI];
+
+	const copyBlocker$ = blockCopyOnPage$.pipe(
+		switchMap((blockCopyOnPage) => (blockCopyOnPage ? fromEvent(document, 'copy') : NEVER)),
+		tap((event: ClipboardEvent) => {
+			event.preventDefault();
+		}),
+		reduceToEmptyString()
+	);
 
 	$: document.body.dataset.theme = $theme$;
 
@@ -403,6 +413,7 @@
 	<title>{$windowTitle$ || 'Texthooker UI'}</title>
 </svelte:head>
 
+{$copyBlocker$ ?? ''}
 {#if settingsOpen}
 	<input class="hidden" type="file" bind:this={fileInput} on:change={handleFileChange} />
 	<div
@@ -615,6 +626,8 @@
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$showLineCount$} />
 		<span class="label-text">Blur Stats</span>
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$blurStats$} />
+		<span class="label-text">Block Copy from Page</span>
+		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$blockCopyOnPage$} />
 		<span class="label-text" style="grid-column: 1/5;">Custom CSS</span>
 		<textarea
 			class="p-1 min-h-[10rem]"
