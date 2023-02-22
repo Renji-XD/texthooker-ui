@@ -13,23 +13,29 @@ export function updateScroll(
 	window: Window,
 	scrollElement: HTMLElement,
 	reverseLineOrder: boolean,
-	displayVertical: boolean
+	displayVertical: boolean,
+	behavior: ScrollBehavior = 'auto'
 ) {
 	if (!scrollElement) {
 		return;
 	}
 
-	if (reverseLineOrder) {
-		if (displayVertical) {
-			scrollElement.scrollTo(scrollElement.scrollWidth, 0);
+	setTimeout(() => {
+		if (reverseLineOrder) {
+			if (displayVertical) {
+				scrollElement.scrollTo({ top: 0, left: scrollElement.scrollWidth, behavior });
+			} else {
+				window.scrollTo({ top: -scrollElement.scrollHeight, left: 0, behavior });
+			}
+		} else if (displayVertical) {
+			scrollElement.scrollTo({ top: 0, left: -scrollElement.scrollWidth, behavior });
 		} else {
-			window.scrollTo(0, -scrollElement.scrollHeight);
+			window.scrollTo({ top: scrollElement.scrollHeight + 100, left: 0, behavior });
 		}
-	} else if (displayVertical) {
-		scrollElement.scrollTo(-scrollElement.scrollWidth, 0);
-	} else {
-		window.scrollTo(0, scrollElement.scrollHeight);
-	}
+		if (behavior === 'smooth') {
+			setTimeout(() => updateScroll(window, scrollElement, reverseLineOrder, displayVertical), 250);
+		}
+	});
 }
 
 export function toTimeString(s: number) {
