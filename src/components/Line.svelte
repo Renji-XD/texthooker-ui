@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
+	import { fly } from 'svelte/transition';
 	import {
 		actionHistory$,
 		displayVertical$,
@@ -31,7 +32,7 @@
 
 	onMount(() => {
 		if (isLast) {
-			updateScroll(window, paragraph.parentElement, $reverseLineOrder$, $displayVertical$);
+			updateScroll(window, paragraph.parentElement, $reverseLineOrder$, $displayVertical$, 'smooth');
 		}
 	});
 
@@ -101,6 +102,7 @@
 		on:dblclick={handleDblClick}
 		on:keyup={dummyFn}
 		bind:this={paragraph}
+		in:fly={{ x: $displayVertical$ ? 100 : -100, duration: 250 }}
 	>
 		{line.text}
 	</p>

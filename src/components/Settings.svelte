@@ -89,7 +89,7 @@
 			for (let index2 = 0, { length: length2 } = addedNodes; index2 < length2; index2 += 1) {
 				const addedNode = addedNodes[index] as HTMLElement;
 
-				if (addedNode.tagName === 'P') {
+				if (addedNode?.tagName === 'P') {
 					newLine$.next([addedNode.textContent, LineType.EXTERNAL]);
 					addedNode.remove();
 				}
