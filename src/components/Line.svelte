@@ -4,6 +4,7 @@
 	import {
 		actionHistory$,
 		displayVertical$,
+		enableLineAnimation$,
 		lineData$,
 		preserveWhitespace$,
 		reverseLineOrder$
@@ -32,7 +33,13 @@
 
 	onMount(() => {
 		if (isLast) {
-			updateScroll(window, paragraph.parentElement, $reverseLineOrder$, $displayVertical$, 'smooth');
+			updateScroll(
+				window,
+				paragraph.parentElement,
+				$reverseLineOrder$,
+				$displayVertical$,
+				$enableLineAnimation$ ? 'smooth' : 'auto'
+			);
 		}
 	});
 
@@ -102,7 +109,7 @@
 		on:dblclick={handleDblClick}
 		on:keyup={dummyFn}
 		bind:this={paragraph}
-		in:fly={{ x: $displayVertical$ ? 100 : -100, duration: 250 }}
+		in:fly={{ x: $displayVertical$ ? 100 : -100, duration: $enableLineAnimation$ ? 250 : 0 }}
 	>
 		{line.text}
 	</p>

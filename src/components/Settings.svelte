@@ -23,6 +23,7 @@
 		dialogOpen$,
 		displayVertical$,
 		enableExternalClipboardMonitor$,
+		enableLineAnimation$,
 		enablePaste$,
 		flashOnMissedLine$,
 		fontSize$,
@@ -628,6 +629,8 @@
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$blurStats$} />
 		<span class="label-text">Block Copy from Page</span>
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$blockCopyOnPage$} />
+		<span class="label-text">Enable Line Animation</span>
+		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$enableLineAnimation$} />
 		<span class="label-text" style="grid-column: 1/5;">Custom CSS</span>
 		<textarea
 			class="p-1 min-h-[10rem]"
