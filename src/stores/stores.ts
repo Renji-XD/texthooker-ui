@@ -38,6 +38,7 @@ const defaultSettings = {
 	showLineCount$: true,
 	blurStats$: false,
 	blockCopyOnPage$: false,
+	enableLineAnimation$: false,
 	customCSS$: '',
 };
 
@@ -142,6 +143,11 @@ export const blockCopyOnPage$ = writableBooleanSubject()(
 	defaultSettings.blockCopyOnPage$
 );
 
+export const enableLineAnimation$ = writableBooleanSubject()(
+	'bannou-texthooker-enableLineAnimation',
+	defaultSettings.enableLineAnimation$
+);
+
 export const customCSS$ = writableStringSubject()('bannou-texthooker-customCSS', defaultSettings.customCSS$);
 
 export const timeValue$ = writableNumberSubject()('bannou-texthooker-timeValue', 0, persistStats$);
@@ -220,6 +226,7 @@ export async function resetAllData() {
 		showLineCount$.next(defaultSettings.showLineCount$);
 		blurStats$.next(defaultSettings.blurStats$);
 		blockCopyOnPage$.next(defaultSettings.blockCopyOnPage$);
+		enableLineAnimation$.next(defaultSettings.enableLineAnimation$);
 		customCSS$.next(defaultSettings.customCSS$);
 	}
 }
