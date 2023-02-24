@@ -93,6 +93,7 @@ The following section contains explanations and details on the settings you can 
 | WebSocket | URL of the WebSocket to which you want to connect. |
 | Font Size | The font size, in number of pixels. |
 | Online Font | Lets you select a font from a predefined selection. An internet connection is required in order for this work. |
+| Prevent Last Line Duplicate | This will prevent the insertion/pasting of a line if the text is equal to one of the last n configured lines. |
 | AFK Timer (s) | Number of seconds after which the timer will automatically pause without page interaction (no new line, text selection, or pointer move). |
 | Adjust Timer after AFK | If enabled, the timer will be subtracted by the configured `AFK Timer (s)` value whenever the timer was paused due to no page interaction. |
 | Enable external Clipboard Monitor | If enabled, this will allow the texthooker page to handle lines pasted by extensions like [Clipboard Inserter](https://github.com/kmltml/clipboard-inserter) or [lap-clipboard-inserter](https://github.com/laplus-sadness/lap-clipboard-inserter). |
@@ -104,7 +105,6 @@ The following section contains explanations and details on the settings you can 
 | Flash on missed Line | If enabled, the page will flash every time a line is inserted/pasted *if your timer is paused*. These lines will be ignored from stats collection. |
 | Allow new Line during Pause | If enabled, this will allow the page to insert/paste new lines even with a paused timer. |
 | Autostart Timer during Pause | If enabled, the time will automatically re-start if it was paused and new lines were inserted/pasted. |
-| Prevent Last Line Duplicate | If enabled, this will prevent the insertion/pasting of a line if the text is equal to the last line. |
 | Prevent Global Duplicate | This is the same as the above, except the line is checked against the entire document. The line will not be inserted/pasted if it is found anywhere within the document. |
 | Display Text vertically | If enabled, the lines will be displayed vertically instead horizontally. |
 | Reverse Line Order | If enabled, the new lines will be appended on top (horizontal mode) / left (vertical mode) instead of bottom / right respectively. |
@@ -116,6 +116,7 @@ The following section contains explanations and details on the settings you can 
 | Show Line Count | If enabled, the page will display the current number of inserted lines within the page. |
 | Blur Stats | If enabled, the displayed stats will be blurred. These stats are unblurred on hover. |
 | Block Copy from Page | If enabled, this will block text on the page from being copied into the clipboard. |
+| Enable Line Animation | If enabled, adds Lines with a short animated Transition. |
 | Custom CSS | Lets you insert custom CSS rules to customize the page further. |
 
 </details>

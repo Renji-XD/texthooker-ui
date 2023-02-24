@@ -51,7 +51,7 @@
 		websocketUrl$,
 		windowTitle$
 	} from '../stores/stores';
-	import { LineType, OnlineFont, Theme, type DialogResult } from '../types';
+	import { LineType, OnlineFont, Theme, type DialogResult, type LineItem } from '../types';
 	import { clickOutside } from '../use-click-outside';
 	import { dummyFn, reduceToEmptyString, timeStringToSeconds } from '../util';
 	import Icon from './Icon.svelte';
@@ -335,6 +335,24 @@
 		}
 	}
 
+	function handlePreventLastDuplicateBlur(event) {
+		const target = event.target as HTMLInputElement;
+		const value = Number.parseInt(target.value || '0');
+		const wasChange = value !== $preventLastDuplicate$;
+
+		if (!value || value < 0) {
+			$preventLastDuplicate$ = 0;
+		} else {
+			$preventLastDuplicate$ = value;
+		}
+
+		target.value = `${$preventLastDuplicate$}`;
+
+		if (wasChange) {
+			handlePreventLastDuplicateChange();
+		}
+	}
+
 	async function handlePreventLastDuplicateChange() {
 		if (!$preventLastDuplicate$ || $lineData$.length < 2) {
 			return;
@@ -348,12 +366,28 @@
 			};
 		});
 
-		if (!canceled && $lineData$[$lineData$.length - 1].text === $lineData$[$lineData$.length - 2].text) {
-			const [removedLine] = $lineData$.splice($lineData$.length - 1, 1);
-
-			$lineData$ = $lineData$;
-			selectedLineIds = selectedLineIds.filter((selectedLineId) => selectedLineId !== removedLine.id);
+		if (canceled) {
+			return;
 		}
+
+		const nonDuplicateLines: LineItem[] = [];
+		const nonDuplicateLineText = new Set<string>();
+		const removedIds = new Set<string>();
+		const lines = $lineData$.splice(-($preventLastDuplicate$ + 1));
+
+		for (let index = 0, { length } = lines; index < length; index += 1) {
+			const line = lines[index];
+
+			if (nonDuplicateLineText.has(line.text)) {
+				removedIds.add(line.id);
+			} else {
+				nonDuplicateLines.push(line);
+				nonDuplicateLineText.add(line.text);
+			}
+		}
+
+		$lineData$ = [...$lineData$, ...nonDuplicateLines];
+		selectedLineIds = selectedLineIds.filter((selectedLineId) => !removedIds.has(selectedLineId));
 	}
 
 	async function handlePreventGlobalDuplicateChange() {
@@ -520,6 +554,14 @@
 				</option>
 			{/each}
 		</select>
+		<span class="label-text col-span-2">Prevent Last Line Duplicate</span>
+		<input
+			type="number"
+			class="input input-bordered h-8 col-span-2"
+			min="0"
+			value={$preventLastDuplicate$}
+			on:blur={handlePreventLastDuplicateBlur}
+		/>
 		<span class="label-text col-span-2">AFK Timer (s)</span>
 		<input
 			type="number"
@@ -580,13 +622,6 @@
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$allowNewLineDuringPause$} />
 		<span class="label-text">Autostart Timer during Pause</span>
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$autoStartTimerDuringPause$} />
-		<span class="label-text">Prevent Last Line Duplicate</span>
-		<input
-			type="checkbox"
-			class="checkbox checkbox-primary ml-2"
-			bind:checked={$preventLastDuplicate$}
-			on:change={handlePreventLastDuplicateChange}
-		/>
 		<span class="label-text">Prevent Global Duplicate</span>
 		<input
 			type="checkbox"

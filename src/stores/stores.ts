@@ -15,6 +15,7 @@ const defaultSettings = {
 	websocketUrl$: 'ws://localhost:6677',
 	fontSize$: 24,
 	onlineFont$: OnlineFont.OFF,
+	preventLastDuplicate$: 0,
 	afkTimer$: 0,
 	adjustTimerOnAfk$: false,
 	enableExternalClipboardMonitor$: false,
@@ -26,7 +27,6 @@ const defaultSettings = {
 	flashOnMissedLine$: true,
 	allowNewLineDuringPause$: false,
 	autoStartTimerDuringPause$: false,
-	preventLastDuplicate$: false,
 	preventGlobalDuplicate$: false,
 	displayVertical$: false,
 	reverseLineOrder$: false,
@@ -92,7 +92,7 @@ export const autoStartTimerDuringPause$ = writableBooleanSubject()(
 	defaultSettings.autoStartTimerDuringPause$
 );
 
-export const preventLastDuplicate$ = writableBooleanSubject()(
+export const preventLastDuplicate$ = writableNumberSubject()(
 	'bannou-texthooker-preventLastDuplicate',
 	defaultSettings.preventLastDuplicate$
 );
@@ -203,6 +203,7 @@ export async function resetAllData() {
 		websocketUrl$.next(defaultSettings.websocketUrl$);
 		fontSize$.next(defaultSettings.fontSize$);
 		onlineFont$.next(defaultSettings.onlineFont$);
+		preventLastDuplicate$.next(defaultSettings.preventLastDuplicate$);
 		afkTimer$.next(defaultSettings.afkTimer$);
 		adjustTimerOnAfk$.next(defaultSettings.adjustTimerOnAfk$);
 		enableExternalClipboardMonitor$.next(defaultSettings.enableExternalClipboardMonitor$);
@@ -214,7 +215,6 @@ export async function resetAllData() {
 		flashOnMissedLine$.next(defaultSettings.flashOnMissedLine$);
 		allowNewLineDuringPause$.next(defaultSettings.allowNewLineDuringPause$);
 		autoStartTimerDuringPause$.next(defaultSettings.autoStartTimerDuringPause$);
-		preventLastDuplicate$.next(defaultSettings.preventLastDuplicate$);
 		preventGlobalDuplicate$.next(defaultSettings.preventGlobalDuplicate$);
 		displayVertical$.next(defaultSettings.displayVertical$);
 		reverseLineOrder$.next(defaultSettings.reverseLineOrder$);
