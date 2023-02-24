@@ -258,7 +258,7 @@
 			canAppend = !$uniqueLines$.has(lineToAppend);
 			$uniqueLines$.add(lineToAppend);
 		} else if ($preventLastDuplicate$ && $lineData$.length) {
-			canAppend = lineToAppend !== $lineData$[$lineData$.length - 1].text;
+			canAppend = $lineData$.slice(-$preventLastDuplicate$).every((line) => line.text !== lineToAppend);
 		}
 
 		return canAppend ? lineToAppend : undefined;
