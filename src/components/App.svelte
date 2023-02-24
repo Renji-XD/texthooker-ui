@@ -16,7 +16,9 @@
 	import {
 		actionHistory$,
 		allowNewLineDuringPause$,
+		allowPasteDuringPause$,
 		autoStartTimerDuringPause$,
+		autoStartTimerDuringPausePaste$,
 		dialogOpen$,
 		displayVertical$,
 		enablePaste$,
@@ -64,11 +66,19 @@
 
 	const handleLine$ = newLine$.pipe(
 		filter(([_, lineType]) => {
-			const hasNoUserInteraction =
-				lineType !== LineType.PASTE || (!$notesOpen$ && !$dialogOpen$ && !settingsOpen && !lineInEdit);
+			const isPaste = lineType === LineType.PASTE;
+			const hasNoUserInteraction = !isPaste || (!$notesOpen$ && !$dialogOpen$ && !settingsOpen && !lineInEdit);
 
-			if ((!$isPaused$ || $allowNewLineDuringPause$ || $autoStartTimerDuringPause$) && hasNoUserInteraction) {
-				if ($isPaused$ && $autoStartTimerDuringPause$) {
+			if (
+				(!$isPaused$ ||
+					(($allowPasteDuringPause$ || $autoStartTimerDuringPausePaste$) && isPaste) ||
+					(($allowNewLineDuringPause$ || $autoStartTimerDuringPause$) && !isPaste)) &&
+				hasNoUserInteraction
+			) {
+				if (
+					$isPaused$ &&
+					(($autoStartTimerDuringPausePaste$ && isPaste) || ($autoStartTimerDuringPause$ && !isPaste))
+				) {
 					$isPaused$ = false;
 				}
 

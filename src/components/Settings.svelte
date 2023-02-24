@@ -16,7 +16,9 @@
 		adjustTimerOnAfk$,
 		afkTimer$,
 		allowNewLineDuringPause$,
+		allowPasteDuringPause$,
 		autoStartTimerDuringPause$,
+		autoStartTimerDuringPausePaste$,
 		blockCopyOnPage$,
 		blurStats$,
 		customCSS$,
@@ -616,12 +618,18 @@
 		/>
 		<span class="label-text">Enable Paste</span>
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$enablePaste$} />
-		<span class="label-text">Flash on missed Line</span>
-		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$flashOnMissedLine$} />
+		<span class="label-text">Block Copy from Page</span>
+		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$blockCopyOnPage$} />
+		<span class="label-text">Allow Paste during Pause</span>
+		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$allowPasteDuringPause$} />
 		<span class="label-text">Allow new Line during Pause</span>
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$allowNewLineDuringPause$} />
-		<span class="label-text">Autostart Timer during Pause</span>
+		<span class="label-text">Autostart Timer by Paste during Pause</span>
+		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$autoStartTimerDuringPausePaste$} />
+		<span class="label-text">Autostart Timer by Line during Pause</span>
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$autoStartTimerDuringPause$} />
+		<span class="label-text">Flash on missed Line</span>
+		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$flashOnMissedLine$} />
 		<span class="label-text">Prevent Global Duplicate</span>
 		<input
 			type="checkbox"
@@ -662,8 +670,6 @@
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$showLineCount$} />
 		<span class="label-text">Blur Stats</span>
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$blurStats$} />
-		<span class="label-text">Block Copy from Page</span>
-		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$blockCopyOnPage$} />
 		<span class="label-text">Enable Line Animation</span>
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$enableLineAnimation$} />
 		<span class="label-text" style="grid-column: 1/5;">Custom CSS</span>
