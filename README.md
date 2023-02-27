@@ -102,7 +102,7 @@ The following section contains explanations and details on the settings you can 
 | Store Lines persistently | If enabled, the inserted/pasted lines will be stored in your local browser storage. |
 | Store Action History persistently | If enabled, the [revertible actions](#what-is-covered-by-undo-last-action) will be stored in your local browser storage. |
 | Enable Paste | If enabled, this will allow the user to manually paste new lines to the texthooker page (i.e. with ctrl+v). |
-| Block Copy from Page | If enabled, this will block text on the page from being copied into the clipboard. |
+| Block Copy from Page | If enabled, this will block the next line insertion by an external clipboard monitor after copying text from the page |
 | Allow Paste during Pause | If enabled, this will allow the page to paste new lines even with a paused timer. |
 | Allow new Line during Pause | If enabled, this will allow the page to insert new lines from other sources than pasting even with a paused timer. |
 | Autostart Timer by Paste during Pause | If enabled, the time will automatically re-start if it was paused and new lines were pasted. |
