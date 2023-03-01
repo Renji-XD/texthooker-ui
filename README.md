@@ -108,7 +108,7 @@ The following section contains explanations and details on the settings you can 
 | Autostart Timer by Paste during Pause | If enabled, the time will automatically re-start if it was paused and new lines were pasted. |
 | Autostart Timer by Line during Pause | If enabled, the time will automatically re-start if it was paused and new lines were inserted by sources than pasting. |
 | Flash on missed Line | If enabled, the page will flash every time a line is inserted/pasted *if your timer is paused*. These lines will be ignored from stats collection. |
-| Prevent Global Duplicate | This is the same as the above, except the line is checked against the entire document. The line will not be inserted/pasted if it is found anywhere within the document. |
+| Prevent Global Duplicate | This is the same as "Prevent Last Line Duplicate", except the line is checked against the entire document. The line will not be inserted/pasted if it is found anywhere within the document. |
 | Display Text vertically | If enabled, the lines will be displayed vertically instead horizontally. |
 | Reverse Line Order | If enabled, the new lines will be appended on top (horizontal mode) / left (vertical mode) instead of bottom / right respectively. |
 | Preserve Whitespace | If enabled, all existing whitespace (such as spaces, new line characters, etc.) within the line will be fully displayed. If left disabled, newlines and multiple spaces in a row will be collapsed to a singular space. This has no effect if the whitespace is already removed (i.e. with the `Remove all Whitespace` option enabled). |
