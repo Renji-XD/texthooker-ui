@@ -10,7 +10,7 @@
 		mdiPlay
 	} from '@mdi/js';
 	import { filter, fromEvent, map, NEVER, switchMap, tap } from 'rxjs';
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { quintInOut } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
 	import {
@@ -38,7 +38,7 @@
 		theme$,
 		websocketUrl$
 	} from '../stores/stores';
-	import { LineType, OnlineFont, Theme, type LineItem } from '../types';
+	import { LineType, OnlineFont, Theme, type LineItem, type LineItemEditEvent } from '../types';
 	import { generateRandomUUID, newLineCharacter, reduceToEmptyString, updateScroll } from '../util';
 	import DialogManager from './DialogManager.svelte';
 	import Icon from './Icon.svelte';
@@ -99,7 +99,7 @@
 
 			return false;
 		}),
-		tap((newLine: [string, string]) => {
+		tap((newLine: [string, LineType]) => {
 			const [lineContent] = newLine;
 			const text = transformLine(lineContent);
 
@@ -213,9 +213,10 @@
 		const [removedLine] = $lineData$.splice($lineData$.length - 1, 1);
 
 		selectedLineIds = selectedLineIds.filter((selectedLineId) => selectedLineId !== removedLine.id);
-
 		$lineData$ = $lineData$;
 		$actionHistory$ = [...$actionHistory$, [{ ...removedLine, index: $lineData$.length }]];
+
+		$uniqueLines$.delete(removedLine.text);
 	}
 
 	function removeLines() {
@@ -229,6 +230,7 @@
 
 			if (hasLine) {
 				newActionHistory.push({ ...oldLine, index: index - newActionHistory.length });
+				$uniqueLines$.delete(oldLine.text);
 			}
 
 			return !hasLine;
@@ -290,6 +292,35 @@
 		}
 
 		return canAppend ? lineToAppend : undefined;
+	}
+
+	function handleLineEdit(event) {
+		const { inEdit, data } = event.detail as LineItemEditEvent;
+
+		if (data && data.originalText !== data.newText) {
+			const text = transformLine(data.newText);
+
+			$lineData$[data.lineIndex] = {
+				id: data.line.id,
+				text: data.newText,
+			};
+
+			if (text) {
+				$actionHistory$ = [...$actionHistory$, [{ ...data.line, index: data.lineIndex }]];
+				$uniqueLines$.delete(data.originalText);
+				$uniqueLines$.add(text);
+			} else {
+				tick().then(
+					() =>
+						($lineData$[data.lineIndex] = {
+							id: data.line.id,
+							text: data.originalText,
+						})
+				);
+			}
+		}
+
+		lineInEdit = inEdit;
 	}
 </script>
 
@@ -373,7 +404,7 @@
 			on:deselected={({ detail }) => {
 				selectedLineIds = selectedLineIds.filter((selectedLineId) => selectedLineId !== detail);
 			}}
-			on:edit={({ detail }) => (lineInEdit = detail)}
+			on:edit={handleLineEdit}
 		/>
 	{/each}
 </main>

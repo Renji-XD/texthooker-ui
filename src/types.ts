@@ -46,10 +46,24 @@ export enum LineType {
 	SOCKET = 'socket',
 	PASTE = 'paste',
 	EXTERNAL = 'external',
+	EDIT = 'edit',
+	UNDO = 'undo',
 }
 
 export interface LineItem {
 	id: string;
 	text: string;
 	index?: number;
+}
+
+export interface LineItemEditEvent {
+	inEdit: boolean;
+	data?: LineItemEditData;
+}
+
+export interface LineItemEditData {
+	originalText: string;
+	newText: string;
+	lineIndex: number;
+	line: LineItem;
 }

@@ -1,15 +1,8 @@
 <script lang="ts">
 	import { createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
 	import { fly } from 'svelte/transition';
-	import {
-		actionHistory$,
-		displayVertical$,
-		enableLineAnimation$,
-		lineData$,
-		preserveWhitespace$,
-		reverseLineOrder$
-	} from '../stores/stores';
-	import type { LineItem } from '../types';
+	import { displayVertical$, enableLineAnimation$, preserveWhitespace$, reverseLineOrder$ } from '../stores/stores';
+	import type { LineItem, LineItemEditEvent } from '../types';
 	import { dummyFn, newLineCharacter, updateScroll } from '../util';
 
 	export let line: LineItem;
@@ -24,7 +17,7 @@
 		return isSelected || range.intersectsNode(paragraph) ? line.id : undefined;
 	}
 
-	const dispatch = createEventDispatcher<{ deselected: string; selected: string; edit: boolean }>();
+	const dispatch = createEventDispatcher<{ deselected: string; selected: string; edit: LineItemEditEvent }>();
 
 	let paragraph: HTMLElement;
 	let originalText = '';
@@ -45,7 +38,7 @@
 
 	onDestroy(() => {
 		document.removeEventListener('click', clickOutsideHandler, false);
-		dispatch('edit', false);
+		dispatch('edit', { inEdit: false });
 	});
 
 	function handleDblClick(event: MouseEvent) {
@@ -63,7 +56,7 @@
 			originalText = paragraph.innerText;
 			isEditable = true;
 
-			dispatch('edit', true);
+			dispatch('edit', { inEdit: true });
 
 			document.addEventListener('click', clickOutsideHandler, false);
 
@@ -80,15 +73,10 @@
 			isEditable = false;
 			document.removeEventListener('click', clickOutsideHandler, false);
 
-			dispatch('edit', false);
-
-			if (originalText !== paragraph.innerText) {
-				$actionHistory$ = [...$actionHistory$, [{ ...line, index }]];
-				$lineData$[index] = {
-					id: line.id,
-					text: paragraph.innerText,
-				};
-			}
+			dispatch('edit', {
+				inEdit: false,
+				data: { originalText, newText: paragraph.innerText, lineIndex: index, line },
+			});
 		}
 	}
 </script>
