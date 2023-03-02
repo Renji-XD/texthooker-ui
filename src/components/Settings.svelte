@@ -675,6 +675,42 @@
 			</div>
 		</div>
 		<details role="button" class="col-span-4 mb-2">
+			<summary>Links</summary>
+			<ul>
+				<li class="my-0.5 hover:text-primary">
+					<a href="https://github.com/Renji-XD/texthooker-ui" target="_blank" rel="noreferrer">
+						texthooker-ui Repository
+					</a>
+				</li>
+				<li class="my-0.5 hover:text-primary">
+					<a href="https://github.com/Artikash/Textractor" target="_blank" rel="noreferrer">Textractor</a>
+				</li>
+				<li class="my-0.5 hover:text-primary">
+					<a href="https://github.com/sadolit/textractor-websocket" target="_blank" rel="noreferrer">
+						textractor-websocket Extension
+					</a>
+				</li>
+				<li class="my-0.5 hover:text-primary">
+					<a href="https://github.com/KamWithK/TextractorSender" target="_blank" rel="noreferrer">
+						TextractorSender Extension
+					</a>
+				</li>
+				<li class="my-0.5 hover:text-primary">
+					<a href="https://github.com/0xDC00/agent" target="_blank" rel="noreferrer"> Agent </a>
+				</li>
+				<li class="my-0.5 hover:text-primary">
+					<a href="https://github.com/kmltml/clipboard-inserter" target="_blank" rel="noreferrer">
+						Clipboard Inserter
+					</a>
+				</li>
+				<li class="my-0.5 hover:text-primary">
+					<a href="https://github.com/laplus-sadness/lap-clipboard-inserter" target="_blank" rel="noreferrer">
+						lap-clipboard-inserter
+					</a>
+				</li>
+			</ul>
+		</details>
+		<details role="button" class="col-span-4 mb-2">
 			<summary>Presets</summary>
 			<div class="flex items-center mt-2">
 				<select class="select flex-1 max-w-md" value={$lastSettingPreset$} on:change={selectPreset}>
