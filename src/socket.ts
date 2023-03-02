@@ -11,6 +11,10 @@ export class SocketConnection {
 		websocketUrl$.subscribe((websocketUrl) => (this.websocketUrl = websocketUrl));
 	}
 
+	getCurrentUrl() {
+		return this.websocketUrl;
+	}
+
 	connect() {
 		if (this.socket?.readyState < 2) {
 			return;

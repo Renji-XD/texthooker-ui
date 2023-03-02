@@ -89,6 +89,7 @@ The following section contains explanations and details on the settings you can 
 
 | Setting | Description |
 |-|-|
+| Presets | Allows you to save the current Settings as a Preset and to quickly switch between them.<br/>**Note:** Changes to Settings needs to be manually saved to a Preset by clicking on the Save button. The Dialog to apply Settings to current Lines or Storage like "Store X persistently", "Prevent Last Line Duplicate", "Remove all Whitespace" etc. will not be triggered by switching between Presets. You can still execute them by toggling respective Setting.|
 | Window Title | Lets you set the current document title. This can be used with Yomichan to tag your created cards (with the `{document-title}` [marker](https://github.com/FooSoft/yomichan#markers-for-term-cards)). |
 | WebSocket | URL of the WebSocket to which you want to connect. |
 | Font Size | The font size, in number of pixels. |

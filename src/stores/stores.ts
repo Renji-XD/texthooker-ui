@@ -1,4 +1,12 @@
-import { LineType, OnlineFont, Theme, type DialogResult, type LineItem } from './../types';
+import {
+	LineType,
+	OnlineFont,
+	Theme,
+	type DialogResult,
+	type LineItem,
+	type SettingPreset,
+	type Settings
+} from './../types';
 
 import { mdiHelpCircle } from '@mdi/js';
 import { Subject } from 'rxjs';
@@ -9,7 +17,7 @@ import { writeableArraySubject } from './transformer/writeable-object-sibject';
 import { writableStringSubject } from './transformer/writeable-string-subject';
 import { writableSubject } from './transformer/writeable-subject';
 
-const defaultSettings = {
+export const defaultSettings: Settings = {
 	theme$: Theme.BUSINESS,
 	windowTitle$: '',
 	websocketUrl$: 'ws://localhost:6677',
@@ -45,6 +53,8 @@ const defaultSettings = {
 };
 
 export const theme$ = writableStringSubject()('bannou-texthooker-theme', defaultSettings.theme$);
+
+export const settingPresets$ = writeableArraySubject<SettingPreset>()('bannou-texthooker-settingPresets', []);
 
 export const windowTitle$ = writableStringSubject()('bannou-texthooker-windowTitle', defaultSettings.windowTitle$);
 
@@ -174,6 +184,8 @@ export const openDialog$ = writableSubject<Record<string, any>>(undefined);
 
 export const dialogOpen$ = writableSubject<boolean>(false);
 
+export const lastSettingPreset$ = writableStringSubject()('bannou-texthooker-lastSettingPreset', '');
+
 export const lineData$ = writeableArraySubject<LineItem>()('bannou-texthooker-lineData', [], persistLines$);
 
 export const actionHistory$ = writeableArraySubject<LineItem[]>()(
@@ -198,6 +210,8 @@ export async function resetAllData() {
 	});
 
 	if (!canceled) {
+		lastSettingPreset$.next('');
+		settingPresets$.next([]);
 		isPaused$.next(true);
 		timeValue$.next(0);
 		userNotes$.next('');

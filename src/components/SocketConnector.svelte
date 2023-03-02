@@ -1,14 +1,26 @@
 <script lang="ts">
 	import { mdiConnection } from '@mdi/js';
+	import { tap, throttleTime } from 'rxjs';
 	import { onMount } from 'svelte';
 	import { SocketConnection } from '../socket';
 	import { isPaused$, openDialog$, socketState$, websocketUrl$ } from '../stores/stores';
+	import { reduceToEmptyString } from '../util';
 	import Icon from './Icon.svelte';
 
 	let socketConnection: SocketConnection | undefined;
 	let intitialAttemptDone = false;
 	let wasConnected = false;
 	let closeRequested = false;
+
+	const urlHandler$ = websocketUrl$.pipe(
+		throttleTime(1000),
+		tap((websocketUrl) => {
+			if (wasConnected && !closeRequested && websocketUrl !== socketConnection?.getCurrentUrl()) {
+				toggleSocket();
+			}
+		}),
+		reduceToEmptyString()
+	);
 
 	$: switch ($socketState$) {
 		case 0:
@@ -66,6 +78,7 @@
 	}
 </script>
 
+{$urlHandler$ ?? ''}
 {#if $socketState$ !== 0}
 	<div
 		class="hover:text-primary"
