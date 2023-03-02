@@ -37,6 +37,46 @@ export enum OnlineFont {
 	SHIPPORI = 'Shippori Mincho',
 }
 
+export interface Settings {
+	theme$: string;
+	windowTitle$: string;
+	websocketUrl$: string;
+	fontSize$: number;
+	onlineFont$: string;
+	preventLastDuplicate$: number;
+	afkTimer$: number;
+	adjustTimerOnAfk$: boolean;
+	enableExternalClipboardMonitor$: boolean;
+	persistStats$: boolean;
+	persistNotes$: boolean;
+	persistLines$: boolean;
+	persistActionHistory$: boolean;
+	enablePaste$: boolean;
+	blockCopyOnPage$: boolean;
+	allowPasteDuringPause$: boolean;
+	allowNewLineDuringPause$: boolean;
+	autoStartTimerDuringPausePaste$: boolean;
+	autoStartTimerDuringPause$: boolean;
+	flashOnMissedLine$: boolean;
+	preventGlobalDuplicate$: boolean;
+	displayVertical$: boolean;
+	reverseLineOrder$: boolean;
+	preserveWhitespace$: boolean;
+	removeAllWhitespace$: boolean;
+	showTimer$: boolean;
+	showSpeed$: boolean;
+	showCharacterCount$: boolean;
+	showLineCount$: boolean;
+	blurStats$: boolean;
+	enableLineAnimation$: boolean;
+	customCSS$: string;
+}
+
+export interface SettingPreset {
+	name: string;
+	settings: Settings;
+}
+
 export interface DialogResult<T = undefined> {
 	canceled: boolean;
 	data: T;
