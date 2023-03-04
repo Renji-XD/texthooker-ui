@@ -27,6 +27,8 @@ export const defaultSettings: Settings = {
 	afkTimer$: 0,
 	adjustTimerOnAfk$: false,
 	enableExternalClipboardMonitor$: false,
+	showPresetQuickSwitch$: false,
+	skipResetConfirmations$: false,
 	persistStats$: true,
 	persistNotes$: true,
 	persistLines$: true,
@@ -79,6 +81,16 @@ export const adjustTimerOnAfk$ = writableBooleanSubject()(
 export const enableExternalClipboardMonitor$ = writableBooleanSubject()(
 	'bannou-texthooker-enableExternalClipboardMonitor',
 	defaultSettings.enableExternalClipboardMonitor$
+);
+
+export const showPresetQuickSwitch$ = writableBooleanSubject()(
+	'bannou-texthooker-showPresetQuickSwitch',
+	defaultSettings.showPresetQuickSwitch$
+);
+
+export const skipResetConfirmations$ = writableBooleanSubject()(
+	'bannou-texthooker-skipResetConfirmations',
+	defaultSettings.skipResetConfirmations$
 );
 
 export const persistStats$ = writableBooleanSubject()('bannou-texthooker-persistStats', defaultSettings.persistStats$);
@@ -201,60 +213,66 @@ export const isPaused$ = writableSubject<boolean>(true);
 export const newLine$ = new Subject<[string, LineType]>();
 
 export async function resetAllData() {
-	const { canceled } = await new Promise<DialogResult>((resolve) => {
-		openDialog$.next({
-			icon: mdiHelpCircle,
-			message: 'All Settings and Data will be reset',
-			callback: resolve,
+	if (!skipResetConfirmations$.getValue()) {
+		const { canceled } = await new Promise<DialogResult>((resolve) => {
+			openDialog$.next({
+				icon: mdiHelpCircle,
+				message: 'All Settings and Data will be reset',
+				callback: resolve,
+			});
 		});
-	});
 
-	if (!canceled) {
-		lastSettingPreset$.next('');
-		settingPresets$.next([]);
-		isPaused$.next(true);
-		timeValue$.next(0);
-		userNotes$.next('');
-		lineData$.next([]);
-		actionHistory$.next([]);
-		flashOnPauseTimeout$.set(undefined);
-
-		window.localStorage.removeItem('bannou-texthooker-timeValue');
-		window.localStorage.removeItem('bannou-texthooker-userNotes');
-		window.localStorage.removeItem('bannou-texthooker-lineData');
-		window.localStorage.removeItem('bannou-texthooker-actionHistory');
-
-		theme$.next(defaultSettings.theme$);
-		windowTitle$.next(defaultSettings.windowTitle$);
-		websocketUrl$.next(defaultSettings.websocketUrl$);
-		fontSize$.next(defaultSettings.fontSize$);
-		onlineFont$.next(defaultSettings.onlineFont$);
-		preventLastDuplicate$.next(defaultSettings.preventLastDuplicate$);
-		afkTimer$.next(defaultSettings.afkTimer$);
-		adjustTimerOnAfk$.next(defaultSettings.adjustTimerOnAfk$);
-		enableExternalClipboardMonitor$.next(defaultSettings.enableExternalClipboardMonitor$);
-		persistStats$.next(defaultSettings.persistStats$);
-		persistNotes$.next(defaultSettings.persistNotes$);
-		persistLines$.next(defaultSettings.persistLines$);
-		persistActionHistory$.next(defaultSettings.persistActionHistory$);
-		enablePaste$.next(defaultSettings.enablePaste$);
-		blockCopyOnPage$.next(defaultSettings.blockCopyOnPage$);
-		allowPasteDuringPause$.next(defaultSettings.allowPasteDuringPause$);
-		allowNewLineDuringPause$.next(defaultSettings.allowNewLineDuringPause$);
-		autoStartTimerDuringPausePaste$.next(defaultSettings.autoStartTimerDuringPausePaste$);
-		autoStartTimerDuringPause$.next(defaultSettings.autoStartTimerDuringPause$);
-		flashOnMissedLine$.next(defaultSettings.flashOnMissedLine$);
-		preventGlobalDuplicate$.next(defaultSettings.preventGlobalDuplicate$);
-		displayVertical$.next(defaultSettings.displayVertical$);
-		reverseLineOrder$.next(defaultSettings.reverseLineOrder$);
-		preserveWhitespace$.next(defaultSettings.preserveWhitespace$);
-		removeAllWhitespace$.next(defaultSettings.removeAllWhitespace$);
-		showTimer$.next(defaultSettings.showTimer$);
-		showSpeed$.next(defaultSettings.showSpeed$);
-		showCharacterCount$.next(defaultSettings.showCharacterCount$);
-		showLineCount$.next(defaultSettings.showLineCount$);
-		blurStats$.next(defaultSettings.blurStats$);
-		enableLineAnimation$.next(defaultSettings.enableLineAnimation$);
-		customCSS$.next(defaultSettings.customCSS$);
+		if (canceled) {
+			return;
+		}
 	}
+
+	lastSettingPreset$.next('');
+	settingPresets$.next([]);
+	isPaused$.next(true);
+	timeValue$.next(0);
+	userNotes$.next('');
+	lineData$.next([]);
+	actionHistory$.next([]);
+	flashOnPauseTimeout$.set(undefined);
+
+	window.localStorage.removeItem('bannou-texthooker-timeValue');
+	window.localStorage.removeItem('bannou-texthooker-userNotes');
+	window.localStorage.removeItem('bannou-texthooker-lineData');
+	window.localStorage.removeItem('bannou-texthooker-actionHistory');
+
+	theme$.next(defaultSettings.theme$);
+	windowTitle$.next(defaultSettings.windowTitle$);
+	websocketUrl$.next(defaultSettings.websocketUrl$);
+	fontSize$.next(defaultSettings.fontSize$);
+	onlineFont$.next(defaultSettings.onlineFont$);
+	preventLastDuplicate$.next(defaultSettings.preventLastDuplicate$);
+	afkTimer$.next(defaultSettings.afkTimer$);
+	adjustTimerOnAfk$.next(defaultSettings.adjustTimerOnAfk$);
+	enableExternalClipboardMonitor$.next(defaultSettings.enableExternalClipboardMonitor$);
+	showPresetQuickSwitch$.next(defaultSettings.showPresetQuickSwitch$);
+	skipResetConfirmations$.next(defaultSettings.skipResetConfirmations$);
+	persistStats$.next(defaultSettings.persistStats$);
+	persistNotes$.next(defaultSettings.persistNotes$);
+	persistLines$.next(defaultSettings.persistLines$);
+	persistActionHistory$.next(defaultSettings.persistActionHistory$);
+	enablePaste$.next(defaultSettings.enablePaste$);
+	blockCopyOnPage$.next(defaultSettings.blockCopyOnPage$);
+	allowPasteDuringPause$.next(defaultSettings.allowPasteDuringPause$);
+	allowNewLineDuringPause$.next(defaultSettings.allowNewLineDuringPause$);
+	autoStartTimerDuringPausePaste$.next(defaultSettings.autoStartTimerDuringPausePaste$);
+	autoStartTimerDuringPause$.next(defaultSettings.autoStartTimerDuringPause$);
+	flashOnMissedLine$.next(defaultSettings.flashOnMissedLine$);
+	preventGlobalDuplicate$.next(defaultSettings.preventGlobalDuplicate$);
+	displayVertical$.next(defaultSettings.displayVertical$);
+	reverseLineOrder$.next(defaultSettings.reverseLineOrder$);
+	preserveWhitespace$.next(defaultSettings.preserveWhitespace$);
+	removeAllWhitespace$.next(defaultSettings.removeAllWhitespace$);
+	showTimer$.next(defaultSettings.showTimer$);
+	showSpeed$.next(defaultSettings.showSpeed$);
+	showCharacterCount$.next(defaultSettings.showCharacterCount$);
+	showLineCount$.next(defaultSettings.showLineCount$);
+	blurStats$.next(defaultSettings.blurStats$);
+	enableLineAnimation$.next(defaultSettings.enableLineAnimation$);
+	customCSS$.next(defaultSettings.customCSS$);
 }

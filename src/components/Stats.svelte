@@ -149,7 +149,12 @@
 {$timer$ ?? ''}
 {$waitForIdle$ ?? ''}
 
-<div class="timer mr-2" class:blur={$blurStats$} bind:this={timerElm} on:pointerleave={handlePointerLeave}>
+<div
+	class="text-sm timer mr-1 sm:text-base sm:mr-2"
+	class:blur={$blurStats$}
+	bind:this={timerElm}
+	on:pointerleave={handlePointerLeave}
+>
 	<div>{statstring}</div>
 </div>
 

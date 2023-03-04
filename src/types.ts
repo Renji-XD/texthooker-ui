@@ -47,6 +47,8 @@ export interface Settings {
 	afkTimer$: number;
 	adjustTimerOnAfk$: boolean;
 	enableExternalClipboardMonitor$: boolean;
+	showPresetQuickSwitch$: boolean;
+	skipResetConfirmations$: boolean;
 	persistStats$: boolean;
 	persistNotes$: boolean;
 	persistLines$: boolean;
