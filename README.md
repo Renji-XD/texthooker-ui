@@ -79,6 +79,14 @@ _Note_: By default, the undo history is stored in memory only. If you want to ke
 -   Clicking on the icon will export the current time value, notes, displayed lines and action history (settings will not be exported)
 -   Clicking on the icon while holding the "ALT" key on the keyboard lets you select a previously exported file for import. Note that all existing data will be overwritten
 
+## Available Keybinds
+| Keybind | Description |
+|-|-|
+| <kbd>Delete</kbd> | Deletes current highlighted lines on the page. |
+| <kbd>Esc</kbd> | Deselects Lines. |
+| <kbd>Alt</kbd> + <kbd>a</kbd> | Deletes all Lines and resets the Timer to 00:00:00. |
+| <kbd>Alt</kbd> + <kbd>q</kbd> | Deletes all Lines. |
+
 
 ## Available Settings
 
@@ -98,6 +106,8 @@ The following section contains explanations and details on the settings you can 
 | AFK Timer (s) | Number of seconds after which the timer will automatically pause without page interaction (no new line, text selection, or pointer move). |
 | Adjust Timer after AFK | If enabled, the timer will be subtracted by the configured `AFK Timer (s)` value whenever the timer was paused due to no page interaction. |
 | Enable external Clipboard Monitor | If enabled, this will allow the texthooker page to handle lines pasted by extensions like [Clipboard Inserter](https://github.com/kmltml/clipboard-inserter) or [lap-clipboard-inserter](https://github.com/laplus-sadness/lap-clipboard-inserter). |
+| Show Preset Quick Switch | If enabled and you have more than 2 preset stored, this will display a preset selector in the page header for quick access to your presets. |
+| Skip Reset Confirmations | If enabled, reset / delete actions like "Reset Lines" will be immediately executed without asking for confirmation. |
 | Store Stats persistently | If enabled, the stats (time, speed, etc.) will be stored in your local browser storage. This means the stats will be available after tab reloads, etc. |
 | Store Notes persistently | If enabled, the text within the notes section will be stored in your local browser storage. |
 | Store Lines persistently | If enabled, the inserted/pasted lines will be stored in your local browser storage. |

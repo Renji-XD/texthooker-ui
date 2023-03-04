@@ -9,7 +9,7 @@
 		mdiPause,
 		mdiPlay
 	} from '@mdi/js';
-	import { filter, fromEvent, map, NEVER, switchMap, tap } from 'rxjs';
+	import { debounceTime, filter, fromEvent, map, NEVER, switchMap, tap } from 'rxjs';
 	import { onMount, tick } from 'svelte';
 	import { quintInOut } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
@@ -44,10 +44,13 @@
 	import Icon from './Icon.svelte';
 	import Line from './Line.svelte';
 	import Notes from './Notes.svelte';
+	import Presets from './Presets.svelte';
 	import Settings from './Settings.svelte';
 	import SocketConnector from './SocketConnector.svelte';
 	import Stats from './Stats.svelte';
 
+	let isSmFactor = false;
+	let settingsComponent: Settings;
 	let selectedLineIds: string[] = [];
 	let settingsContainer: HTMLElement;
 	let settingsElement: SVGElement;
@@ -143,9 +146,16 @@
 		reduceToEmptyString()
 	);
 
-	onMount(() => {
-		executeUpdateScroll();
+	const resizeHandler$ = fromEvent(window, 'resize').pipe(
+		debounceTime(500),
+		tap(mountFunction),
+		reduceToEmptyString()
+	);
 
+	$: iconSize = isSmFactor ? '1.5rem' : '1.25rem';
+
+	onMount(() => {
+		mountFunction();
 		if (wakeLockAvailable) {
 			wakeLock = navigator.wakeLock
 				.request('screen')
@@ -158,6 +168,11 @@
 				});
 		}
 	});
+
+	function mountFunction() {
+		isSmFactor = window.matchMedia('(min-width: 640px)').matches;
+		executeUpdateScroll();
+	}
 
 	function handleKeyPress(event: KeyboardEvent) {
 		if (event.key === 'Delete') {
@@ -179,10 +194,18 @@
 			}
 		} else if (selectedLineIds.length && event.key === 'Escape') {
 			deselectLines();
+		} else if (event.altKey && event.key === 'a') {
+			settingsComponent.handleReset(false);
+		} else if (event.altKey && event.key === 'q') {
+			settingsComponent.handleReset(true);
 		}
 	}
 
 	function undoLastAction() {
+		if (!$actionHistory$.length) {
+			return;
+		}
+
 		const linesToRevert = $actionHistory$.pop();
 
 		let lineToRevert = linesToRevert.pop();
@@ -210,6 +233,10 @@
 	}
 
 	function removeLastLine() {
+		if (!$lineData$.length) {
+			return;
+		}
+
 		const [removedLine] = $lineData$.splice($lineData$.length - 1, 1);
 
 		selectedLineIds = selectedLineIds.filter((selectedLineId) => selectedLineId !== removedLine.id);
@@ -330,6 +357,7 @@
 {$handleLine$ ?? ''}
 {$pasteHandler$ ?? ''}
 {$copyBlocker$ ?? ''}
+{$resizeHandler$ ?? ''}
 
 <DialogManager />
 
@@ -342,43 +370,62 @@
 		<div
 			role="button"
 			title="Continue"
-			class="mr-2 animate-[pulse_1.25s_cubic-bezier(0.4,0,0.6,1)_infinite] hover:text-primary"
+			class="mr-1 animate-[pulse_1.25s_cubic-bezier(0.4,0,0.6,1)_infinite] hover:text-primary sm:mr-2"
 		>
-			<Icon path={mdiPlay} on:click={() => ($isPaused$ = false)} />
+			<Icon path={mdiPlay} width={iconSize} height={iconSize} on:click={() => ($isPaused$ = false)} />
 		</div>
 	{:else}
-		<div role="button" title="Pause" class="mr-2 hover:text-primary">
-			<Icon path={mdiPause} on:click={() => ($isPaused$ = true)} />
+		<div role="button" title="Pause" class="mr-1 hover:text-primary sm:mr-2">
+			<Icon path={mdiPause} width={iconSize} height={iconSize} on:click={() => ($isPaused$ = true)} />
 		</div>
 	{/if}
-	{#if $actionHistory$.length}
-		<div role="button" title="Undo last Action" class="mr-2 hover:text-primary">
-			<Icon path={mdiArrowULeftTop} on:click={undoLastAction} />
-		</div>
-	{/if}
-	{#if $lineData$.length}
-		<div role="button" title="Delete last Line" class="mr-2 hover:text-primary">
-			<Icon path={mdiDeleteForever} on:click={removeLastLine} />
-		</div>
-	{/if}
+	<div
+		role="button"
+		title="Delete last Line"
+		class="mr-1 hover:text-primary sm:mr-2"
+		class:opacity-50={!$lineData$.length}
+		class:cursor-not-allowed={!$lineData$.length}
+		class:hover:text-primary={$lineData$.length}
+	>
+		<Icon path={mdiDeleteForever} width={iconSize} height={iconSize} on:click={removeLastLine} />
+	</div>
+	<div
+		role="button"
+		title="Undo last Action"
+		class="mr-1 hover:text-primary sm:mr-2"
+		class:opacity-50={!$actionHistory$.length}
+		class:cursor-not-allowed={!$actionHistory$.length}
+		class:hover:text-primary={$actionHistory$.length}
+	>
+		<Icon path={mdiArrowULeftTop} width={iconSize} height={iconSize} on:click={undoLastAction} />
+	</div>
 	{#if selectedLineIds.length}
-		<div role="button" title="Remove selected Lines" class="mr-2 hover:text-primary">
-			<Icon path={mdiDelete} on:click={removeLines} />
+		<div role="button" title="Remove selected Lines" class="mr-1 hover:text-primary sm:mr-2">
+			<Icon path={mdiDelete} width={iconSize} height={iconSize} on:click={removeLines} />
 		</div>
-		<div role="button" title="Deselect Lines" class="mr-2 hover:text-primary">
-			<Icon path={mdiCancel} on:click={deselectLines} />
+		<div role="button" title="Deselect Lines" class="mr-1 hover:text-primary sm:mr-2">
+			<Icon path={mdiCancel} width={iconSize} height={iconSize} on:click={deselectLines} />
 		</div>
 	{/if}
-	<div role="button" title="Open Notes" class="mr-2 hover:text-primary">
-		<Icon path={mdiNoteEdit} on:click={() => ($notesOpen$ = true)} />
+	<div role="button" title="Open Notes" class="mr-1 hover:text-primary sm:mr-2">
+		<Icon path={mdiNoteEdit} width={iconSize} height={iconSize} on:click={() => ($notesOpen$ = true)} />
 	</div>
 	<Icon
+		class="cursor-pointer mr-1 hover:text-primary md:mr-2"
 		path={mdiCog}
-		class="cursor-pointer mr-2 hover:text-primary"
+		width={iconSize}
+		height={iconSize}
 		bind:element={settingsElement}
 		on:click={() => (settingsOpen = !settingsOpen)}
 	/>
-	<Settings {settingsElement} bind:settingsOpen bind:selectedLineIds on:layoutChange={executeUpdateScroll} />
+	<Settings
+		{settingsElement}
+		bind:settingsOpen
+		bind:selectedLineIds
+		bind:this={settingsComponent}
+		on:layoutChange={executeUpdateScroll}
+	/>
+	<Presets isQuickSwitch={true} on:layoutChange={executeUpdateScroll} />
 </header>
 <main
 	class="flex flex-col flex-1 break-all px-4 w-full h-full overflow-auto"

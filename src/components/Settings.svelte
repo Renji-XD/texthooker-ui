@@ -1,11 +1,9 @@
 <script lang="ts">
 	import {
 		mdiClose,
-		mdiContentSave,
 		mdiDatabaseSync,
 		mdiDelete,
 		mdiHelpCircle,
-		mdiReload,
 		mdiTimerCancel,
 		mdiTimerEdit,
 		mdiWeatherNight,
@@ -23,7 +21,6 @@
 		blockCopyOnPage$,
 		blurStats$,
 		customCSS$,
-		defaultSettings,
 		dialogOpen$,
 		displayVertical$,
 		enableExternalClipboardMonitor$,
@@ -31,7 +28,6 @@
 		enablePaste$,
 		flashOnMissedLine$,
 		fontSize$,
-		lastSettingPreset$,
 		lineData$,
 		newLine$,
 		onlineFont$,
@@ -46,28 +42,55 @@
 		removeAllWhitespace$,
 		resetAllData,
 		reverseLineOrder$,
-		settingPresets$,
 		showCharacterCount$,
 		showLineCount$,
+		showPresetQuickSwitch$,
 		showSpeed$,
 		showTimer$,
+		skipResetConfirmations$,
 		theme$,
 		timeValue$,
 		userNotes$,
 		websocketUrl$,
 		windowTitle$
 	} from '../stores/stores';
-	import { LineType, OnlineFont, Theme, type DialogResult, type LineItem, type SettingPreset } from '../types';
+	import { LineType, OnlineFont, Theme, type DialogResult, type LineItem } from '../types';
 	import { clickOutside } from '../use-click-outside';
 	import { dummyFn, timeStringToSeconds } from '../util';
 	import Icon from './Icon.svelte';
+	import Presets from './Presets.svelte';
 
 	export let selectedLineIds: string[];
 	export let settingsOpen: boolean;
 	export let settingsElement: SVGElement;
 
+	export async function handleReset(linesOnly: boolean) {
+		if (!$skipResetConfirmations$) {
+			const { canceled } = await new Promise<DialogResult>((resolve) => {
+				$openDialog$ = {
+					icon: mdiHelpCircle,
+					message: linesOnly
+						? 'All displayed and stored Lines will be cleared'
+						: 'Clear stored Lines + set Timer to 00:00:00',
+					callback: resolve,
+				};
+			});
+
+			if (canceled) {
+				return;
+			}
+		}
+
+		$lineData$ = [];
+		selectedLineIds = [];
+		window.localStorage.removeItem('bannou-texthooker-lineData');
+
+		if (!linesOnly) {
+			$timeValue$ = 0;
+		}
+	}
+
 	const dispatch = createEventDispatcher<{ layoutChange: void }>();
-	const fallbackPresetEntry = [{ name: '' }];
 	const onlineFonts = [OnlineFont.OFF, OnlineFont.NOTO, OnlineFont.KLEE, OnlineFont.SHIPPORI];
 
 	let fileInput: HTMLInputElement;
@@ -166,56 +189,40 @@
 	}
 
 	async function handleResetTimer() {
-		const { canceled } = await new Promise<DialogResult>((resolve) => {
-			$openDialog$ = {
-				icon: mdiHelpCircle,
-				message: 'Timer will be set to 00:00:00',
-				callback: resolve,
-			};
-		});
-
-		if (!canceled) {
-			$timeValue$ = 0;
-		}
-	}
-
-	async function handleReset(linesOnly: boolean) {
-		const { canceled } = await new Promise<DialogResult>((resolve) => {
-			$openDialog$ = {
-				icon: mdiHelpCircle,
-				message: linesOnly
-					? 'All displayed and stored Lines will be cleared'
-					: 'Clear stored Lines + set Timer to 00:00:00',
-				callback: resolve,
-			};
-		});
-
-		if (canceled) {
-			return;
-		}
-
-		$lineData$ = [];
-		selectedLineIds = [];
-		window.localStorage.removeItem('bannou-texthooker-lineData');
-
-		if (!linesOnly) {
-			$timeValue$ = 0;
-		}
-	}
-
-	async function handleExportImportData(event: MouseEvent) {
-		if (event.altKey) {
+		if (!$skipResetConfirmations$) {
 			const { canceled } = await new Promise<DialogResult>((resolve) => {
 				$openDialog$ = {
 					icon: mdiHelpCircle,
-					message: 'Existing Data will be overwritten',
+					message: 'Timer will be set to 00:00:00',
 					callback: resolve,
 				};
 			});
 
-			if (!canceled) {
-				fileInput.click();
+			if (canceled) {
+				return;
 			}
+		}
+
+		$timeValue$ = 0;
+	}
+
+	async function handleExportImportData(event: MouseEvent) {
+		if (event.altKey) {
+			if (!$skipResetConfirmations$) {
+				const { canceled } = await new Promise<DialogResult>((resolve) => {
+					$openDialog$ = {
+						icon: mdiHelpCircle,
+						message: 'Existing Data will be overwritten',
+						callback: resolve,
+					};
+				});
+
+				if (canceled) {
+					return;
+				}
+			}
+
+			fileInput.click();
 		} else {
 			const a = document.createElement('a');
 			a.href = URL.createObjectURL(
@@ -313,153 +320,6 @@
 			fileReader.addEventListener('error', () => reject(new Error('Failed to read File')));
 			fileReader.readAsText(file, 'utf-8');
 		});
-	}
-
-	function selectPreset(event: Event) {
-		const target = event.target as HTMLSelectElement;
-
-		changePreset(target.selectedOptions[0].value);
-	}
-
-	function changePreset(presetName: string) {
-		const existingEntry = $settingPresets$.find((entry) => entry.name === presetName);
-
-		if (!existingEntry) {
-			return;
-		}
-
-		theme$.next(existingEntry.settings.theme$ ?? defaultSettings.theme$);
-		windowTitle$.next(existingEntry.settings.windowTitle$ ?? defaultSettings.windowTitle$);
-		websocketUrl$.next(existingEntry.settings.websocketUrl$ ?? defaultSettings.websocketUrl$);
-		fontSize$.next(existingEntry.settings.fontSize$ ?? defaultSettings.fontSize$);
-		onlineFont$.next(existingEntry.settings.onlineFont$ ?? defaultSettings.onlineFont$);
-		preventLastDuplicate$.next(
-			existingEntry.settings.preventLastDuplicate$ ?? defaultSettings.preventLastDuplicate$
-		);
-		afkTimer$.next(existingEntry.settings.afkTimer$ ?? defaultSettings.afkTimer$);
-		adjustTimerOnAfk$.next(existingEntry.settings.adjustTimerOnAfk$ ?? defaultSettings.adjustTimerOnAfk$);
-		enableExternalClipboardMonitor$.next(
-			existingEntry.settings.enableExternalClipboardMonitor$ ?? defaultSettings.enableExternalClipboardMonitor$
-		);
-		persistStats$.next(existingEntry.settings.persistStats$ ?? defaultSettings.persistStats$);
-		persistNotes$.next(existingEntry.settings.persistNotes$ ?? defaultSettings.persistNotes$);
-		persistLines$.next(existingEntry.settings.persistLines$ ?? defaultSettings.persistLines$);
-		persistActionHistory$.next(
-			existingEntry.settings.persistActionHistory$ ?? defaultSettings.persistActionHistory$
-		);
-		enablePaste$.next(existingEntry.settings.enablePaste$ ?? defaultSettings.enablePaste$);
-		blockCopyOnPage$.next(existingEntry.settings.blockCopyOnPage$ ?? defaultSettings.blockCopyOnPage$);
-		allowPasteDuringPause$.next(
-			existingEntry.settings.allowPasteDuringPause$ ?? defaultSettings.allowPasteDuringPause$
-		);
-		allowNewLineDuringPause$.next(
-			existingEntry.settings.allowNewLineDuringPause$ ?? defaultSettings.allowNewLineDuringPause$
-		);
-		autoStartTimerDuringPausePaste$.next(
-			existingEntry.settings.autoStartTimerDuringPausePaste$ ?? defaultSettings.autoStartTimerDuringPausePaste$
-		);
-		autoStartTimerDuringPause$.next(
-			existingEntry.settings.autoStartTimerDuringPause$ ?? defaultSettings.autoStartTimerDuringPause$
-		);
-		flashOnMissedLine$.next(existingEntry.settings.flashOnMissedLine$ ?? defaultSettings.flashOnMissedLine$);
-		preventGlobalDuplicate$.next(
-			existingEntry.settings.preventGlobalDuplicate$ ?? defaultSettings.preventGlobalDuplicate$
-		);
-		displayVertical$.next(existingEntry.settings.displayVertical$ ?? defaultSettings.displayVertical$);
-		reverseLineOrder$.next(existingEntry.settings.reverseLineOrder$ ?? defaultSettings.reverseLineOrder$);
-		preserveWhitespace$.next(existingEntry.settings.preserveWhitespace$ ?? defaultSettings.preserveWhitespace$);
-		removeAllWhitespace$.next(existingEntry.settings.removeAllWhitespace$ ?? defaultSettings.removeAllWhitespace$);
-		showTimer$.next(existingEntry.settings.showTimer$ ?? defaultSettings.showTimer$);
-		showSpeed$.next(existingEntry.settings.showSpeed$ ?? defaultSettings.showSpeed$);
-		showCharacterCount$.next(existingEntry.settings.showCharacterCount$ ?? defaultSettings.showCharacterCount$);
-		showLineCount$.next(existingEntry.settings.showLineCount$ ?? defaultSettings.showLineCount$);
-		blurStats$.next(existingEntry.settings.blurStats$ ?? defaultSettings.blurStats$);
-		enableLineAnimation$.next(existingEntry.settings.enableLineAnimation$ ?? defaultSettings.enableLineAnimation$);
-		customCSS$.next(existingEntry.settings.customCSS$ ?? defaultSettings.customCSS$);
-
-		$lastSettingPreset$ = presetName;
-
-		tick().then(() => dispatch('layoutChange'));
-	}
-
-	async function savePreset() {
-		const { canceled, data } = await new Promise<DialogResult<string>>((resolve) => {
-			$openDialog$ = {
-				icon: mdiHelpCircle,
-				askForData: 'text',
-				dataValue: $lastSettingPreset$ || 'Preset Name',
-				message: '',
-				callback: resolve,
-			};
-		});
-
-		if (canceled || !data) {
-			return;
-		}
-
-		const existingEntryIndex = $settingPresets$.findIndex((entry) => entry.name === data);
-		const entry: SettingPreset = {
-			name: data,
-			settings: {
-				theme$: $theme$,
-				windowTitle$: $windowTitle$,
-				websocketUrl$: $websocketUrl$,
-				fontSize$: $fontSize$,
-				onlineFont$: $onlineFont$,
-				preventLastDuplicate$: $preventLastDuplicate$,
-				afkTimer$: $afkTimer$,
-				adjustTimerOnAfk$: $adjustTimerOnAfk$,
-				enableExternalClipboardMonitor$: $enableExternalClipboardMonitor$,
-				persistStats$: $persistStats$,
-				persistNotes$: $persistNotes$,
-				persistLines$: $persistLines$,
-				persistActionHistory$: $persistActionHistory$,
-				enablePaste$: $enablePaste$,
-				blockCopyOnPage$: $blockCopyOnPage$,
-				allowPasteDuringPause$: $allowPasteDuringPause$,
-				allowNewLineDuringPause$: $allowNewLineDuringPause$,
-				autoStartTimerDuringPausePaste$: $autoStartTimerDuringPausePaste$,
-				autoStartTimerDuringPause$: $autoStartTimerDuringPause$,
-				flashOnMissedLine$: $flashOnMissedLine$,
-				preventGlobalDuplicate$: $preventGlobalDuplicate$,
-				displayVertical$: $displayVertical$,
-				reverseLineOrder$: $reverseLineOrder$,
-				preserveWhitespace$: $preserveWhitespace$,
-				removeAllWhitespace$: $removeAllWhitespace$,
-				showTimer$: $showTimer$,
-				showSpeed$: $showSpeed$,
-				showCharacterCount$: $showCharacterCount$,
-				showLineCount$: $showLineCount$,
-				blurStats$: $blurStats$,
-				enableLineAnimation$: $enableLineAnimation$,
-				customCSS$: $customCSS$,
-			},
-		};
-
-		if (existingEntryIndex > -1) {
-			$settingPresets$[existingEntryIndex] = entry;
-		} else {
-			$settingPresets$ = [...$settingPresets$, entry];
-		}
-
-		$lastSettingPreset$ = data;
-	}
-
-	async function deletePreset() {
-		const { canceled } = await new Promise<DialogResult>((resolve) => {
-			$openDialog$ = {
-				icon: mdiHelpCircle,
-				message: 'Preset will be deleted',
-				callback: resolve,
-			};
-		});
-
-		if (canceled) {
-			return;
-		}
-
-		$settingPresets$ = $settingPresets$.filter((entry) => entry.name !== $lastSettingPreset$);
-		$lastSettingPreset$ = '';
 	}
 
 	async function handlePersistenceChange(settingEnabled: boolean, message: String, storageKey: string) {
@@ -710,47 +570,7 @@
 				</li>
 			</ul>
 		</details>
-		<details role="button" class="col-span-4 mb-2">
-			<summary>Presets</summary>
-			<div class="flex items-center mt-2">
-				<select class="select flex-1 max-w-md" value={$lastSettingPreset$} on:change={selectPreset}>
-					{#each $settingPresets$.length ? $settingPresets$ : fallbackPresetEntry as preset (preset.name)}
-						<option value={preset.name}>
-							{preset.name || 'No Presets stored'}
-						</option>
-					{/each}
-				</select>
-				<div
-					role="button"
-					class="flex flex-col items-center hover:text-primary ml-3"
-					on:click={savePreset}
-					on:keyup={dummyFn}
-				>
-					<Icon path={mdiContentSave} />
-					<span class="label-text">Save</span>
-				</div>
-				<div
-					role="button"
-					class="flex flex-col items-center hover:text-primary ml-3"
-					class:invisible={!$lastSettingPreset$}
-					on:click={() => changePreset($lastSettingPreset$)}
-					on:keyup={dummyFn}
-				>
-					<Icon path={mdiReload} />
-					<span class="label-text">Reload</span>
-				</div>
-				<div
-					role="button"
-					class="flex flex-col items-center hover:text-primary ml-3"
-					class:invisible={!$lastSettingPreset$}
-					on:click={deletePreset}
-					on:keyup={dummyFn}
-				>
-					<Icon path={mdiDelete} />
-					<span class="label-text">Delete</span>
-				</div>
-			</div>
-		</details>
+		<Presets on:layoutChange />
 		<span class="label-text col-span-2">Window Title</span>
 		<input class="input input-bordered h-8 col-span-2" bind:value={$windowTitle$} />
 		<span class="label-text col-span-2">Websocket</span>
@@ -799,6 +619,10 @@
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$adjustTimerOnAfk$} />
 		<span class="label-text">Enable external Clipboard Monitor</span>
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$enableExternalClipboardMonitor$} />
+		<span class="label-text">Show Preset Quick Switch</span>
+		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$showPresetQuickSwitch$} />
+		<span class="label-text">Skip Reset Confirmations</span>
+		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$skipResetConfirmations$} />
 		<span class="label-text">Store Stats persistently</span>
 		<input
 			type="checkbox"
