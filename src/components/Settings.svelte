@@ -556,6 +556,11 @@
 					</a>
 				</li>
 				<li class="my-0.5 hover:text-primary">
+					<a href="https://github.com/kuroahna/mpv_websocket" target="_blank" rel="noreferrer">
+						mpv_websocket Plugin
+					</a>
+				</li>
+				<li class="my-0.5 hover:text-primary">
 					<a href="https://github.com/0xDC00/agent" target="_blank" rel="noreferrer"> Agent </a>
 				</li>
 				<li class="my-0.5 hover:text-primary">
