@@ -37,6 +37,7 @@ The page can be opened via the index.html inside the "docs" folder and is usable
 ### I can't connect to the websocket with a different plugin/still can't connect to the websocket with one of the mentioned plugins.
 
 -   Make sure your firewall is not blocking the required ports. You can also check if another extension is interfering by trying out the page with a clean temporary profile and disabled extensions
+-	**For Brave Users**: If you are using a hosted / online version of the page disable the brave shield for the domain to allow the usage of unsafe websocket connections. Alternatively try out the local / offline version which you can find in the [docs](https://raw.githubusercontent.com/Renji-XD/texthooker-ui/main/docs/index.html) folder
 
 ### Can I use this page with extensions like [Clipboard Inserter](https://github.com/kmltml/clipboard-inserter) or [lap-clipboard-inserter](https://github.com/laplus-sadness/lap-clipboard-inserter)?
 
