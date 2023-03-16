@@ -1,6 +1,8 @@
 # Texthooker UI
 
-A web interface for consuming [Textractor](https://github.com/Artikash/Textractor) with a websocket plugin like [textractor-websocket](https://github.com/sadolit/textractor-websocket) or [TextractorSender](https://github.com/KamWithK/TextractorSender).
+A web interface for using websocket-based interfaces, such as:
+- [Textractor](https://github.com/Artikash/Textractor) with [textractor-websocket](https://github.com/sadolit/textractor-websocket) or [TextractorSender](https://github.com/KamWithK/TextractorSender)
+- [mpv](https://mpv.io) with [mpv_websocket](https://github.com/kuroahna/mpv_websocket)
 
 An online version of the page can be accessed [here](https://renji-xd.github.io/texthooker-ui/).
 
