@@ -27,10 +27,14 @@ export class SocketConnection {
 
 		socketState$.next(0);
 
-		this.socket = new WebSocket(this.websocketUrl);
-		this.socket.onopen = this.updateSocketState.bind(this);
-		this.socket.onclose = this.updateSocketState.bind(this);
-		this.socket.onmessage = this.handleMessage.bind(this);
+		try {
+			this.socket = new WebSocket(this.websocketUrl);
+			this.socket.onopen = this.updateSocketState.bind(this);
+			this.socket.onclose = this.updateSocketState.bind(this);
+			this.socket.onmessage = this.handleMessage.bind(this);
+		} catch (error) {
+			socketState$.next(3);
+		}
 	}
 
 	disconnect() {
