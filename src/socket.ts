@@ -8,7 +8,14 @@ export class SocketConnection {
 	private socket: WebSocket | undefined;
 
 	constructor() {
-		websocketUrl$.subscribe((websocketUrl) => (this.websocketUrl = websocketUrl));
+		websocketUrl$.subscribe((websocketUrl) => {
+			if (websocketUrl !== this.websocketUrl) {
+				this.websocketUrl = websocketUrl;
+				this.disconnect();
+				this.socket = undefined;
+				this.connect();
+			}
+		});
 	}
 
 	getCurrentUrl() {

@@ -7,7 +7,7 @@
 		mdiTimerCancel,
 		mdiTimerEdit,
 		mdiWeatherNight,
-		mdiWhiteBalanceSunny
+		mdiWhiteBalanceSunny,
 	} from '@mdi/js';
 	import { createEventDispatcher, tick } from 'svelte';
 	import {
@@ -52,7 +52,7 @@
 		timeValue$,
 		userNotes$,
 		websocketUrl$,
-		windowTitle$
+		windowTitle$,
 	} from '../stores/stores';
 	import { LineType, OnlineFont, Theme, type DialogResult, type LineItem } from '../types';
 	import { clickOutside } from '../use-click-outside';
@@ -95,6 +95,8 @@
 
 	let fileInput: HTMLInputElement;
 	let clipboardMutationObserver: MutationObserver | undefined;
+
+	$: websocketUrl = $websocketUrl$;
 
 	$: document.body.dataset.theme = $theme$;
 
@@ -579,7 +581,11 @@
 		<span class="label-text col-span-2">Window Title</span>
 		<input class="input input-bordered h-8 col-span-2" bind:value={$windowTitle$} />
 		<span class="label-text col-span-2">Websocket</span>
-		<input class="input input-bordered h-8 col-span-2" bind:value={$websocketUrl$} />
+		<input
+			class="input input-bordered h-8 col-span-2"
+			bind:value={websocketUrl}
+			on:change={() => ($websocketUrl$ = websocketUrl)}
+		/>
 		<span class="label-text col-span-2">Font Size</span>
 		<input
 			type="number"
