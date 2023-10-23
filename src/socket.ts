@@ -1,4 +1,5 @@
-import { newLine$, socketState$, websocketUrl$ } from './stores/stores';
+import { NEVER, Subscription, filter, switchMap } from 'rxjs';
+import { continuousReconnect$, newLine$, reconnectSocket$, socketState$, websocketUrl$ } from './stores/stores';
 
 import { LineType } from './types';
 
@@ -7,15 +8,24 @@ export class SocketConnection {
 
 	private socket: WebSocket | undefined;
 
+	private subscriptions: Subscription[] = [];
+
 	constructor() {
-		websocketUrl$.subscribe((websocketUrl) => {
-			if (websocketUrl !== this.websocketUrl) {
-				this.websocketUrl = websocketUrl;
-				this.disconnect();
-				this.socket = undefined;
-				this.connect();
-			}
-		});
+		this.subscriptions.push(
+			websocketUrl$.subscribe((websocketUrl) => {
+				if (websocketUrl !== this.websocketUrl) {
+					this.websocketUrl = websocketUrl;
+					this.reloadSocket();
+				}
+			}),
+			continuousReconnect$
+				.pipe(
+					switchMap((continuousReconnect) =>
+						continuousReconnect ? reconnectSocket$.pipe(filter(() => this.socket?.readyState === 3)) : NEVER
+					)
+				)
+				.subscribe(() => this.reloadSocket())
+		);
 	}
 
 	getCurrentUrl() {
@@ -50,7 +60,25 @@ export class SocketConnection {
 		}
 	}
 
+	cleanUp() {
+		this.disconnect();
+
+		for (let index = 0, { length } = this.subscriptions; index < length; index += 1) {
+			this.subscriptions[index].unsubscribe();
+		}
+	}
+
+	private reloadSocket() {
+		this.disconnect();
+		this.socket = undefined;
+		this.connect();
+	}
+
 	private updateSocketState() {
+		if (!this.socket) {
+			return;
+		}
+
 		socketState$.next(this.socket.readyState);
 	}
 
