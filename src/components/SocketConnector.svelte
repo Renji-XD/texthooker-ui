@@ -2,7 +2,14 @@
 	import { mdiConnection } from '@mdi/js';
 	import { onMount } from 'svelte';
 	import { SocketConnection } from '../socket';
-	import { isPaused$, openDialog$, socketState$, websocketUrl$ } from '../stores/stores';
+	import {
+		continuousReconnect$,
+		isPaused$,
+		openDialog$,
+		reconnectSocket$,
+		socketState$,
+		websocketUrl$,
+	} from '../stores/stores';
 	import Icon from './Icon.svelte';
 
 	let socketConnection: SocketConnection | undefined;
@@ -10,44 +17,53 @@
 	let wasConnected = false;
 	let closeRequested = false;
 
-	$: switch ($socketState$) {
-		case 0:
-			wasConnected = false;
-			closeRequested = false;
-			break;
-		case 1:
-			intitialAttemptDone = true;
-			wasConnected = true;
-			break;
-		case 3:
-			if (!closeRequested && intitialAttemptDone) {
-				$openDialog$ = {
-					type: 'error',
-					message: wasConnected ? `Lost Connection to Websocket` : 'Unable to connect to Websocket',
-					showCancel: false,
-				};
-			}
-
-			$isPaused$ = true;
-
-			intitialAttemptDone = true;
-			wasConnected = false;
-			break;
-
-		default:
-			break;
-	}
-
 	$: connectedWithLabel = updateConnectedWithLabel(wasConnected);
+
+	$: handleSocketState($socketState$);
 
 	onMount(() => {
 		toggleSocket();
 
 		return () => {
 			closeRequested = true;
-			socketConnection?.disconnect();
+			socketConnection?.cleanUp();
 		};
 	});
+
+	function handleSocketState(socketState) {
+		switch (socketState) {
+			case 0:
+				wasConnected = false;
+				closeRequested = false;
+				break;
+			case 1:
+				intitialAttemptDone = true;
+				wasConnected = true;
+				break;
+			case 3:
+				if (!closeRequested && intitialAttemptDone && (wasConnected || !$continuousReconnect$)) {
+					$openDialog$ = {
+						type: 'error',
+						message: wasConnected ? `Lost Connection to Websocket` : 'Unable to connect to Websocket',
+						showCancel: false,
+					};
+				}
+
+				$isPaused$ = true;
+
+				intitialAttemptDone = true;
+				wasConnected = false;
+
+				if (!closeRequested) {
+					reconnectSocket$.next();
+				}
+
+				break;
+
+			default:
+				break;
+		}
+	}
 
 	function updateConnectedWithLabel(hasConnection: boolean) {
 		return hasConnection ? `Connected with ${$websocketUrl$}` : 'Not Connected';

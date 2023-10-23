@@ -71,6 +71,7 @@ export interface Settings {
 	showLineCount$: boolean;
 	blurStats$: boolean;
 	enableLineAnimation$: boolean;
+	continuousReconnect$: boolean;
 	customCSS$: string;
 }
 

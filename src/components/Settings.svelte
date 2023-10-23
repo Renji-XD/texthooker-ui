@@ -20,6 +20,7 @@
 		autoStartTimerDuringPausePaste$,
 		blockCopyOnPage$,
 		blurStats$,
+		continuousReconnect$,
 		customCSS$,
 		dialogOpen$,
 		displayVertical$,
@@ -39,6 +40,7 @@
 		preserveWhitespace$,
 		preventGlobalDuplicate$,
 		preventLastDuplicate$,
+		reconnectSocket$,
 		removeAllWhitespace$,
 		resetAllData,
 		reverseLineOrder$,
@@ -726,6 +728,13 @@
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$blurStats$} />
 		<span class="label-text">Enable Line Animation</span>
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$enableLineAnimation$} />
+		<span class="label-text">Continuous Reconnect</span>
+		<input
+			type="checkbox"
+			class="checkbox checkbox-primary ml-2"
+			bind:checked={$continuousReconnect$}
+			on:change={() => reconnectSocket$.next()}
+		/>
 		<span class="label-text" style="grid-column: 1/5;">Custom CSS</span>
 		<textarea
 			class="p-1 min-h-[10rem] font-mono"

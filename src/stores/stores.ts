@@ -5,7 +5,7 @@ import {
 	type DialogResult,
 	type LineItem,
 	type SettingPreset,
-	type Settings
+	type Settings,
 } from './../types';
 
 import { mdiHelpCircle } from '@mdi/js';
@@ -51,6 +51,7 @@ export const defaultSettings: Settings = {
 	showLineCount$: true,
 	blurStats$: false,
 	enableLineAnimation$: false,
+	continuousReconnect$: false,
 	customCSS$: '',
 };
 
@@ -182,6 +183,11 @@ export const enableLineAnimation$ = writableBooleanSubject()(
 	defaultSettings.enableLineAnimation$
 );
 
+export const continuousReconnect$ = writableBooleanSubject()(
+	'bannou-texthooker-continuousReconnect',
+	defaultSettings.continuousReconnect$
+);
+
 export const customCSS$ = writableStringSubject()('bannou-texthooker-customCSS', defaultSettings.customCSS$);
 
 export const timeValue$ = writableNumberSubject()('bannou-texthooker-timeValue', 0, persistStats$);
@@ -211,6 +217,8 @@ export const flashOnPauseTimeout$ = writable<number>(undefined);
 export const isPaused$ = writableSubject<boolean>(true);
 
 export const newLine$ = new Subject<[string, LineType]>();
+
+export const reconnectSocket$ = new Subject<void>();
 
 export async function resetAllData() {
 	if (!skipResetConfirmations$.getValue()) {
@@ -274,5 +282,6 @@ export async function resetAllData() {
 	showLineCount$.next(defaultSettings.showLineCount$);
 	blurStats$.next(defaultSettings.blurStats$);
 	enableLineAnimation$.next(defaultSettings.enableLineAnimation$);
+	continuousReconnect$.next(defaultSettings.continuousReconnect$);
 	customCSS$.next(defaultSettings.customCSS$);
 }

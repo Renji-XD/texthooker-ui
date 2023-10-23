@@ -133,6 +133,7 @@ The following section contains explanations and details on the settings you can 
 | Show Line Count | If enabled, the page will display the current number of inserted lines within the page. |
 | Blur Stats | If enabled, the displayed stats will be blurred. These stats are unblurred on hover. |
 | Enable Line Animation | If enabled, adds Lines with a short animated Transition. |
+| Continuous Reconnect | If enabled, supresses Connection Error Messages and retries to connect to the Websocket Url continuously. |
 | Custom CSS | Lets you insert custom CSS rules to customize the page further. |
 
 </details>

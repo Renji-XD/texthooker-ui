@@ -10,6 +10,7 @@
 		autoStartTimerDuringPausePaste$,
 		blockCopyOnPage$,
 		blurStats$,
+		continuousReconnect$,
 		customCSS$,
 		defaultSettings,
 		displayVertical$,
@@ -28,6 +29,7 @@
 		preserveWhitespace$,
 		preventGlobalDuplicate$,
 		preventLastDuplicate$,
+		reconnectSocket$,
 		removeAllWhitespace$,
 		reverseLineOrder$,
 		settingPresets$,
@@ -37,9 +39,10 @@
 		showSpeed$,
 		showTimer$,
 		skipResetConfirmations$,
+		socketState$,
 		theme$,
 		websocketUrl$,
-		windowTitle$
+		windowTitle$,
 	} from '../stores/stores';
 	import type { DialogResult, SettingPreset } from '../types';
 	import { dummyFn } from '../util';
@@ -116,11 +119,18 @@
 		showLineCount$.next(existingEntry.settings.showLineCount$ ?? defaultSettings.showLineCount$);
 		blurStats$.next(existingEntry.settings.blurStats$ ?? defaultSettings.blurStats$);
 		enableLineAnimation$.next(existingEntry.settings.enableLineAnimation$ ?? defaultSettings.enableLineAnimation$);
+		continuousReconnect$.next(existingEntry.settings.continuousReconnect$ ?? defaultSettings.continuousReconnect$);
 		customCSS$.next(existingEntry.settings.customCSS$ ?? defaultSettings.customCSS$);
 
 		$lastSettingPreset$ = presetName;
 
-		tick().then(() => dispatch('layoutChange'));
+		tick().then(() => {
+			dispatch('layoutChange');
+
+			if ($socketState$ !== 1 && $continuousReconnect$) {
+				reconnectSocket$.next();
+			}
+		});
 	}
 
 	async function savePreset() {
@@ -175,6 +185,7 @@
 				showLineCount$: $showLineCount$,
 				blurStats$: $blurStats$,
 				enableLineAnimation$: $enableLineAnimation$,
+				continuousReconnect$: $continuousReconnect$,
 				customCSS$: $customCSS$,
 			},
 		};
