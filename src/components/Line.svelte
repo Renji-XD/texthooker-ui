@@ -44,7 +44,7 @@
 	function handleDblClick(event: MouseEvent) {
 		window.getSelection()?.removeAllRanges();
 
-		if (event.ctrlKey) {
+		if (event.ctrlKey || event.metaKey) {
 			if (isSelected) {
 				isSelected = false;
 				dispatch('deselected', line.id);

@@ -56,7 +56,7 @@ There are multiple ways of deleting a line:
 -   Click on the "Delete last Line" Icon in the header
 -   Click on the "Reset Lines" / "Reset Data" / "Reset All" Icon in the settings menu
 -   Highlight a line and press the "Delete" key on the keyboard
--   Select a Line for deletion by holding the "CTRL" key on the keyboard and double click on it (you can press "Escape" to unselect lines again). Afterwards click on the "Remove selected Lines" icon in the header
+-   Select a Line for deletion by holding the "CTRL" key (or "command" key on macOS) on the keyboard and double click on it (you can press "Escape" to unselect lines again). Afterwards click on the "Remove selected Lines" icon in the header
 
 ### How can I edit a line?
 
