@@ -6,20 +6,26 @@
 		continuousReconnect$,
 		isPaused$,
 		openDialog$,
+		reconnectSecondarySocket$,
 		reconnectSocket$,
+		secondarySocketState$,
+		secondaryWebsocketUrl$,
 		socketState$,
 		websocketUrl$,
 	} from '../stores/stores';
 	import Icon from './Icon.svelte';
 
+	export let isPrimary = true;
+
 	let socketConnection: SocketConnection | undefined;
 	let intitialAttemptDone = false;
 	let wasConnected = false;
 	let closeRequested = false;
+	let socketState = isPrimary ? socketState$ : secondarySocketState$;
 
 	$: connectedWithLabel = updateConnectedWithLabel(wasConnected);
 
-	$: handleSocketState($socketState$);
+	$: handleSocketState($socketState);
 
 	onMount(() => {
 		toggleSocket();
@@ -30,8 +36,8 @@
 		};
 	});
 
-	function handleSocketState(socketState) {
-		switch (socketState) {
+	function handleSocketState(socketStateValue) {
+		switch (socketStateValue) {
 			case 0:
 				wasConnected = false;
 				closeRequested = false;
@@ -41,10 +47,15 @@
 				wasConnected = true;
 				break;
 			case 3:
-				if (!closeRequested && intitialAttemptDone && (wasConnected || !$continuousReconnect$)) {
+				const socketType = isPrimary ? 'primary' : 'secondary';
+				const socketUrl = isPrimary ? $websocketUrl$ : $secondaryWebsocketUrl$;
+
+				if (!closeRequested && intitialAttemptDone && socketUrl && (wasConnected || !$continuousReconnect$)) {
 					$openDialog$ = {
 						type: 'error',
-						message: wasConnected ? `Lost Connection to Websocket` : 'Unable to connect to Websocket',
+						message: wasConnected
+							? `Lost Connection to ${socketType} Websocket`
+							: `Unable to connect to ${socketType} Websocket`,
 						showCancel: false,
 					};
 				}
@@ -55,7 +66,7 @@
 				wasConnected = false;
 
 				if (!closeRequested) {
-					reconnectSocket$.next();
+					(isPrimary ? reconnectSocket$ : reconnectSecondarySocket$).next();
 				}
 
 				break;
@@ -63,28 +74,32 @@
 			default:
 				break;
 		}
+
+		connectedWithLabel = updateConnectedWithLabel(wasConnected);
 	}
 
 	function updateConnectedWithLabel(hasConnection: boolean) {
-		return hasConnection ? `Connected with ${$websocketUrl$}` : 'Not Connected';
+		return hasConnection
+			? `Connected with ${isPrimary ? $websocketUrl$ : $secondaryWebsocketUrl$}`
+			: 'Not Connected';
 	}
 
 	async function toggleSocket() {
-		if ($socketState$ === 1 && socketConnection) {
+		if ($socketState === 1 && socketConnection) {
 			closeRequested = true;
 			socketConnection.disconnect();
 		} else {
-			socketConnection = socketConnection || new SocketConnection();
+			socketConnection = socketConnection || new SocketConnection(isPrimary);
 			socketConnection.connect();
 		}
 	}
 </script>
 
-{#if $socketState$ !== 0}
+{#if $socketState !== 0}
 	<div
 		class="hover:text-primary"
-		class:text-red-500={$socketState$ !== -1}
-		class:text-green-700={$socketState$ === 1}
+		class:text-red-500={$socketState !== -1}
+		class:text-green-700={$socketState === 1}
 		title={connectedWithLabel}
 	>
 		<Icon path={mdiConnection} class="cursor-pointer mx-2" on:click={toggleSocket} />

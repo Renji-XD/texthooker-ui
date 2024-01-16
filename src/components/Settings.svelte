@@ -40,10 +40,12 @@
 		preserveWhitespace$,
 		preventGlobalDuplicate$,
 		preventLastDuplicate$,
+		reconnectSecondarySocket$,
 		reconnectSocket$,
 		removeAllWhitespace$,
 		resetAllData,
 		reverseLineOrder$,
+		secondaryWebsocketUrl$,
 		showCharacterCount$,
 		showLineCount$,
 		showPresetQuickSwitch$,
@@ -100,11 +102,29 @@
 
 	$: websocketUrl = $websocketUrl$;
 
+	$: secondaryWebsocketUrl = $secondaryWebsocketUrl$;
+
 	$: document.body.dataset.theme = $theme$;
 
 	$: updateExternalClipboardMonitor($enableExternalClipboardMonitor$);
 
 	$: updateCustomCSS($customCSS$);
+
+	function handleSecondaryWebsocketChange(event: Event) {
+		const target = event.target as HTMLInputElement;
+
+		target.setCustomValidity('');
+
+		if (secondaryWebsocketUrl === websocketUrl) {
+			target.setCustomValidity('Duplicate Websocket');
+			secondaryWebsocketUrl = '';
+			$secondaryWebsocketUrl$ = '';
+		} else {
+			$secondaryWebsocketUrl$ = target.value;
+		}
+
+		target.reportValidity();
+	}
 
 	function updateExternalClipboardMonitor(enableExternalClipboardMonitor: boolean) {
 		if (enableExternalClipboardMonitor && !clipboardMutationObserver) {
@@ -239,8 +259,8 @@
 							'bannou-texthooker-actionHistory': $actionHistory$,
 						}),
 					],
-					{ type: `application/json` }
-				)
+					{ type: `application/json` },
+				),
 			);
 			a.rel = 'noopener';
 			a.download = 'texthooker-ui.json';
@@ -582,11 +602,17 @@
 		<Presets on:layoutChange />
 		<span class="label-text col-span-2">Window Title</span>
 		<input class="input input-bordered h-8 col-span-2" bind:value={$windowTitle$} />
-		<span class="label-text col-span-2">Websocket</span>
+		<span class="label-text col-span-2">Primary Websocket</span>
 		<input
 			class="input input-bordered h-8 col-span-2"
 			bind:value={websocketUrl}
 			on:change={() => ($websocketUrl$ = websocketUrl)}
+		/>
+		<span class="label-text col-span-2">Secondary Websocket</span>
+		<input
+			class="input input-bordered h-8 col-span-2"
+			bind:value={secondaryWebsocketUrl}
+			on:change={handleSecondaryWebsocketChange}
 		/>
 		<span class="label-text col-span-2">Font Size</span>
 		<input
@@ -669,7 +695,7 @@
 				handlePersistenceChange(
 					$persistActionHistory$,
 					'Clear action history',
-					'bannou-texthooker-actionHistory'
+					'bannou-texthooker-actionHistory',
 				)}
 		/>
 		<span class="label-text">Enable Paste</span>
@@ -733,7 +759,10 @@
 			type="checkbox"
 			class="checkbox checkbox-primary ml-2"
 			bind:checked={$continuousReconnect$}
-			on:change={() => reconnectSocket$.next()}
+			on:change={() => {
+				reconnectSocket$.next();
+				reconnectSecondarySocket$.next();
+			}}
 		/>
 		<span class="label-text" style="grid-column: 1/5;">Custom CSS</span>
 		<textarea

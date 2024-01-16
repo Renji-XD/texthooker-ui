@@ -21,6 +21,7 @@ export const defaultSettings: Settings = {
 	theme$: Theme.BUSINESS,
 	windowTitle$: '',
 	websocketUrl$: 'ws://localhost:6677',
+	secondaryWebsocketUrl$: '',
 	fontSize$: 24,
 	onlineFont$: OnlineFont.OFF,
 	preventLastDuplicate$: 0,
@@ -62,6 +63,11 @@ export const settingPresets$ = writeableArraySubject<SettingPreset>()('bannou-te
 export const windowTitle$ = writableStringSubject()('bannou-texthooker-windowTitle', defaultSettings.windowTitle$);
 
 export const websocketUrl$ = writableStringSubject()('bannou-texthooker-websocketUrl', defaultSettings.websocketUrl$);
+
+export const secondaryWebsocketUrl$ = writableStringSubject()(
+	'bannou-texthooker-secondary-websocketUrl',
+	defaultSettings.secondaryWebsocketUrl$
+);
 
 export const fontSize$ = writableNumberSubject()('bannou-texthooker-fontSize', defaultSettings.fontSize$);
 
@@ -198,6 +204,8 @@ export const userNotes$ = writableStringSubject()('bannou-texthooker-userNotes',
 
 export const socketState$ = writableSubject<number>(-1);
 
+export const secondarySocketState$ = writableSubject<number>(-1);
+
 export const openDialog$ = writableSubject<Record<string, any>>(undefined);
 
 export const dialogOpen$ = writableSubject<boolean>(false);
@@ -219,6 +227,8 @@ export const isPaused$ = writableSubject<boolean>(true);
 export const newLine$ = new Subject<[string, LineType]>();
 
 export const reconnectSocket$ = new Subject<void>();
+
+export const reconnectSecondarySocket$ = new Subject<void>();
 
 export async function resetAllData() {
 	if (!skipResetConfirmations$.getValue()) {
@@ -252,6 +262,7 @@ export async function resetAllData() {
 	theme$.next(defaultSettings.theme$);
 	windowTitle$.next(defaultSettings.windowTitle$);
 	websocketUrl$.next(defaultSettings.websocketUrl$);
+	secondaryWebsocketUrl$.next(defaultSettings.secondaryWebsocketUrl$);
 	fontSize$.next(defaultSettings.fontSize$);
 	onlineFont$.next(defaultSettings.onlineFont$);
 	preventLastDuplicate$.next(defaultSettings.preventLastDuplicate$);
