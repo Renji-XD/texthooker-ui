@@ -1,5 +1,14 @@
-import { NEVER, Subscription, filter, switchMap } from 'rxjs';
-import { continuousReconnect$, newLine$, reconnectSocket$, socketState$, websocketUrl$ } from './stores/stores';
+import { BehaviorSubject, NEVER, Subscription, filter, switchMap } from 'rxjs';
+import {
+	continuousReconnect$,
+	newLine$,
+	reconnectSecondarySocket$,
+	reconnectSocket$,
+	secondarySocketState$,
+	secondaryWebsocketUrl$,
+	socketState$,
+	websocketUrl$,
+} from './stores/stores';
 
 import { LineType } from './types';
 
@@ -8,11 +17,14 @@ export class SocketConnection {
 
 	private socket: WebSocket | undefined;
 
+	private socketState: BehaviorSubject<number>;
+
 	private subscriptions: Subscription[] = [];
 
-	constructor() {
+	constructor(isPrimary = true) {
+		this.socketState = isPrimary ? socketState$ : secondarySocketState$;
 		this.subscriptions.push(
-			websocketUrl$.subscribe((websocketUrl) => {
+			(isPrimary ? websocketUrl$ : secondaryWebsocketUrl$).subscribe((websocketUrl) => {
 				if (websocketUrl !== this.websocketUrl) {
 					this.websocketUrl = websocketUrl;
 					this.reloadSocket();
@@ -21,7 +33,11 @@ export class SocketConnection {
 			continuousReconnect$
 				.pipe(
 					switchMap((continuousReconnect) =>
-						continuousReconnect ? reconnectSocket$.pipe(filter(() => this.socket?.readyState === 3)) : NEVER
+						continuousReconnect
+							? (isPrimary ? reconnectSocket$ : reconnectSecondarySocket$).pipe(
+									filter(() => this.socket?.readyState === 3)
+							  )
+							: NEVER
 					)
 				)
 				.subscribe(() => this.reloadSocket())
@@ -38,11 +54,11 @@ export class SocketConnection {
 		}
 
 		if (!this.websocketUrl) {
-			socketState$.next(3);
+			this.socketState.next(3);
 			return;
 		}
 
-		socketState$.next(0);
+		this.socketState.next(0);
 
 		try {
 			this.socket = new WebSocket(this.websocketUrl);
@@ -50,7 +66,7 @@ export class SocketConnection {
 			this.socket.onclose = this.updateSocketState.bind(this);
 			this.socket.onmessage = this.handleMessage.bind(this);
 		} catch (error) {
-			socketState$.next(3);
+			this.socketState.next(3);
 		}
 	}
 
@@ -79,7 +95,7 @@ export class SocketConnection {
 			return;
 		}
 
-		socketState$.next(this.socket.readyState);
+		this.socketState.next(this.socket.readyState);
 	}
 
 	private handleMessage(event: MessageEvent) {

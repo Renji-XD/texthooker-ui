@@ -7,9 +7,9 @@
 		mdiDeleteForever,
 		mdiNoteEdit,
 		mdiPause,
-		mdiPlay
+		mdiPlay,
 	} from '@mdi/js';
-	import { debounceTime, filter, fromEvent, map, NEVER, switchMap, tap } from 'rxjs';
+	import { NEVER, debounceTime, filter, fromEvent, map, switchMap, tap } from 'rxjs';
 	import { onMount, tick } from 'svelte';
 	import { quintInOut } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
@@ -35,8 +35,9 @@
 		preventLastDuplicate$,
 		removeAllWhitespace$,
 		reverseLineOrder$,
+		secondaryWebsocketUrl$,
 		theme$,
-		websocketUrl$
+		websocketUrl$,
 	} from '../stores/stores';
 	import { LineType, OnlineFont, Theme, type LineItem, type LineItemEditEvent } from '../types';
 	import { generateRandomUUID, newLineCharacter, reduceToEmptyString, updateScroll } from '../util';
@@ -65,8 +66,8 @@
 
 	const uniqueLines$ = preventGlobalDuplicate$.pipe(
 		map((preventGlobalDuplicate) =>
-			preventGlobalDuplicate ? new Set($lineData$.map((line) => line.text)) : new Set()
-		)
+			preventGlobalDuplicate ? new Set($lineData$.map((line) => line.text)) : new Set(),
+		),
 	);
 
 	const handleLine$ = newLine$.pipe(
@@ -110,13 +111,13 @@
 				$lineData$ = [...$lineData$, { id: generateRandomUUID(), text }];
 			}
 		}),
-		reduceToEmptyString()
+		reduceToEmptyString(),
 	);
 
 	const pasteHandler$ = enablePaste$.pipe(
 		switchMap((enablePaste) => (enablePaste ? fromEvent(document, 'paste') : NEVER)),
 		tap((event: ClipboardEvent) => newLine$.next([event.clipboardData.getData('text/plain'), LineType.PASTE])),
-		reduceToEmptyString()
+		reduceToEmptyString(),
 	);
 
 	const visibilityHandler$ = fromEvent(document, 'visibilitychange').pipe(
@@ -133,7 +134,7 @@
 					});
 			}
 		}),
-		reduceToEmptyString()
+		reduceToEmptyString(),
 	);
 
 	const copyBlocker$ = blockCopyOnPage$.pipe(
@@ -143,13 +144,13 @@
 			return blockCopyOnPage ? fromEvent(document, 'copy') : NEVER;
 		}),
 		tap(() => (blockNextExternalLine = true)),
-		reduceToEmptyString()
+		reduceToEmptyString(),
 	);
 
 	const resizeHandler$ = fromEvent(window, 'resize').pipe(
 		debounceTime(500),
 		tap(mountFunction),
-		reduceToEmptyString()
+		reduceToEmptyString(),
 	);
 
 	$: iconSize = isSmFactor ? '1.5rem' : '1.25rem';
@@ -342,7 +343,7 @@
 						($lineData$[data.lineIndex] = {
 							id: data.line.id,
 							text: data.originalText,
-						})
+						}),
 				);
 			}
 		}
@@ -365,6 +366,9 @@
 	<Stats />
 	{#if $websocketUrl$}
 		<SocketConnector />
+	{/if}
+	{#if $secondaryWebsocketUrl$}
+		<SocketConnector isPrimary={false} />
 	{/if}
 	{#if $isPaused$}
 		<div

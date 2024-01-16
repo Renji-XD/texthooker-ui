@@ -29,9 +29,12 @@
 		preserveWhitespace$,
 		preventGlobalDuplicate$,
 		preventLastDuplicate$,
+		reconnectSecondarySocket$,
 		reconnectSocket$,
 		removeAllWhitespace$,
 		reverseLineOrder$,
+		secondarySocketState$,
+		secondaryWebsocketUrl$,
 		settingPresets$,
 		showCharacterCount$,
 		showLineCount$,
@@ -69,45 +72,46 @@
 		theme$.next(existingEntry.settings.theme$ ?? defaultSettings.theme$);
 		windowTitle$.next(existingEntry.settings.windowTitle$ ?? defaultSettings.windowTitle$);
 		websocketUrl$.next(existingEntry.settings.websocketUrl$ ?? defaultSettings.websocketUrl$);
+		secondaryWebsocketUrl$.next(existingEntry.settings.secondaryWebsocketUrl$ ?? '');
 		fontSize$.next(existingEntry.settings.fontSize$ ?? defaultSettings.fontSize$);
 		onlineFont$.next(existingEntry.settings.onlineFont$ ?? defaultSettings.onlineFont$);
 		preventLastDuplicate$.next(
-			existingEntry.settings.preventLastDuplicate$ ?? defaultSettings.preventLastDuplicate$
+			existingEntry.settings.preventLastDuplicate$ ?? defaultSettings.preventLastDuplicate$,
 		);
 		afkTimer$.next(existingEntry.settings.afkTimer$ ?? defaultSettings.afkTimer$);
 		adjustTimerOnAfk$.next(existingEntry.settings.adjustTimerOnAfk$ ?? defaultSettings.adjustTimerOnAfk$);
 		enableExternalClipboardMonitor$.next(
-			existingEntry.settings.enableExternalClipboardMonitor$ ?? defaultSettings.enableExternalClipboardMonitor$
+			existingEntry.settings.enableExternalClipboardMonitor$ ?? defaultSettings.enableExternalClipboardMonitor$,
 		);
 		showPresetQuickSwitch$.next(
-			existingEntry.settings.showPresetQuickSwitch$ ?? defaultSettings.showPresetQuickSwitch$
+			existingEntry.settings.showPresetQuickSwitch$ ?? defaultSettings.showPresetQuickSwitch$,
 		);
 		skipResetConfirmations$.next(
-			existingEntry.settings.skipResetConfirmations$ ?? defaultSettings.skipResetConfirmations$
+			existingEntry.settings.skipResetConfirmations$ ?? defaultSettings.skipResetConfirmations$,
 		);
 		persistStats$.next(existingEntry.settings.persistStats$ ?? defaultSettings.persistStats$);
 		persistNotes$.next(existingEntry.settings.persistNotes$ ?? defaultSettings.persistNotes$);
 		persistLines$.next(existingEntry.settings.persistLines$ ?? defaultSettings.persistLines$);
 		persistActionHistory$.next(
-			existingEntry.settings.persistActionHistory$ ?? defaultSettings.persistActionHistory$
+			existingEntry.settings.persistActionHistory$ ?? defaultSettings.persistActionHistory$,
 		);
 		enablePaste$.next(existingEntry.settings.enablePaste$ ?? defaultSettings.enablePaste$);
 		blockCopyOnPage$.next(existingEntry.settings.blockCopyOnPage$ ?? defaultSettings.blockCopyOnPage$);
 		allowPasteDuringPause$.next(
-			existingEntry.settings.allowPasteDuringPause$ ?? defaultSettings.allowPasteDuringPause$
+			existingEntry.settings.allowPasteDuringPause$ ?? defaultSettings.allowPasteDuringPause$,
 		);
 		allowNewLineDuringPause$.next(
-			existingEntry.settings.allowNewLineDuringPause$ ?? defaultSettings.allowNewLineDuringPause$
+			existingEntry.settings.allowNewLineDuringPause$ ?? defaultSettings.allowNewLineDuringPause$,
 		);
 		autoStartTimerDuringPausePaste$.next(
-			existingEntry.settings.autoStartTimerDuringPausePaste$ ?? defaultSettings.autoStartTimerDuringPausePaste$
+			existingEntry.settings.autoStartTimerDuringPausePaste$ ?? defaultSettings.autoStartTimerDuringPausePaste$,
 		);
 		autoStartTimerDuringPause$.next(
-			existingEntry.settings.autoStartTimerDuringPause$ ?? defaultSettings.autoStartTimerDuringPause$
+			existingEntry.settings.autoStartTimerDuringPause$ ?? defaultSettings.autoStartTimerDuringPause$,
 		);
 		flashOnMissedLine$.next(existingEntry.settings.flashOnMissedLine$ ?? defaultSettings.flashOnMissedLine$);
 		preventGlobalDuplicate$.next(
-			existingEntry.settings.preventGlobalDuplicate$ ?? defaultSettings.preventGlobalDuplicate$
+			existingEntry.settings.preventGlobalDuplicate$ ?? defaultSettings.preventGlobalDuplicate$,
 		);
 		displayVertical$.next(existingEntry.settings.displayVertical$ ?? defaultSettings.displayVertical$);
 		reverseLineOrder$.next(existingEntry.settings.reverseLineOrder$ ?? defaultSettings.reverseLineOrder$);
@@ -129,6 +133,10 @@
 
 			if ($socketState$ !== 1 && $continuousReconnect$) {
 				reconnectSocket$.next();
+			}
+
+			if ($secondarySocketState$ !== 1 && $continuousReconnect$) {
+				reconnectSecondarySocket$.next();
 			}
 		});
 	}
@@ -155,6 +163,7 @@
 				theme$: $theme$,
 				windowTitle$: $windowTitle$,
 				websocketUrl$: $websocketUrl$,
+				secondaryWebsocketUrl$: $secondaryWebsocketUrl$,
 				fontSize$: $fontSize$,
 				onlineFont$: $onlineFont$,
 				preventLastDuplicate$: $preventLastDuplicate$,

@@ -41,6 +41,7 @@ export interface Settings {
 	theme$: string;
 	windowTitle$: string;
 	websocketUrl$: string;
+	secondaryWebsocketUrl$: string;
 	fontSize$: number;
 	onlineFont$: string;
 	preventLastDuplicate$: number;
