@@ -56,6 +56,7 @@ There are multiple ways of deleting a line:
 -   Click on the "Delete last Line" Icon in the header
 -   Click on the "Reset Lines" / "Reset Data" / "Reset All" Icon in the settings menu
 -   Highlight a line and press the "Delete" key on the keyboard
+-   Have no text highlighted and press the "Alt" + "Delete" key on the keyboard
 -   Select a Line for deletion by holding the "CTRL" key (or "command" key on macOS) on the keyboard and double click on it (you can press "Escape" to unselect lines again). Afterwards click on the "Remove selected Lines" icon in the header
 
 ### How can I edit a line?
@@ -68,6 +69,7 @@ _Note_: By default, the undo history is stored in memory only. If you want to ke
 
 -   Deleting lines by clicking on the "Remove last line" icon
 -   Deleting lines by highlighting them and pressing the "Delete" key on the keyboard
+-   Deleting last line pressing the "Alt" + "Delete" key on the keyboard
 -   Deleting lines by clicking on the "Remove selected lines" icon
 -   Editing content of a line
 
@@ -87,6 +89,7 @@ _Note_: By default, the undo history is stored in memory only. If you want to ke
 |-|-|
 | <kbd>Delete</kbd> | Deletes current highlighted lines on the page. |
 | <kbd>Esc</kbd> | Deselects Lines. |
+| <kbd>Alt</kbd> + <kbd>Delete</kbd> | Deletes last line if no lines are highlighted |
 | <kbd>Alt</kbd> + <kbd>a</kbd> | Deletes all Lines and resets the Timer to 00:00:00. |
 | <kbd>Alt</kbd> + <kbd>q</kbd> | Deletes all Lines. |
 
