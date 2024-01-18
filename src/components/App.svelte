@@ -192,6 +192,8 @@
 
 			if (selectedLineIds.length) {
 				removeLines();
+			} else if (event.altKey) {
+				removeLastLine();
 			}
 		} else if (selectedLineIds.length && event.key === 'Escape') {
 			deselectLines();
