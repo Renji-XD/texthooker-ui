@@ -46,6 +46,7 @@ export interface Settings {
 	onlineFont$: string;
 	preventLastDuplicate$: number;
 	afkTimer$: number;
+	maxLines$: number;
 	adjustTimerOnAfk$: boolean;
 	enableExternalClipboardMonitor$: boolean;
 	showPresetQuickSwitch$: boolean;

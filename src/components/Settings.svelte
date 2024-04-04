@@ -14,6 +14,7 @@
 		actionHistory$,
 		adjustTimerOnAfk$,
 		afkTimer$,
+		maxLines$,
 		allowNewLineDuringPause$,
 		allowPasteDuringPause$,
 		autoStartTimerDuringPause$,
@@ -651,6 +652,18 @@
 			on:blur={() => {
 				if ($afkTimer$ === null || $afkTimer$ < 0) {
 					$afkTimer$ = 0;
+				}
+			}}
+		/>
+		<span class="label-text col-span-2">Max lines</span>
+		<input
+			type="number"
+			class="input input-bordered h-8 mb-2 col-span-2"
+			min="0"
+			bind:value={$maxLines$}
+			on:blur={() => {
+				if ($maxLines$ === null || $maxLines$ < 0) {
+					$maxLines$ = 0;
 				}
 			}}
 		/>

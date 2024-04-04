@@ -26,6 +26,7 @@
 		flashOnMissedLine$,
 		flashOnPauseTimeout$,
 		fontSize$,
+		maxLines$,
 		isPaused$,
 		lineData$,
 		newLine$,
@@ -109,6 +110,10 @@
 
 			if (text) {
 				$lineData$ = [...$lineData$, { id: generateRandomUUID(), text }];
+
+				if ($maxLines$ > 0 && $lineData$.length > $maxLines$) {
+					$lineData$.splice(0, 1);
+				}
 			}
 		}),
 		reduceToEmptyString(),

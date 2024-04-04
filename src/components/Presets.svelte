@@ -4,6 +4,7 @@
 	import {
 		adjustTimerOnAfk$,
 		afkTimer$,
+		maxLines$,
 		allowNewLineDuringPause$,
 		allowPasteDuringPause$,
 		autoStartTimerDuringPause$,
@@ -79,6 +80,7 @@
 			existingEntry.settings.preventLastDuplicate$ ?? defaultSettings.preventLastDuplicate$,
 		);
 		afkTimer$.next(existingEntry.settings.afkTimer$ ?? defaultSettings.afkTimer$);
+		maxLines$.next(existingEntry.settings.maxLines$ ?? defaultSettings.maxLines$);
 		adjustTimerOnAfk$.next(existingEntry.settings.adjustTimerOnAfk$ ?? defaultSettings.adjustTimerOnAfk$);
 		enableExternalClipboardMonitor$.next(
 			existingEntry.settings.enableExternalClipboardMonitor$ ?? defaultSettings.enableExternalClipboardMonitor$,
@@ -168,6 +170,7 @@
 				onlineFont$: $onlineFont$,
 				preventLastDuplicate$: $preventLastDuplicate$,
 				afkTimer$: $afkTimer$,
+				maxLines$: $maxLines$,
 				adjustTimerOnAfk$: $adjustTimerOnAfk$,
 				enableExternalClipboardMonitor$: $enableExternalClipboardMonitor$,
 				showPresetQuickSwitch$: $showPresetQuickSwitch$,
