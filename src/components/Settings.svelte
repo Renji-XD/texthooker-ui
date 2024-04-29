@@ -570,7 +570,7 @@
 					<a href="https://github.com/Artikash/Textractor" target="_blank" rel="noreferrer">Textractor</a>
 				</li>
 				<li class="my-0.5 hover:text-primary">
-					<a href="https://github.com/sadolit/textractor-websocket" target="_blank" rel="noreferrer">
+					<a href="https://github.com/kuroahna/textractor_websocket" target="_blank" rel="noreferrer">
 						textractor-websocket Extension
 					</a>
 				</li>

@@ -1,7 +1,7 @@
 # Texthooker UI
 
 A web interface for using websocket-based interfaces, such as:
-- [Textractor](https://github.com/Artikash/Textractor) with [textractor-websocket](https://github.com/sadolit/textractor-websocket) or [TextractorSender](https://github.com/KamWithK/TextractorSender)
+- [Textractor](https://github.com/Artikash/Textractor) with [textractor-websocket](https://github.com/kuroahna/textractor_websocket) or [TextractorSender](https://github.com/KamWithK/TextractorSender)
 - [mpv](https://mpv.io) with [mpv_websocket](https://github.com/kuroahna/mpv_websocket)
 
 An online version of the page can be accessed [here](https://renji-xd.github.io/texthooker-ui/).
@@ -30,7 +30,7 @@ The page can be opened via the index.html inside the "docs" folder and is usable
 
 ### I can't connect to the websocket with textractor-websocket.
 
--   This plugin requires that textractor captures at least one line before starting the server - connect manually afterwards
+-   [Sadolit's textractor-websocket](https://github.com/sadolit/textractor-websocket) requires that textractor captures at least one line before starting the server - connect manually afterwards. Alternatively try [kuroahna's textractor_websocket](https://github.com/kuroahna/textractor_websocket) which does not have this issue.
 
 ### I can't connect to the websocket with TextractorSender.
 
