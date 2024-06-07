@@ -30,6 +30,7 @@
 		flashOnMissedLine$,
 		fontSize$,
 		lineData$,
+		maxLines$,
 		newLine$,
 		onlineFont$,
 		openDialog$,
@@ -94,7 +95,7 @@
 		}
 	}
 
-	const dispatch = createEventDispatcher<{ layoutChange: void }>();
+	const dispatch = createEventDispatcher<{ layoutChange: void; maxLinesChange: void }>();
 	const onlineFonts = [OnlineFont.OFF, OnlineFont.NOTO, OnlineFont.KLEE, OnlineFont.SHIPPORI];
 
 	let fileInput: HTMLInputElement;
@@ -419,6 +420,46 @@
 		selectedLineIds = selectedLineIds.filter((selectedLineId) => !removedIds.has(selectedLineId));
 	}
 
+	function handleMaxLinesBlur(event) {
+		const target = event.target as HTMLInputElement;
+		const value = Number.parseInt(target.value || '0');
+		const wasChange = value !== $maxLines$;
+
+		if (!value || value < 0) {
+			$maxLines$ = 0;
+		} else {
+			$maxLines$ = value;
+		}
+
+		target.value = `${$maxLines$}`;
+
+		if (wasChange) {
+			handleMaxLinesChange();
+		}
+	}
+
+	async function handleMaxLinesChange() {
+		const lineDiff = $lineData$.length - $maxLines$;
+
+		if (!$maxLines$ || lineDiff < 1) {
+			return;
+		}
+
+		const { canceled } = await new Promise<DialogResult>((resolve) => {
+			$openDialog$ = {
+				icon: mdiHelpCircle,
+				message: `This will remove the first ${lineDiff} line(s)`,
+				callback: resolve,
+			};
+		});
+
+		if (canceled) {
+			$maxLines$ = 0;
+		} else {
+			dispatch('maxLinesChange');
+		}
+	}
+
 	async function handlePreventGlobalDuplicateChange() {
 		if (!$preventGlobalDuplicate$ || $lineData$.length < 2) {
 			return;
@@ -641,6 +682,14 @@
 			min="0"
 			value={$preventLastDuplicate$}
 			on:blur={handlePreventLastDuplicateBlur}
+		/>
+		<span class="label-text col-span-2">Max lines</span>
+		<input
+			type="number"
+			class="input input-bordered h-8 mb-2 col-span-2"
+			min="0"
+			value={$maxLines$}
+			on:blur={handleMaxLinesBlur}
 		/>
 		<span class="label-text col-span-2">AFK Timer (s)</span>
 		<input

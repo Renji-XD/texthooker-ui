@@ -20,6 +20,7 @@
 		flashOnMissedLine$,
 		fontSize$,
 		lastSettingPreset$,
+		maxLines$,
 		onlineFont$,
 		openDialog$,
 		persistActionHistory$,
@@ -78,6 +79,7 @@
 		preventLastDuplicate$.next(
 			existingEntry.settings.preventLastDuplicate$ ?? defaultSettings.preventLastDuplicate$,
 		);
+		maxLines$.next(existingEntry.settings.maxLines$ ?? defaultSettings.maxLines$);
 		afkTimer$.next(existingEntry.settings.afkTimer$ ?? defaultSettings.afkTimer$);
 		adjustTimerOnAfk$.next(existingEntry.settings.adjustTimerOnAfk$ ?? defaultSettings.adjustTimerOnAfk$);
 		enableExternalClipboardMonitor$.next(
@@ -167,6 +169,7 @@
 				fontSize$: $fontSize$,
 				onlineFont$: $onlineFont$,
 				preventLastDuplicate$: $preventLastDuplicate$,
+				maxLines$: $maxLines$,
 				afkTimer$: $afkTimer$,
 				adjustTimerOnAfk$: $adjustTimerOnAfk$,
 				enableExternalClipboardMonitor$: $enableExternalClipboardMonitor$,

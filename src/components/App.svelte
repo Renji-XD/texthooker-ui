@@ -28,6 +28,7 @@
 		fontSize$,
 		isPaused$,
 		lineData$,
+		maxLines$,
 		newLine$,
 		notesOpen$,
 		onlineFont$,
@@ -108,7 +109,7 @@
 			const text = transformLine(lineContent);
 
 			if (text) {
-				$lineData$ = [...$lineData$, { id: generateRandomUUID(), text }];
+				$lineData$ = [...applyMaxLinesAndGetRemainingLineData(1), { id: generateRandomUUID(), text }];
 			}
 		}),
 		reduceToEmptyString(),
@@ -231,7 +232,7 @@
 			lineToRevert = linesToRevert.pop();
 		}
 
-		$lineData$ = $lineData$;
+		$lineData$ = applyMaxLinesAndGetRemainingLineData();
 		$actionHistory$ = $actionHistory$;
 	}
 
@@ -352,6 +353,30 @@
 
 		lineInEdit = inEdit;
 	}
+
+	function applyMaxLinesAndGetRemainingLineData(diffMod = 0) {
+		const oldLinesToRemove = new Set<string>();
+		const startIndex = $maxLines$ ? $lineData$.length - $maxLines$ + diffMod : 0;
+		const remainingLineData =
+			startIndex > 0
+				? $lineData$.filter((oldLine, index) => {
+						if (index < startIndex) {
+							oldLinesToRemove.add(oldLine.id);
+
+							$uniqueLines$.delete(oldLine.text);
+							return false;
+						}
+
+						return true;
+					})
+				: $lineData$;
+
+		if (oldLinesToRemove.size) {
+			selectedLineIds = selectedLineIds.filter((selectedLineId) => !oldLinesToRemove.has(selectedLineId));
+		}
+
+		return remainingLineData;
+	}
 </script>
 
 <svelte:window on:keyup={handleKeyPress} />
@@ -430,6 +455,7 @@
 		bind:selectedLineIds
 		bind:this={settingsComponent}
 		on:layoutChange={executeUpdateScroll}
+		on:maxLinesChange={() => ($lineData$ = applyMaxLinesAndGetRemainingLineData())}
 	/>
 	<Presets isQuickSwitch={true} on:layoutChange={executeUpdateScroll} />
 </header>
