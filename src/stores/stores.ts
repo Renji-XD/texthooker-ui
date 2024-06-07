@@ -25,6 +25,7 @@ export const defaultSettings: Settings = {
 	fontSize$: 24,
 	onlineFont$: OnlineFont.OFF,
 	preventLastDuplicate$: 0,
+	maxLines$: 0,
 	afkTimer$: 0,
 	adjustTimerOnAfk$: false,
 	enableExternalClipboardMonitor$: false,
@@ -77,6 +78,8 @@ export const preventLastDuplicate$ = writableNumberSubject()(
 	'bannou-texthooker-preventLastDuplicate',
 	defaultSettings.preventLastDuplicate$
 );
+
+export const maxLines$ = writableNumberSubject()('bannou-texthooker-maxLines', defaultSettings.maxLines$);
 
 export const afkTimer$ = writableNumberSubject()('bannou-texthooker-afkTimer', defaultSettings.afkTimer$);
 

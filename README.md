@@ -110,6 +110,7 @@ The following section contains explanations and details on the settings you can 
 | Font Size | The font size, in number of pixels. |
 | Online Font | Lets you select a font from a predefined selection. An internet connection is required in order for this work. |
 | Prevent Last Line Duplicate | This will prevent the insertion/pasting of a line if the text is equal to one of the last n configured lines. |
+| Max lines | Sets the maximum number of lines allowed. Once the limit is reached, the oldest line is automatically removed when a new one is added. The feature is active only when the limit is greater than 0. Undo Action will enforce this setting on execution. |
 | AFK Timer (s) | Number of seconds after which the timer will automatically pause without page interaction (no new line, text selection, or pointer move). |
 | Adjust Timer after AFK | If enabled, the timer will be subtracted by the configured `AFK Timer (s)` value whenever the timer was paused due to no page interaction. |
 | Enable external Clipboard Monitor | If enabled, this will allow the texthooker page to handle lines pasted by extensions like [Clipboard Inserter](https://github.com/kmltml/clipboard-inserter) or [lap-clipboard-inserter](https://github.com/laplus-sadness/lap-clipboard-inserter). |
