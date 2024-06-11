@@ -30,6 +30,7 @@
 		flashOnMissedLine$,
 		fontSize$,
 		lineData$,
+		maxDialogs$,
 		maxLines$,
 		newLine$,
 		onlineFont$,
@@ -694,12 +695,24 @@
 		<span class="label-text col-span-2">AFK Timer (s)</span>
 		<input
 			type="number"
-			class="input input-bordered h-8 mb-2 col-span-2"
+			class="input input-bordered h-8 col-span-2"
 			min="0"
 			bind:value={$afkTimer$}
 			on:blur={() => {
 				if ($afkTimer$ === null || $afkTimer$ < 0) {
 					$afkTimer$ = 0;
+				}
+			}}
+		/>
+		<span class="label-text col-span-2">Max Popup Dialogs</span>
+		<input
+			type="number"
+			class="input input-bordered h-8 mb-2 col-span-2"
+			min="-1"
+			bind:value={$maxDialogs$}
+			on:blur={() => {
+				if ($maxDialogs$ === null || $maxDialogs$ < -1) {
+					$maxDialogs$ = -1;
 				}
 			}}
 		/>

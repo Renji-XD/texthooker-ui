@@ -25,6 +25,7 @@ export const defaultSettings: Settings = {
 	fontSize$: 24,
 	onlineFont$: OnlineFont.OFF,
 	preventLastDuplicate$: 0,
+	maxDialogs$: -1,
 	maxLines$: 0,
 	afkTimer$: 0,
 	adjustTimerOnAfk$: false,
@@ -82,6 +83,8 @@ export const preventLastDuplicate$ = writableNumberSubject()(
 export const maxLines$ = writableNumberSubject()('bannou-texthooker-maxLines', defaultSettings.maxLines$);
 
 export const afkTimer$ = writableNumberSubject()('bannou-texthooker-afkTimer', defaultSettings.afkTimer$);
+
+export const maxDialogs$ = writableNumberSubject()('bannou-texthooker-maxDialogs', defaultSettings.maxDialogs$);
 
 export const adjustTimerOnAfk$ = writableBooleanSubject()(
 	'bannou-texthooker-adjustTimerOnAfk',
@@ -270,6 +273,7 @@ export async function resetAllData() {
 	onlineFont$.next(defaultSettings.onlineFont$);
 	preventLastDuplicate$.next(defaultSettings.preventLastDuplicate$);
 	afkTimer$.next(defaultSettings.afkTimer$);
+	maxDialogs$.next(defaultSettings.maxDialogs$);
 	adjustTimerOnAfk$.next(defaultSettings.adjustTimerOnAfk$);
 	enableExternalClipboardMonitor$.next(defaultSettings.enableExternalClipboardMonitor$);
 	showPresetQuickSwitch$.next(defaultSettings.showPresetQuickSwitch$);
