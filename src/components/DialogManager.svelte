@@ -7,7 +7,11 @@
 	let dialogPropsQueue: any[] = [];
 
 	const sub = openDialog$.subscribe((d) => {
-		if (!d) {
+		if (
+			!d ||
+			((d.message.includes('Lost Connection to') || d.message.includes('Unable to connect to')) &&
+				(props?.message === d.message || dialogPropsQueue.find((dialog) => dialog.message === d.message)))
+		) {
 			return;
 		}
 
