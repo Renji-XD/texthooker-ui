@@ -9,12 +9,14 @@
 		startWith,
 		switchMap,
 		tap,
-		throttleTime
+		throttleTime,
 	} from 'rxjs';
 	import {
 		adjustTimerOnAfk$,
 		afkTimer$,
 		blurStats$,
+		enableAfkBlur$,
+		enableAfkBlurRestart$,
 		isPaused$,
 		lineData$,
 		newLine$,
@@ -22,7 +24,7 @@
 		showLineCount$,
 		showSpeed$,
 		showTimer$,
-		timeValue$
+		timeValue$,
 	} from '../stores/stores';
 	import { reduceToEmptyString, toTimeString } from '../util';
 
@@ -44,7 +46,7 @@
 			return interval(1000);
 		}),
 		tap(updateElapsedTime),
-		reduceToEmptyString()
+		reduceToEmptyString(),
 	);
 
 	const waitForIdle$ = combineLatest([isPaused$, afkTimer$]).pipe(
@@ -54,15 +56,15 @@
 				: merge(
 						newLine$,
 						fromEvent<PointerEvent>(window, 'pointermove'),
-						fromEvent<Event>(document, 'selectionchange')
-				  ).pipe(
+						fromEvent<Event>(document, 'selectionchange'),
+					).pipe(
 						startWith(true),
 						throttleTime(1000),
 						tap(() => (idleTime = performance.now() + $afkTimer$ * 1000)),
-						debounceTime($afkTimer$ * 1000)
-				  )
+						debounceTime($afkTimer$ * 1000),
+					),
 		),
-		reduceToEmptyString()
+		reduceToEmptyString(),
 	);
 
 	let timerElm: HTMLElement;
@@ -106,6 +108,28 @@
 				$timeValue$ = Math.max(0, $timeValue$ + elapsed - $afkTimer$);
 			} else {
 				$timeValue$ += elapsed;
+			}
+
+			if ($enableAfkBlur$) {
+				document.body.style.filter = 'blur(8px)';
+				document.body.style.pointerEvents = 'none';
+
+				document.addEventListener(
+					'dblclick',
+					(event) => {
+						event.stopPropagation();
+
+						window.getSelection().removeAllRanges();
+
+						document.body.style.filter = null;
+						document.body.style.pointerEvents = 'auto';
+
+						if ($enableAfkBlurRestart$) {
+							$isPaused$ = false;
+						}
+					},
+					{ once: true, capture: false },
+				);
 			}
 		} else {
 			lastTick = now;

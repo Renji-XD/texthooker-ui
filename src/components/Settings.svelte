@@ -24,6 +24,8 @@
 		customCSS$,
 		dialogOpen$,
 		displayVertical$,
+		enableAfkBlur$,
+		enableAfkBlurRestart$,
 		enableExternalClipboardMonitor$,
 		enableLineAnimation$,
 		enablePaste$,
@@ -803,6 +805,10 @@
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$blurStats$} />
 		<span class="label-text">Enable Line Animation</span>
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$enableLineAnimation$} />
+		<span class="label-text">Enable AFK Blur</span>
+		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$enableAfkBlur$} />
+		<span class="label-text">Restart Timer after AFK Blur</span>
+		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$enableAfkBlurRestart$} />
 		<span class="label-text">Continuous Reconnect</span>
 		<input
 			type="checkbox"

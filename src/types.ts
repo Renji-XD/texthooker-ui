@@ -73,6 +73,8 @@ export interface Settings {
 	showLineCount$: boolean;
 	blurStats$: boolean;
 	enableLineAnimation$: boolean;
+	enableAfkBlur$: boolean;
+	enableAfkBlurRestart$: boolean;
 	continuousReconnect$: boolean;
 	customCSS$: string;
 }
