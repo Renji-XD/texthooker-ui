@@ -14,6 +14,8 @@
 		customCSS$,
 		defaultSettings,
 		displayVertical$,
+		enableAfkBlur$,
+		enableAfkBlurRestart$,
 		enableExternalClipboardMonitor$,
 		enableLineAnimation$,
 		enablePaste$,
@@ -125,6 +127,10 @@
 		showLineCount$.next(existingEntry.settings.showLineCount$ ?? defaultSettings.showLineCount$);
 		blurStats$.next(existingEntry.settings.blurStats$ ?? defaultSettings.blurStats$);
 		enableLineAnimation$.next(existingEntry.settings.enableLineAnimation$ ?? defaultSettings.enableLineAnimation$);
+		enableAfkBlur$.next(existingEntry.settings.enableAfkBlur$ ?? defaultSettings.enableAfkBlur$);
+		enableAfkBlurRestart$.next(
+			existingEntry.settings.enableAfkBlurRestart$ ?? defaultSettings.enableAfkBlurRestart$,
+		);
 		continuousReconnect$.next(existingEntry.settings.continuousReconnect$ ?? defaultSettings.continuousReconnect$);
 		customCSS$.next(existingEntry.settings.customCSS$ ?? defaultSettings.customCSS$);
 
@@ -197,6 +203,8 @@
 				showLineCount$: $showLineCount$,
 				blurStats$: $blurStats$,
 				enableLineAnimation$: $enableLineAnimation$,
+				enableAfkBlur$: $enableAfkBlur$,
+				enableAfkBlurRestart$: $enableAfkBlurRestart$,
 				continuousReconnect$: $continuousReconnect$,
 				customCSS$: $customCSS$,
 			},

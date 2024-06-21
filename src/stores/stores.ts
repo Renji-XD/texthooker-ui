@@ -53,6 +53,8 @@ export const defaultSettings: Settings = {
 	showLineCount$: true,
 	blurStats$: false,
 	enableLineAnimation$: false,
+	enableAfkBlur$: false,
+	enableAfkBlurRestart$: false,
 	continuousReconnect$: false,
 	customCSS$: '',
 };
@@ -192,6 +194,16 @@ export const enableLineAnimation$ = writableBooleanSubject()(
 	defaultSettings.enableLineAnimation$
 );
 
+export const enableAfkBlur$ = writableBooleanSubject()(
+	'bannou-texthooker-enableAfkBlur',
+	defaultSettings.enableAfkBlur$
+);
+
+export const enableAfkBlurRestart$ = writableBooleanSubject()(
+	'bannou-texthooker-enableAfkBlurRestart',
+	defaultSettings.enableAfkBlurRestart$
+);
+
 export const continuousReconnect$ = writableBooleanSubject()(
 	'bannou-texthooker-continuousReconnect',
 	defaultSettings.continuousReconnect$
@@ -296,6 +308,8 @@ export async function resetAllData() {
 	showLineCount$.next(defaultSettings.showLineCount$);
 	blurStats$.next(defaultSettings.blurStats$);
 	enableLineAnimation$.next(defaultSettings.enableLineAnimation$);
+	enableAfkBlur$.next(defaultSettings.enableAfkBlur$);
+	enableAfkBlurRestart$.next(defaultSettings.enableAfkBlurRestart$);
 	continuousReconnect$.next(defaultSettings.continuousReconnect$);
 	customCSS$.next(defaultSettings.customCSS$);
 }

@@ -77,6 +77,7 @@ _Note_: By default, the undo history is stored in memory only. If you want to ke
 
 -   Deleting data by clicking on the "Reset Lines" / "Reset Data" / "Reset All" icon
 -   Overwritten data by an import
+-	Removed lines by the "Max Lines" setting
 
 ### Can I move the data to another device / browser?
 
@@ -138,6 +139,8 @@ The following section contains explanations and details on the settings you can 
 | Show Line Count | If enabled, the page will display the current number of inserted lines within the page. |
 | Blur Stats | If enabled, the displayed stats will be blurred. These stats are unblurred on hover. |
 | Enable Line Animation | If enabled, adds Lines with a short animated Transition. |
+| Enable AFK Blur | If enabled the screen will be blurred when the afk timer gets activated. You can exit by double clicking/tapping on the page. |
+| Restart Timer after AFK Blur | If enabled the timer will automatically restart when you exit the afk blur mode. |
 | Continuous Reconnect | If enabled, supresses Connection Error Messages and retries to connect to the Websocket Url continuously. |
 | Custom CSS | Lets you insert custom CSS rules to customize the page further. |
 
