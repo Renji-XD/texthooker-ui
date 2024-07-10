@@ -10,6 +10,7 @@
 		reconnectSocket$,
 		secondarySocketState$,
 		secondaryWebsocketUrl$,
+		showConnectionErrors$,
 		socketState$,
 		websocketUrl$,
 	} from '../stores/stores';
@@ -50,7 +51,13 @@
 				const socketType = isPrimary ? 'primary' : 'secondary';
 				const socketUrl = isPrimary ? $websocketUrl$ : $secondaryWebsocketUrl$;
 
-				if (!closeRequested && intitialAttemptDone && socketUrl && (wasConnected || !$continuousReconnect$)) {
+				if (
+					$showConnectionErrors$ &&
+					!closeRequested &&
+					intitialAttemptDone &&
+					socketUrl &&
+					(wasConnected || !$continuousReconnect$)
+				) {
 					$openDialog$ = {
 						type: 'error',
 						message: wasConnected

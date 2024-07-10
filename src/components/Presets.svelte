@@ -40,6 +40,7 @@
 		secondaryWebsocketUrl$,
 		settingPresets$,
 		showCharacterCount$,
+		showConnectionErrors$,
 		showLineCount$,
 		showPresetQuickSwitch$,
 		showSpeed$,
@@ -132,6 +133,9 @@
 			existingEntry.settings.enableAfkBlurRestart$ ?? defaultSettings.enableAfkBlurRestart$,
 		);
 		continuousReconnect$.next(existingEntry.settings.continuousReconnect$ ?? defaultSettings.continuousReconnect$);
+		showConnectionErrors$.next(
+			existingEntry.settings.showConnectionErrors$ ?? defaultSettings.showConnectionErrors$,
+		);
 		customCSS$.next(existingEntry.settings.customCSS$ ?? defaultSettings.customCSS$);
 
 		$lastSettingPreset$ = presetName;
@@ -206,6 +210,7 @@
 				enableAfkBlur$: $enableAfkBlur$,
 				enableAfkBlurRestart$: $enableAfkBlurRestart$,
 				continuousReconnect$: $continuousReconnect$,
+				showConnectionErrors$: $showConnectionErrors$,
 				customCSS$: $customCSS$,
 			},
 		};
