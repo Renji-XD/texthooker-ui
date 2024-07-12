@@ -39,6 +39,7 @@ export enum OnlineFont {
 
 export interface Settings {
 	theme$: string;
+	replacements$: ReplacementItem[];
 	windowTitle$: string;
 	websocketUrl$: string;
 	secondaryWebsocketUrl$: string;
@@ -78,6 +79,13 @@ export interface Settings {
 	continuousReconnect$: boolean;
 	showConnectionErrors$: boolean;
 	customCSS$: string;
+}
+
+export interface ReplacementItem {
+	pattern: string;
+	replaces: string;
+	flags: string[],
+	enabled: boolean;
 }
 
 export interface SettingPreset {

@@ -54,6 +54,7 @@
 		showLineCount$,
 		showPresetQuickSwitch$,
 		showSpeed$,
+		showSpinner$,
 		showTimer$,
 		skipResetConfirmations$,
 		theme$,
@@ -67,6 +68,7 @@
 	import { dummyFn, timeStringToSeconds } from '../util';
 	import Icon from './Icon.svelte';
 	import Presets from './Presets.svelte';
+	import ReplacementSettings from './ReplacementSettings.svelte';
 
 	export let selectedLineIds: string[];
 	export let settingsOpen: boolean;
@@ -177,6 +179,7 @@
 		const target = event.target as any;
 
 		if (
+			!$showSpinner$ &&
 			target !== settingsElement &&
 			target.parentElement !== settingsElement &&
 			target !== fileInput &&
@@ -644,6 +647,7 @@
 			</ul>
 		</details>
 		<Presets on:layoutChange />
+		<ReplacementSettings on:applyReplacements />
 		<span class="label-text col-span-2">Window Title</span>
 		<input class="input input-bordered h-8 col-span-2" bind:value={$windowTitle$} />
 		<span class="label-text col-span-2">Primary Websocket</span>

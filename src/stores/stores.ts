@@ -4,6 +4,7 @@ import {
 	Theme,
 	type DialogResult,
 	type LineItem,
+	type ReplacementItem,
 	type SettingPreset,
 	type Settings,
 } from './../types';
@@ -19,6 +20,7 @@ import { writableSubject } from './transformer/writeable-subject';
 
 export const defaultSettings: Settings = {
 	theme$: Theme.BUSINESS,
+	replacements$: [],
 	windowTitle$: '',
 	websocketUrl$: 'ws://localhost:6677',
 	secondaryWebsocketUrl$: '',
@@ -63,6 +65,8 @@ export const defaultSettings: Settings = {
 export const theme$ = writableStringSubject()('bannou-texthooker-theme', defaultSettings.theme$);
 
 export const settingPresets$ = writeableArraySubject<SettingPreset>()('bannou-texthooker-settingPresets', []);
+
+export const replacements$ = writeableArraySubject<ReplacementItem>()('bannou-texthooker-replacements', []);
 
 export const windowTitle$ = writableStringSubject()('bannou-texthooker-windowTitle', defaultSettings.windowTitle$);
 
@@ -251,6 +255,10 @@ export const reconnectSocket$ = new Subject<void>();
 
 export const reconnectSecondarySocket$ = new Subject<void>();
 
+export const showSpinner$ = writable<boolean>(false);
+
+export const enabledReplacements$ = writable<ReplacementItem[]>([]);
+
 export async function resetAllData() {
 	if (!skipResetConfirmations$.getValue()) {
 		const { canceled } = await new Promise<DialogResult>((resolve) => {
@@ -281,6 +289,7 @@ export async function resetAllData() {
 	window.localStorage.removeItem('bannou-texthooker-actionHistory');
 
 	theme$.next(defaultSettings.theme$);
+	replacements$.next(defaultSettings.replacements$);
 	windowTitle$.next(defaultSettings.windowTitle$);
 	websocketUrl$.next(defaultSettings.websocketUrl$);
 	secondaryWebsocketUrl$.next(defaultSettings.secondaryWebsocketUrl$);

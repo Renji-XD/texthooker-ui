@@ -9,7 +9,7 @@
 		mdiPause,
 		mdiPlay,
 	} from '@mdi/js';
-	import { NEVER, debounceTime, filter, fromEvent, map, switchMap, tap } from 'rxjs';
+	import { debounceTime, filter, fromEvent, map, NEVER, switchMap, tap } from 'rxjs';
 	import { onMount, tick } from 'svelte';
 	import { quintInOut } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
@@ -22,6 +22,7 @@
 		blockCopyOnPage$,
 		dialogOpen$,
 		displayVertical$,
+		enabledReplacements$,
 		enablePaste$,
 		flashOnMissedLine$,
 		flashOnPauseTimeout$,
@@ -32,16 +33,25 @@
 		newLine$,
 		notesOpen$,
 		onlineFont$,
+		openDialog$,
 		preventGlobalDuplicate$,
 		preventLastDuplicate$,
 		removeAllWhitespace$,
+		replacements$,
 		reverseLineOrder$,
 		secondaryWebsocketUrl$,
+		showSpinner$,
 		theme$,
 		websocketUrl$,
 	} from '../stores/stores';
 	import { LineType, OnlineFont, Theme, type LineItem, type LineItemEditEvent } from '../types';
-	import { generateRandomUUID, newLineCharacter, reduceToEmptyString, updateScroll } from '../util';
+	import {
+		applyReplacements,
+		generateRandomUUID,
+		newLineCharacter,
+		reduceToEmptyString,
+		updateScroll,
+	} from '../util';
 	import DialogManager from './DialogManager.svelte';
 	import Icon from './Icon.svelte';
 	import Line from './Line.svelte';
@@ -49,6 +59,7 @@
 	import Presets from './Presets.svelte';
 	import Settings from './Settings.svelte';
 	import SocketConnector from './SocketConnector.svelte';
+	import Spinner from './Spinner.svelte';
 	import Stats from './Stats.svelte';
 
 	let isSmFactor = false;
@@ -156,6 +167,8 @@
 
 	$: iconSize = isSmFactor ? '1.5rem' : '1.25rem';
 
+	$: $enabledReplacements$ = $replacements$.filter((replacment) => replacment.enabled);
+
 	onMount(() => {
 		mountFunction();
 		if (wakeLockAvailable) {
@@ -215,7 +228,7 @@
 		let lineToRevert = linesToRevert.pop();
 
 		while (lineToRevert) {
-			const text = transformLine(lineToRevert.text);
+			const text = transformLine(lineToRevert.text, false);
 
 			if (text) {
 				const { id, index } = lineToRevert;
@@ -282,6 +295,43 @@
 		selectedLineIds = [];
 	}
 
+	function onApplyReplacements() {
+		if (!$enabledReplacements$.length) {
+			return;
+		}
+
+		$showSpinner$ = true;
+
+		let changed = 0;
+
+		try {
+			for (let index = 0, { length } = $lineData$; index < length; index += 1) {
+				const line = $lineData$[index];
+				const newText = transformLine(line.text);
+
+				if (newText) {
+					$uniqueLines$.delete(line.text);
+
+					$lineData$[index] = { ...line, text: newText };
+					changed += 1;
+				}
+			}
+
+			$openDialog$ = {
+				message: `${changed} line(s) changed`,
+				showCancel: false,
+			};
+		} catch ({ message }) {
+			$openDialog$ = {
+				type: 'error',
+				message: `An Error occured: ${message} (after ${changed} changed lines)`,
+				showCancel: false,
+			};
+		}
+
+		$showSpinner$ = false;
+	}
+
 	function executeUpdateScroll() {
 		updateScroll(window, lineContainer, $reverseLineOrder$, $displayVertical$);
 	}
@@ -308,8 +358,9 @@
 		}, 500);
 	}
 
-	function transformLine(text: string) {
-		const lineToAppend = $removeAllWhitespace$ ? text.replace(/\s/gm, '').trim() : text;
+	function transformLine(text: string, useReplacements = true) {
+		const textToAppend = useReplacements ? applyReplacements(text, $enabledReplacements$) : text;
+		const lineToAppend = $removeAllWhitespace$ ? textToAppend.replace(/\s/gm, '').trim() : textToAppend;
 
 		let canAppend = true;
 
@@ -333,7 +384,7 @@
 
 			$lineData$[data.lineIndex] = {
 				id: data.line.id,
-				text: data.newText,
+				text,
 			};
 
 			if (text) {
@@ -386,6 +437,10 @@
 {$pasteHandler$ ?? ''}
 {$copyBlocker$ ?? ''}
 {$resizeHandler$ ?? ''}
+
+{#if $showSpinner$}
+	<Spinner />
+{/if}
 
 <DialogManager />
 
@@ -454,6 +509,7 @@
 		bind:settingsOpen
 		bind:selectedLineIds
 		bind:this={settingsComponent}
+		on:applyReplacements={onApplyReplacements}
 		on:layoutChange={executeUpdateScroll}
 		on:maxLinesChange={() => ($lineData$ = applyMaxLinesAndGetRemainingLineData())}
 	/>

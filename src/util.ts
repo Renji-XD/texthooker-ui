@@ -1,5 +1,7 @@
 import { filter, map, pipe } from 'rxjs';
 
+import type { ReplacementItem } from './types';
+
 export function dummyFn() {}
 
 export function reduceToEmptyString() {
@@ -67,6 +69,25 @@ export function generateRandomUUID() {
 		.join('');
 
 	return uuid;
+}
+
+export function applyReplacements(originalText: string, replacements: ReplacementItem[]) {
+	if (!originalText || !replacements.length) {
+		return originalText;
+	}
+
+	let adjustedText = originalText;
+
+	for (let index = 0, { length } = replacements; index < length; index += 1) {
+		const replacement = replacements[index];
+
+		adjustedText = adjustedText.replace(
+			new RegExp(replacement.pattern, replacement.flags.join('')),
+			replacement.replaces.replace(/\\t/gm, '\t').replace(/\\n/gm, '\n')
+		);
+	}
+
+	return adjustedText;
 }
 
 export const newLineCharacter = '\n';

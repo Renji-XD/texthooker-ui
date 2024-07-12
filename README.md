@@ -77,6 +77,8 @@ _Note_: By default, the undo history is stored in memory only. If you want to ke
 
 -   Deleting data by clicking on the "Reset Lines" / "Reset Data" / "Reset All" icon
 -   Overwritten data by an import
+-	Skipping duplicates resulting out of setting changes / changed Data
+-	Skipping duplicates resulting out of replacement pattern changes / changed Data
 -	Removed lines by the "Max Lines" setting
 
 ### Can I move the data to another device / browser?
@@ -105,6 +107,7 @@ The following section contains explanations and details on the settings you can 
 | Setting | Description |
 |-|-|
 | Presets | Allows you to save the current Settings as a Preset and to quickly switch between them.<br/>**Note:** Changes to Settings needs to be manually saved to a Preset by clicking on the Save button. The Dialog to apply Settings to current Lines or Storage like "Store X persistently", "Prevent Last Line Duplicate", "Remove all Whitespace" etc. will not be triggered by switching between Presets. You can still execute them by toggling respective Setting.|
+| Replacements | Allows you to configure (regex) patterns and replacements which are getting applied to new lines. See [this documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#description) for more Information. You can change the order of patterns by holding down your mouse on the box and moving it to the item you want to swap the position with
 | Window Title | Lets you set the current document title. This can be used with Yomichan to tag your created cards (with the `{document-title}` [marker](https://github.com/FooSoft/yomichan#markers-for-term-cards)). |
 | Primary WebSocket | URL of the primary WebSocket to which you want to connect. |
 | Secondary WebSocket | URL of the secondary WebSocket to which you want to connect. |

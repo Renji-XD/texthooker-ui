@@ -5,6 +5,7 @@
 		"@sveltejs/vite-plugin-svelte": "^2.0.2",
 		"@tsconfig/svelte": "^3.0.0",
 		"@types/dom-screen-wake-lock": "^1.0.0",
+		"@types/sortablejs": "^1.15.8",
 		"autoprefixer": "^10.4.13",
 		"daisyui": "^2.45.0",
 		"eslint": "^8.30.0",
@@ -36,5 +37,8 @@
 		"preview": "vite -c vite.main.config.ts preview --host"
 	},
 	"type": "module",
-	"version": "1.0.0"
+	"version": "1.0.0",
+	"dependencies": {
+		"sortablejs": "^1.15.2"
+	}
 }
