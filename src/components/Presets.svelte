@@ -35,6 +35,7 @@
 		reconnectSecondarySocket$,
 		reconnectSocket$,
 		removeAllWhitespace$,
+		replacements$,
 		reverseLineOrder$,
 		secondarySocketState$,
 		secondaryWebsocketUrl$,
@@ -74,6 +75,7 @@
 		}
 
 		theme$.next(existingEntry.settings.theme$ ?? defaultSettings.theme$);
+		replacements$.next(existingEntry.settings.replacements$ ?? defaultSettings.replacements$);
 		windowTitle$.next(existingEntry.settings.windowTitle$ ?? defaultSettings.windowTitle$);
 		websocketUrl$.next(existingEntry.settings.websocketUrl$ ?? defaultSettings.websocketUrl$);
 		secondaryWebsocketUrl$.next(existingEntry.settings.secondaryWebsocketUrl$ ?? '');
@@ -173,6 +175,7 @@
 			name: data,
 			settings: {
 				theme$: $theme$,
+				replacements$: $replacements$,
 				windowTitle$: $windowTitle$,
 				websocketUrl$: $websocketUrl$,
 				secondaryWebsocketUrl$: $secondaryWebsocketUrl$,
