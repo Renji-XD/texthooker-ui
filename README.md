@@ -86,6 +86,7 @@ _Note_: By default, the undo history is stored in memory only. If you want to ke
 -   You can export/import data by clicking on the respective Icon in the settings menu
 -   Clicking on the icon will export the current time value, notes, displayed lines and action history (settings will not be exported)
 -   Clicking on the icon while holding the "ALT" key on the keyboard lets you select a previously exported file for import. Note that all existing data will be overwritten
+-	The same steps can be executed for exporting/importing all Settings/Presets or single Presets via respective Icons
 
 ## Available Keybinds
 | Keybind | Description |

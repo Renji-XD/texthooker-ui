@@ -81,10 +81,23 @@ export interface Settings {
 	customCSS$: string;
 }
 
+export interface ExportedData {
+	'bannou-texthooker-timeValue': number;
+	'bannou-texthooker-userNotes': string;
+	'bannou-texthooker-lineData': LineItem[];
+	'bannou-texthooker-actionHistory': LineItem[][];
+}
+
+export interface ExportedSettings {
+	currentSettings: Settings;
+	settingPresets: SettingPreset[];
+	lastSettingsPreset: string;
+}
+
 export interface ReplacementItem {
 	pattern: string;
 	replaces: string;
-	flags: string[],
+	flags: string[];
 	enabled: boolean;
 }
 

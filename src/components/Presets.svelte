@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { mdiContentSave, mdiDelete, mdiHelpCircle, mdiReload } from '@mdi/js';
+	import { mdiContentSave, mdiDatabaseSync, mdiDelete, mdiHelpCircle, mdiReload } from '@mdi/js';
 	import { createEventDispatcher, tick } from 'svelte';
 	import {
 		adjustTimerOnAfk$,
@@ -52,95 +52,116 @@
 		websocketUrl$,
 		windowTitle$,
 	} from '../stores/stores';
-	import type { DialogResult, SettingPreset } from '../types';
+	import type { DialogResult, SettingPreset, Settings } from '../types';
 	import { dummyFn } from '../util';
 	import Icon from './Icon.svelte';
 
 	export let isQuickSwitch = false;
 
-	const fallbackPresetEntry = [{ name: '' }];
-	const dispatch = createEventDispatcher<{ layoutChange: void }>();
-
-	function selectPreset(event: Event) {
-		const target = event.target as HTMLSelectElement;
-
-		changePreset(target.selectedOptions[0].value);
+	export function getCurrentSettings(): Settings {
+		return {
+			theme$: $theme$,
+			replacements$: $replacements$,
+			windowTitle$: $windowTitle$,
+			websocketUrl$: $websocketUrl$,
+			secondaryWebsocketUrl$: $secondaryWebsocketUrl$,
+			fontSize$: $fontSize$,
+			onlineFont$: $onlineFont$,
+			preventLastDuplicate$: $preventLastDuplicate$,
+			maxLines$: $maxLines$,
+			afkTimer$: $afkTimer$,
+			adjustTimerOnAfk$: $adjustTimerOnAfk$,
+			enableExternalClipboardMonitor$: $enableExternalClipboardMonitor$,
+			showPresetQuickSwitch$: $showPresetQuickSwitch$,
+			skipResetConfirmations$: $skipResetConfirmations$,
+			persistStats$: $persistStats$,
+			persistNotes$: $persistNotes$,
+			persistLines$: $persistLines$,
+			persistActionHistory$: $persistActionHistory$,
+			enablePaste$: $enablePaste$,
+			blockCopyOnPage$: $blockCopyOnPage$,
+			allowPasteDuringPause$: $allowPasteDuringPause$,
+			allowNewLineDuringPause$: $allowNewLineDuringPause$,
+			autoStartTimerDuringPausePaste$: $autoStartTimerDuringPausePaste$,
+			autoStartTimerDuringPause$: $autoStartTimerDuringPause$,
+			flashOnMissedLine$: $flashOnMissedLine$,
+			preventGlobalDuplicate$: $preventGlobalDuplicate$,
+			displayVertical$: $displayVertical$,
+			reverseLineOrder$: $reverseLineOrder$,
+			preserveWhitespace$: $preserveWhitespace$,
+			removeAllWhitespace$: $removeAllWhitespace$,
+			showTimer$: $showTimer$,
+			showSpeed$: $showSpeed$,
+			showCharacterCount$: $showCharacterCount$,
+			showLineCount$: $showLineCount$,
+			blurStats$: $blurStats$,
+			enableLineAnimation$: $enableLineAnimation$,
+			enableAfkBlur$: $enableAfkBlur$,
+			enableAfkBlurRestart$: $enableAfkBlurRestart$,
+			continuousReconnect$: $continuousReconnect$,
+			showConnectionErrors$: $showConnectionErrors$,
+			customCSS$: $customCSS$,
+		};
 	}
 
-	function changePreset(presetName: string) {
-		const existingEntry = $settingPresets$.find((entry) => entry.name === presetName);
-
-		if (!existingEntry) {
-			return;
-		}
-
-		theme$.next(existingEntry.settings.theme$ ?? defaultSettings.theme$);
-		replacements$.next(existingEntry.settings.replacements$ ?? defaultSettings.replacements$);
-		windowTitle$.next(existingEntry.settings.windowTitle$ ?? defaultSettings.windowTitle$);
-		websocketUrl$.next(existingEntry.settings.websocketUrl$ ?? defaultSettings.websocketUrl$);
-		secondaryWebsocketUrl$.next(existingEntry.settings.secondaryWebsocketUrl$ ?? '');
-		fontSize$.next(existingEntry.settings.fontSize$ ?? defaultSettings.fontSize$);
-		onlineFont$.next(existingEntry.settings.onlineFont$ ?? defaultSettings.onlineFont$);
-		preventLastDuplicate$.next(
-			existingEntry.settings.preventLastDuplicate$ ?? defaultSettings.preventLastDuplicate$,
-		);
-		maxLines$.next(existingEntry.settings.maxLines$ ?? defaultSettings.maxLines$);
-		afkTimer$.next(existingEntry.settings.afkTimer$ ?? defaultSettings.afkTimer$);
-		adjustTimerOnAfk$.next(existingEntry.settings.adjustTimerOnAfk$ ?? defaultSettings.adjustTimerOnAfk$);
+	export function updateSettingsWithPreset(preset: SettingPreset, updateLastPreset = true) {
+		theme$.next(preset.settings.theme$ ?? defaultSettings.theme$);
+		replacements$.next(preset.settings.replacements$ ?? defaultSettings.replacements$);
+		windowTitle$.next(preset.settings.windowTitle$ ?? defaultSettings.windowTitle$);
+		websocketUrl$.next(preset.settings.websocketUrl$ ?? defaultSettings.websocketUrl$);
+		secondaryWebsocketUrl$.next(preset.settings.secondaryWebsocketUrl$ ?? '');
+		fontSize$.next(preset.settings.fontSize$ ?? defaultSettings.fontSize$);
+		onlineFont$.next(preset.settings.onlineFont$ ?? defaultSettings.onlineFont$);
+		preventLastDuplicate$.next(preset.settings.preventLastDuplicate$ ?? defaultSettings.preventLastDuplicate$);
+		maxLines$.next(preset.settings.maxLines$ ?? defaultSettings.maxLines$);
+		afkTimer$.next(preset.settings.afkTimer$ ?? defaultSettings.afkTimer$);
+		adjustTimerOnAfk$.next(preset.settings.adjustTimerOnAfk$ ?? defaultSettings.adjustTimerOnAfk$);
 		enableExternalClipboardMonitor$.next(
-			existingEntry.settings.enableExternalClipboardMonitor$ ?? defaultSettings.enableExternalClipboardMonitor$,
+			preset.settings.enableExternalClipboardMonitor$ ?? defaultSettings.enableExternalClipboardMonitor$,
 		);
-		showPresetQuickSwitch$.next(
-			existingEntry.settings.showPresetQuickSwitch$ ?? defaultSettings.showPresetQuickSwitch$,
-		);
+		showPresetQuickSwitch$.next(preset.settings.showPresetQuickSwitch$ ?? defaultSettings.showPresetQuickSwitch$);
 		skipResetConfirmations$.next(
-			existingEntry.settings.skipResetConfirmations$ ?? defaultSettings.skipResetConfirmations$,
+			preset.settings.skipResetConfirmations$ ?? defaultSettings.skipResetConfirmations$,
 		);
-		persistStats$.next(existingEntry.settings.persistStats$ ?? defaultSettings.persistStats$);
-		persistNotes$.next(existingEntry.settings.persistNotes$ ?? defaultSettings.persistNotes$);
-		persistLines$.next(existingEntry.settings.persistLines$ ?? defaultSettings.persistLines$);
-		persistActionHistory$.next(
-			existingEntry.settings.persistActionHistory$ ?? defaultSettings.persistActionHistory$,
-		);
-		enablePaste$.next(existingEntry.settings.enablePaste$ ?? defaultSettings.enablePaste$);
-		blockCopyOnPage$.next(existingEntry.settings.blockCopyOnPage$ ?? defaultSettings.blockCopyOnPage$);
-		allowPasteDuringPause$.next(
-			existingEntry.settings.allowPasteDuringPause$ ?? defaultSettings.allowPasteDuringPause$,
-		);
+		persistStats$.next(preset.settings.persistStats$ ?? defaultSettings.persistStats$);
+		persistNotes$.next(preset.settings.persistNotes$ ?? defaultSettings.persistNotes$);
+		persistLines$.next(preset.settings.persistLines$ ?? defaultSettings.persistLines$);
+		persistActionHistory$.next(preset.settings.persistActionHistory$ ?? defaultSettings.persistActionHistory$);
+		enablePaste$.next(preset.settings.enablePaste$ ?? defaultSettings.enablePaste$);
+		blockCopyOnPage$.next(preset.settings.blockCopyOnPage$ ?? defaultSettings.blockCopyOnPage$);
+		allowPasteDuringPause$.next(preset.settings.allowPasteDuringPause$ ?? defaultSettings.allowPasteDuringPause$);
 		allowNewLineDuringPause$.next(
-			existingEntry.settings.allowNewLineDuringPause$ ?? defaultSettings.allowNewLineDuringPause$,
+			preset.settings.allowNewLineDuringPause$ ?? defaultSettings.allowNewLineDuringPause$,
 		);
 		autoStartTimerDuringPausePaste$.next(
-			existingEntry.settings.autoStartTimerDuringPausePaste$ ?? defaultSettings.autoStartTimerDuringPausePaste$,
+			preset.settings.autoStartTimerDuringPausePaste$ ?? defaultSettings.autoStartTimerDuringPausePaste$,
 		);
 		autoStartTimerDuringPause$.next(
-			existingEntry.settings.autoStartTimerDuringPause$ ?? defaultSettings.autoStartTimerDuringPause$,
+			preset.settings.autoStartTimerDuringPause$ ?? defaultSettings.autoStartTimerDuringPause$,
 		);
-		flashOnMissedLine$.next(existingEntry.settings.flashOnMissedLine$ ?? defaultSettings.flashOnMissedLine$);
+		flashOnMissedLine$.next(preset.settings.flashOnMissedLine$ ?? defaultSettings.flashOnMissedLine$);
 		preventGlobalDuplicate$.next(
-			existingEntry.settings.preventGlobalDuplicate$ ?? defaultSettings.preventGlobalDuplicate$,
+			preset.settings.preventGlobalDuplicate$ ?? defaultSettings.preventGlobalDuplicate$,
 		);
-		displayVertical$.next(existingEntry.settings.displayVertical$ ?? defaultSettings.displayVertical$);
-		reverseLineOrder$.next(existingEntry.settings.reverseLineOrder$ ?? defaultSettings.reverseLineOrder$);
-		preserveWhitespace$.next(existingEntry.settings.preserveWhitespace$ ?? defaultSettings.preserveWhitespace$);
-		removeAllWhitespace$.next(existingEntry.settings.removeAllWhitespace$ ?? defaultSettings.removeAllWhitespace$);
-		showTimer$.next(existingEntry.settings.showTimer$ ?? defaultSettings.showTimer$);
-		showSpeed$.next(existingEntry.settings.showSpeed$ ?? defaultSettings.showSpeed$);
-		showCharacterCount$.next(existingEntry.settings.showCharacterCount$ ?? defaultSettings.showCharacterCount$);
-		showLineCount$.next(existingEntry.settings.showLineCount$ ?? defaultSettings.showLineCount$);
-		blurStats$.next(existingEntry.settings.blurStats$ ?? defaultSettings.blurStats$);
-		enableLineAnimation$.next(existingEntry.settings.enableLineAnimation$ ?? defaultSettings.enableLineAnimation$);
-		enableAfkBlur$.next(existingEntry.settings.enableAfkBlur$ ?? defaultSettings.enableAfkBlur$);
-		enableAfkBlurRestart$.next(
-			existingEntry.settings.enableAfkBlurRestart$ ?? defaultSettings.enableAfkBlurRestart$,
-		);
-		continuousReconnect$.next(existingEntry.settings.continuousReconnect$ ?? defaultSettings.continuousReconnect$);
-		showConnectionErrors$.next(
-			existingEntry.settings.showConnectionErrors$ ?? defaultSettings.showConnectionErrors$,
-		);
-		customCSS$.next(existingEntry.settings.customCSS$ ?? defaultSettings.customCSS$);
+		displayVertical$.next(preset.settings.displayVertical$ ?? defaultSettings.displayVertical$);
+		reverseLineOrder$.next(preset.settings.reverseLineOrder$ ?? defaultSettings.reverseLineOrder$);
+		preserveWhitespace$.next(preset.settings.preserveWhitespace$ ?? defaultSettings.preserveWhitespace$);
+		removeAllWhitespace$.next(preset.settings.removeAllWhitespace$ ?? defaultSettings.removeAllWhitespace$);
+		showTimer$.next(preset.settings.showTimer$ ?? defaultSettings.showTimer$);
+		showSpeed$.next(preset.settings.showSpeed$ ?? defaultSettings.showSpeed$);
+		showCharacterCount$.next(preset.settings.showCharacterCount$ ?? defaultSettings.showCharacterCount$);
+		showLineCount$.next(preset.settings.showLineCount$ ?? defaultSettings.showLineCount$);
+		blurStats$.next(preset.settings.blurStats$ ?? defaultSettings.blurStats$);
+		enableLineAnimation$.next(preset.settings.enableLineAnimation$ ?? defaultSettings.enableLineAnimation$);
+		enableAfkBlur$.next(preset.settings.enableAfkBlur$ ?? defaultSettings.enableAfkBlur$);
+		enableAfkBlurRestart$.next(preset.settings.enableAfkBlurRestart$ ?? defaultSettings.enableAfkBlurRestart$);
+		continuousReconnect$.next(preset.settings.continuousReconnect$ ?? defaultSettings.continuousReconnect$);
+		showConnectionErrors$.next(preset.settings.showConnectionErrors$ ?? defaultSettings.showConnectionErrors$);
+		customCSS$.next(preset.settings.customCSS$ ?? defaultSettings.customCSS$);
 
-		$lastSettingPreset$ = presetName;
+		if (updateLastPreset) {
+			$lastSettingPreset$ = preset.name;
+		}
 
 		tick().then(() => {
 			dispatch('layoutChange');
@@ -153,6 +174,23 @@
 				reconnectSecondarySocket$.next();
 			}
 		});
+	}
+
+	const fallbackPresetEntry = [{ name: '' }];
+	const dispatch = createEventDispatcher<{ layoutChange: void; exportImportPreset: MouseEvent }>();
+
+	function selectPreset(event: Event) {
+		const target = event.target as HTMLSelectElement;
+
+		changePreset(target.selectedOptions[0].value);
+	}
+
+	function changePreset(presetName: string) {
+		const existingEntry = $settingPresets$.find((entry) => entry.name === presetName);
+
+		if (existingEntry) {
+			updateSettingsWithPreset(existingEntry);
+		}
 	}
 
 	async function savePreset() {
@@ -173,49 +211,7 @@
 		const existingEntryIndex = $settingPresets$.findIndex((entry) => entry.name === data);
 		const entry: SettingPreset = {
 			name: data,
-			settings: {
-				theme$: $theme$,
-				replacements$: $replacements$,
-				windowTitle$: $windowTitle$,
-				websocketUrl$: $websocketUrl$,
-				secondaryWebsocketUrl$: $secondaryWebsocketUrl$,
-				fontSize$: $fontSize$,
-				onlineFont$: $onlineFont$,
-				preventLastDuplicate$: $preventLastDuplicate$,
-				maxLines$: $maxLines$,
-				afkTimer$: $afkTimer$,
-				adjustTimerOnAfk$: $adjustTimerOnAfk$,
-				enableExternalClipboardMonitor$: $enableExternalClipboardMonitor$,
-				showPresetQuickSwitch$: $showPresetQuickSwitch$,
-				skipResetConfirmations$: $skipResetConfirmations$,
-				persistStats$: $persistStats$,
-				persistNotes$: $persistNotes$,
-				persistLines$: $persistLines$,
-				persistActionHistory$: $persistActionHistory$,
-				enablePaste$: $enablePaste$,
-				blockCopyOnPage$: $blockCopyOnPage$,
-				allowPasteDuringPause$: $allowPasteDuringPause$,
-				allowNewLineDuringPause$: $allowNewLineDuringPause$,
-				autoStartTimerDuringPausePaste$: $autoStartTimerDuringPausePaste$,
-				autoStartTimerDuringPause$: $autoStartTimerDuringPause$,
-				flashOnMissedLine$: $flashOnMissedLine$,
-				preventGlobalDuplicate$: $preventGlobalDuplicate$,
-				displayVertical$: $displayVertical$,
-				reverseLineOrder$: $reverseLineOrder$,
-				preserveWhitespace$: $preserveWhitespace$,
-				removeAllWhitespace$: $removeAllWhitespace$,
-				showTimer$: $showTimer$,
-				showSpeed$: $showSpeed$,
-				showCharacterCount$: $showCharacterCount$,
-				showLineCount$: $showLineCount$,
-				blurStats$: $blurStats$,
-				enableLineAnimation$: $enableLineAnimation$,
-				enableAfkBlur$: $enableAfkBlur$,
-				enableAfkBlurRestart$: $enableAfkBlurRestart$,
-				continuousReconnect$: $continuousReconnect$,
-				showConnectionErrors$: $showConnectionErrors$,
-				customCSS$: $customCSS$,
-			},
+			settings: getCurrentSettings(),
 		};
 
 		if (existingEntryIndex > -1) {
@@ -263,7 +259,7 @@
 {:else}
 	<details role="button" class="col-span-4 mb-2">
 		<summary>Presets</summary>
-		<div class="flex items-center mt-2">
+		<div class="flex items-center justify-between mt-2">
 			<select class="select flex-1 max-w-md" value={$lastSettingPreset$} on:change={selectPreset}>
 				{#each $settingPresets$.length ? $settingPresets$ : fallbackPresetEntry as preset (preset.name)}
 					<option value={preset.name}>
@@ -279,6 +275,15 @@
 			>
 				<Icon path={mdiContentSave} />
 				<span class="label-text">Save</span>
+			</div>
+			<div
+				role="button"
+				class="flex flex-col items-center hover:text-primary ml-3"
+				on:click={(event) => dispatch('exportImportPreset', event)}
+				on:keyup={dummyFn}
+			>
+				<Icon path={mdiDatabaseSync} />
+				<span class="label-text">Export/Import</span>
 			</div>
 			<div
 				role="button"
