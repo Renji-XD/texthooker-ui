@@ -31,6 +31,7 @@
 		enablePaste$,
 		flashOnMissedLine$,
 		fontSize$,
+		lastSettingPreset$,
 		lineData$,
 		maxLines$,
 		newLine$,
@@ -49,6 +50,7 @@
 		resetAllData,
 		reverseLineOrder$,
 		secondaryWebsocketUrl$,
+		settingPresets$,
 		showCharacterCount$,
 		showConnectionErrors$,
 		showLineCount$,
@@ -63,7 +65,16 @@
 		websocketUrl$,
 		windowTitle$,
 	} from '../stores/stores';
-	import { LineType, OnlineFont, Theme, type DialogResult, type LineItem } from '../types';
+	import {
+		LineType,
+		OnlineFont,
+		Theme,
+		type DialogResult,
+		type ExportedData,
+		type ExportedSettings,
+		type LineItem,
+		type SettingPreset,
+	} from '../types';
 	import { clickOutside } from '../use-click-outside';
 	import { dummyFn, timeStringToSeconds } from '../util';
 	import Icon from './Icon.svelte';
@@ -103,7 +114,10 @@
 	const dispatch = createEventDispatcher<{ layoutChange: void; maxLinesChange: void }>();
 	const onlineFonts = [OnlineFont.OFF, OnlineFont.NOTO, OnlineFont.KLEE, OnlineFont.SHIPPORI];
 
-	let fileInput: HTMLInputElement;
+	let dataFileInput: HTMLInputElement;
+	let settingsFileInput: HTMLInputElement;
+	let presetFileInput: HTMLInputElement;
+	let presetComponent: Presets;
 	let clipboardMutationObserver: MutationObserver | undefined;
 
 	$: websocketUrl = $websocketUrl$;
@@ -182,7 +196,9 @@
 			!$showSpinner$ &&
 			target !== settingsElement &&
 			target.parentElement !== settingsElement &&
-			target !== fileInput &&
+			target !== dataFileInput &&
+			target !== settingsFileInput &&
+			target !== presetFileInput &&
 			!$dialogOpen$
 		) {
 			settingsOpen = false;
@@ -239,73 +255,51 @@
 
 	async function handleExportImportData(event: MouseEvent) {
 		if (event.altKey) {
-			if (!$skipResetConfirmations$) {
-				const { canceled } = await new Promise<DialogResult>((resolve) => {
-					$openDialog$ = {
-						icon: mdiHelpCircle,
-						message: 'Existing Data will be overwritten',
-						callback: resolve,
-					};
-				});
-
-				if (canceled) {
-					return;
-				}
-			}
-
-			fileInput.click();
+			await handleImport(dataFileInput, 'Existing Data will be overwritten');
 		} else {
-			const a = document.createElement('a');
-			a.href = URL.createObjectURL(
-				new Blob(
-					[
-						JSON.stringify({
-							'bannou-texthooker-timeValue': $timeValue$,
-							'bannou-texthooker-userNotes': $userNotes$,
-							'bannou-texthooker-lineData': $lineData$,
-							'bannou-texthooker-actionHistory': $actionHistory$,
-						}),
-					],
-					{ type: `application/json` },
-				),
-			);
-			a.rel = 'noopener';
-			a.download = 'texthooker-ui.json';
-			setTimeout(() => {
-				URL.revokeObjectURL(a.href);
-			}, 1e4);
-
-			setTimeout(() => {
-				a.click();
+			handleExport<ExportedData>('texthooker-ui_data.json', {
+				'bannou-texthooker-timeValue': $timeValue$,
+				'bannou-texthooker-userNotes': $userNotes$,
+				'bannou-texthooker-lineData': $lineData$,
+				'bannou-texthooker-actionHistory': $actionHistory$,
 			});
 		}
 	}
 
-	async function handleFileChange() {
-		const [file] = fileInput.files;
-
-		if (!file) {
-			return;
+	async function handleExportImportSettings(event: MouseEvent) {
+		if (event.altKey) {
+			await handleImport(settingsFileInput, 'Presets, Settings etc. will be overwritten');
+		} else {
+			handleExport<ExportedSettings>('texthooker-ui_settings.json', {
+				currentSettings: presetComponent.getCurrentSettings(),
+				settingPresets: $settingPresets$,
+				lastSettingsPreset: $lastSettingPreset$,
+			});
 		}
+	}
 
-		if (!file.name.endsWith('.json')) {
-			$openDialog$ = {
-				type: 'error',
-				message: `Expected json File`,
-				showCancel: false,
-			};
+	async function handleExportImportPreset(event: MouseEvent) {
+		if (event.altKey) {
+			await handleImport(presetFileInput, 'Preset will be overwritten or otherwise added');
+		} else if ($lastSettingPreset$) {
+			const existingEntry = $settingPresets$.find((entry) => entry.name === $lastSettingPreset$);
 
-			fileInput.value = null;
-			return;
+			if (existingEntry) {
+				handleExport<SettingPreset>('texthooker-ui_preset.json', {
+					name: existingEntry.name,
+					settings: existingEntry.settings,
+				});
+			}
 		}
+	}
 
-		const data = await loadFile(file).catch(({ message }) => {
+	async function handleDataFileChange() {
+		const data = await loadFile<ExportedData>(dataFileInput).catch(({ message }) => {
 			$openDialog$ = {
 				type: 'error',
 				message,
 				showCancel: false,
 			};
-			return undefined;
 		});
 
 		if (data) {
@@ -333,24 +327,54 @@
 			}
 		}
 
-		fileInput.value = null;
+		dataFileInput.value = null;
 	}
 
-	function loadFile(file: File) {
-		return new Promise((resolve, reject) => {
-			const fileReader = new FileReader();
-
-			fileReader.addEventListener('loadend', (event) => {
-				try {
-					const data = JSON.parse(event.target.result as string);
-					resolve(data);
-				} catch (error) {
-					reject(new Error('Error parsing File'));
-				}
-			});
-			fileReader.addEventListener('error', () => reject(new Error('Failed to read File')));
-			fileReader.readAsText(file, 'utf-8');
+	async function handleSettingsFileChange() {
+		const data = await loadFile<ExportedSettings>(settingsFileInput).catch(({ message }) => {
+			$openDialog$ = {
+				type: 'error',
+				message,
+				showCancel: false,
+			};
 		});
+
+		if (data) {
+			$settingPresets$ = data.settingPresets || [];
+			$lastSettingPreset$ = data.lastSettingsPreset || '';
+
+			if (data.currentSettings) {
+				presetComponent.updateSettingsWithPreset({ name: '', settings: data.currentSettings }, false);
+			}
+		}
+
+		settingsFileInput.value = null;
+	}
+
+	async function handlePresetFileChange() {
+		const data = await loadFile<SettingPreset>(presetFileInput).catch(({ message }) => {
+			$openDialog$ = {
+				type: 'error',
+				message,
+				showCancel: false,
+			};
+		});
+
+		if (data && data.name && data.settings) {
+			const presetIndex = $settingPresets$.findIndex((entry) => entry.name === data.name);
+
+			if (presetIndex > -1) {
+				$settingPresets$[presetIndex] = data;
+				$settingPresets$ = [...$settingPresets$];
+			} else {
+				$settingPresets$ = [...$settingPresets$, data];
+			}
+
+			$lastSettingPreset$ = data.name;
+			presetComponent.updateSettingsWithPreset(data);
+		}
+
+		presetFileInput.value = null;
 	}
 
 	async function handlePersistenceChange(settingEnabled: boolean, message: String, storageKey: string) {
@@ -518,6 +542,74 @@
 	function handleCustomCSSBlur(event: FocusEvent) {
 		$customCSS$ = (event.target as HTMLTextAreaElement).value;
 	}
+
+	async function handleImport(fileInput: HTMLInputElement, message: string) {
+		if (!$skipResetConfirmations$) {
+			const { canceled } = await new Promise<DialogResult>((resolve) => {
+				$openDialog$ = {
+					icon: mdiHelpCircle,
+					message,
+					callback: resolve,
+				};
+			});
+
+			if (canceled) {
+				return;
+			}
+		}
+
+		fileInput.click();
+	}
+
+	function handleExport<T>(fileName: string, exportData: T) {
+		const a = document.createElement('a');
+
+		a.href = URL.createObjectURL(new Blob([JSON.stringify(exportData)], { type: `application/json` }));
+		a.rel = 'noopener';
+		a.download = fileName;
+
+		setTimeout(() => {
+			URL.revokeObjectURL(a.href);
+		}, 1e4);
+
+		setTimeout(() => {
+			a.click();
+		});
+	}
+
+	function loadFile<T>(inputElement: HTMLInputElement) {
+		return new Promise<T | void>((resolve, reject) => {
+			const [file] = inputElement.files;
+			const fileReader = new FileReader();
+
+			if (!file) {
+				return resolve();
+			}
+
+			if (!file.name.endsWith('.json')) {
+				$openDialog$ = {
+					type: 'error',
+					message: `Expected json File`,
+					showCancel: false,
+				};
+
+				inputElement.value = null;
+				return resolve();
+			}
+
+			fileReader.addEventListener('loadend', (event) => {
+				try {
+					const data = JSON.parse(event.target.result as string);
+
+					resolve(data);
+				} catch (error) {
+					reject(new Error('Error parsing File'));
+				}
+			});
+			fileReader.addEventListener('error', () => reject(new Error('Failed to read File')));
+			fileReader.readAsText(file, 'utf-8');
+		});
+	}
 </script>
 
 <svelte:head>
@@ -525,7 +617,9 @@
 </svelte:head>
 
 {#if settingsOpen}
-	<input class="hidden" type="file" bind:this={fileInput} on:change={handleFileChange} />
+	<input class="hidden" type="file" bind:this={dataFileInput} on:change={handleDataFileChange} />
+	<input class="hidden" type="file" bind:this={settingsFileInput} on:change={handleSettingsFileChange} />
+	<input class="hidden" type="file" bind:this={presetFileInput} on:change={handlePresetFileChange} />
 	<div
 		class="grid grid-cols-[max-content,auto,max-content,auto] gap-3 absolute overflow-auto h-[90vh] top-11 z-10 py-4 pr-8 pl-4 border bg-base-200"
 		use:clickOutside={handleSettingsClick}
@@ -589,6 +683,15 @@
 				<div
 					role="button"
 					class="flex flex-col items-center hover:text-primary"
+					on:click={handleExportImportSettings}
+					on:keyup={dummyFn}
+				>
+					<Icon path={mdiDatabaseSync} />
+					<span class="label-text">Ex-/Import Settings</span>
+				</div>
+				<div
+					role="button"
+					class="flex flex-col items-center hover:text-primary"
 					on:click={() => ($theme$ = $theme$ === Theme.BUSINESS ? Theme.GARDEN : Theme.BUSINESS)}
 					on:keyup={dummyFn}
 				>
@@ -646,7 +749,11 @@
 				</li>
 			</ul>
 		</details>
-		<Presets on:layoutChange />
+		<Presets
+			on:layoutChange
+			on:exportImportPreset={({ detail }) => handleExportImportPreset(detail)}
+			bind:this={presetComponent}
+		/>
 		<ReplacementSettings on:applyReplacements />
 		<span class="label-text col-span-2">Window Title</span>
 		<input class="input input-bordered h-8 col-span-2" bind:value={$windowTitle$} />
