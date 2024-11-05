@@ -43,8 +43,9 @@ export const defaultSettings: Settings = {
 	allowNewLineDuringPause$: false,
 	autoStartTimerDuringPausePaste$: false,
 	autoStartTimerDuringPause$: false,
-	flashOnMissedLine$: true,
 	preventGlobalDuplicate$: false,
+	mergeEqualLineStarts$: false,
+	flashOnMissedLine$: true,
 	displayVertical$: false,
 	reverseLineOrder$: false,
 	preserveWhitespace$: true,
@@ -148,14 +149,19 @@ export const autoStartTimerDuringPause$ = writableBooleanSubject()(
 	defaultSettings.autoStartTimerDuringPause$
 );
 
-export const flashOnMissedLine$ = writableBooleanSubject()(
-	'bannou-texthooker-flashOnMissedLine',
-	defaultSettings.flashOnMissedLine$
-);
-
 export const preventGlobalDuplicate$ = writableBooleanSubject()(
 	'bannou-texthooker-preventGlobalDuplicate',
 	defaultSettings.preventGlobalDuplicate$
+);
+
+export const mergeEqualLineStarts$ = writableBooleanSubject()(
+	'bannou-texthooker-mergeEqualLineStarts',
+	defaultSettings.mergeEqualLineStarts$
+);
+
+export const flashOnMissedLine$ = writableBooleanSubject()(
+	'bannou-texthooker-flashOnMissedLine',
+	defaultSettings.flashOnMissedLine$
 );
 
 export const displayVertical$ = writableBooleanSubject()(
@@ -311,8 +317,9 @@ export async function resetAllData() {
 	allowNewLineDuringPause$.next(defaultSettings.allowNewLineDuringPause$);
 	autoStartTimerDuringPausePaste$.next(defaultSettings.autoStartTimerDuringPausePaste$);
 	autoStartTimerDuringPause$.next(defaultSettings.autoStartTimerDuringPause$);
-	flashOnMissedLine$.next(defaultSettings.flashOnMissedLine$);
 	preventGlobalDuplicate$.next(defaultSettings.preventGlobalDuplicate$);
+	mergeEqualLineStarts$.next(defaultSettings.mergeEqualLineStarts$);
+	flashOnMissedLine$.next(defaultSettings.flashOnMissedLine$);
 	displayVertical$.next(defaultSettings.displayVertical$);
 	reverseLineOrder$.next(defaultSettings.reverseLineOrder$);
 	preserveWhitespace$.next(defaultSettings.preserveWhitespace$);
