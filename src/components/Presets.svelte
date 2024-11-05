@@ -23,6 +23,7 @@
 		fontSize$,
 		lastSettingPreset$,
 		maxLines$,
+		mergeEqualLineStarts$,
 		onlineFont$,
 		openDialog$,
 		persistActionHistory$,
@@ -84,8 +85,9 @@
 			allowNewLineDuringPause$: $allowNewLineDuringPause$,
 			autoStartTimerDuringPausePaste$: $autoStartTimerDuringPausePaste$,
 			autoStartTimerDuringPause$: $autoStartTimerDuringPause$,
-			flashOnMissedLine$: $flashOnMissedLine$,
 			preventGlobalDuplicate$: $preventGlobalDuplicate$,
+			mergeEqualLineStarts$: $mergeEqualLineStarts$,
+			flashOnMissedLine$: $flashOnMissedLine$,
 			displayVertical$: $displayVertical$,
 			reverseLineOrder$: $reverseLineOrder$,
 			preserveWhitespace$: $preserveWhitespace$,
@@ -139,10 +141,11 @@
 		autoStartTimerDuringPause$.next(
 			preset.settings.autoStartTimerDuringPause$ ?? defaultSettings.autoStartTimerDuringPause$,
 		);
-		flashOnMissedLine$.next(preset.settings.flashOnMissedLine$ ?? defaultSettings.flashOnMissedLine$);
 		preventGlobalDuplicate$.next(
 			preset.settings.preventGlobalDuplicate$ ?? defaultSettings.preventGlobalDuplicate$,
 		);
+		mergeEqualLineStarts$.next(preset.settings.mergeEqualLineStarts$ ?? defaultSettings.mergeEqualLineStarts$);
+		flashOnMissedLine$.next(preset.settings.flashOnMissedLine$ ?? defaultSettings.flashOnMissedLine$);
 		displayVertical$.next(preset.settings.displayVertical$ ?? defaultSettings.displayVertical$);
 		reverseLineOrder$.next(preset.settings.reverseLineOrder$ ?? defaultSettings.reverseLineOrder$);
 		preserveWhitespace$.next(preset.settings.preserveWhitespace$ ?? defaultSettings.preserveWhitespace$);

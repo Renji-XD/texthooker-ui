@@ -34,6 +34,7 @@
 		lastSettingPreset$,
 		lineData$,
 		maxLines$,
+		mergeEqualLineStarts$,
 		newLine$,
 		onlineFont$,
 		openDialog$,
@@ -873,8 +874,6 @@
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$autoStartTimerDuringPausePaste$} />
 		<span class="label-text">Autostart Timer by Line during Pause</span>
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$autoStartTimerDuringPause$} />
-		<span class="label-text">Flash on missed Line</span>
-		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$flashOnMissedLine$} />
 		<span class="label-text">Prevent Global Duplicate</span>
 		<input
 			type="checkbox"
@@ -882,6 +881,10 @@
 			bind:checked={$preventGlobalDuplicate$}
 			on:change={handlePreventGlobalDuplicateChange}
 		/>
+		<span class="label-text">Merge equal Line Starts</span>
+		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$mergeEqualLineStarts$} />
+		<span class="label-text">Flash on missed Line</span>
+		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$flashOnMissedLine$} />
 		<span class="label-text">Display Text vertically</span>
 		<input
 			type="checkbox"

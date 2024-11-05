@@ -30,6 +30,7 @@
 		isPaused$,
 		lineData$,
 		maxLines$,
+		mergeEqualLineStarts$,
 		newLine$,
 		notesOpen$,
 		onlineFont$,
@@ -78,7 +79,7 @@
 
 	const uniqueLines$ = preventGlobalDuplicate$.pipe(
 		map((preventGlobalDuplicate) =>
-			preventGlobalDuplicate ? new Set($lineData$.map((line) => line.text)) : new Set(),
+			preventGlobalDuplicate ? new Set<string>($lineData$.map((line) => line.text)) : new Set<string>(),
 		),
 	);
 
@@ -120,7 +121,10 @@
 			const text = transformLine(lineContent);
 
 			if (text) {
-				$lineData$ = [...applyMaxLinesAndGetRemainingLineData(1), { id: generateRandomUUID(), text }];
+				$lineData$ = applyEqualLineStartMerge([
+					...applyMaxLinesAndGetRemainingLineData(1),
+					{ id: generateRandomUUID(), text },
+				]);
 			}
 		}),
 		reduceToEmptyString(),
@@ -218,7 +222,7 @@
 		}
 	}
 
-	function undoLastAction() {
+	async function undoLastAction() {
 		if (!$actionHistory$.length) {
 			return;
 		}
@@ -245,7 +249,9 @@
 			lineToRevert = linesToRevert.pop();
 		}
 
-		$lineData$ = applyMaxLinesAndGetRemainingLineData();
+		await tick();
+
+		$lineData$ = applyEqualLineStartMerge(applyMaxLinesAndGetRemainingLineData());
 		$actionHistory$ = $actionHistory$;
 	}
 
@@ -427,6 +433,25 @@
 		}
 
 		return remainingLineData;
+	}
+
+	function applyEqualLineStartMerge(currentLineData: LineItem[]) {
+		if (!$mergeEqualLineStarts$ || currentLineData.length < 2) {
+			return currentLineData;
+		}
+
+		const lastIndex = currentLineData.length - 1;
+		const comparisonIndex = lastIndex - 1;
+		const lastLine = currentLineData[lastIndex];
+		const comparisonLine = currentLineData[comparisonIndex].text;
+
+		if (lastLine.text.startsWith(comparisonLine)) {
+			$uniqueLines$.delete(comparisonLine);
+
+			currentLineData.splice(comparisonIndex, 2, lastLine);
+		}
+
+		return currentLineData;
 	}
 </script>
 

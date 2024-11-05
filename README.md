@@ -88,6 +88,14 @@ _Note_: By default, the undo history is stored in memory only. If you want to ke
 -   Clicking on the icon while holding the "ALT" key on the keyboard lets you select a previously exported file for import. Note that all existing data will be overwritten
 -	The same steps can be executed for exporting/importing all Settings/Presets or single Presets via respective Icons
 
+
+### What is the order of settings / transformations on new text lines?
+1.	Replacements
+2.	Remove all Whitespace
+3.	Global or last line Duplicate
+4.	Max Lines
+5.	Merge equal Line Starts
+
 ## Available Keybinds
 | Keybind | Description |
 |-|-|
@@ -131,8 +139,9 @@ The following section contains explanations and details on the settings you can 
 | Allow new Line during Pause | If enabled, this will allow the page to insert new lines from other sources than pasting even with a paused timer. |
 | Autostart Timer by Paste during Pause | If enabled, the time will automatically re-start if it was paused and new lines were pasted. |
 | Autostart Timer by Line during Pause | If enabled, the time will automatically re-start if it was paused and new lines were inserted by sources than pasting. |
-| Flash on missed Line | If enabled, the page will flash every time a line is inserted/pasted *if your timer is paused*. These lines will be ignored from stats collection. |
 | Prevent Global Duplicate | This is the same as "Prevent Last Line Duplicate", except the line is checked against the entire document. The line will not be inserted/pasted if it is found anywhere within the document. |
+| Merge equal Line Start | If enabled, a new text line will be merged with the previous one in case it starts with the exact same content |
+| Flash on missed Line | If enabled, the page will flash every time a line is inserted/pasted *if your timer is paused*. These lines will be ignored from stats collection. |
 | Display Text vertically | If enabled, the lines will be displayed vertically instead horizontally. |
 | Reverse Line Order | If enabled, the new lines will be appended on top (horizontal mode) / left (vertical mode) instead of bottom / right respectively. |
 | Preserve Whitespace | If enabled, all existing whitespace (such as spaces, new line characters, etc.) within the line will be fully displayed. If left disabled, newlines and multiple spaces in a row will be collapsed to a singular space. This has no effect if the whitespace is already removed (i.e. with the `Remove all Whitespace` option enabled). |

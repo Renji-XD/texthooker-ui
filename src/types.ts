@@ -62,8 +62,9 @@ export interface Settings {
 	allowNewLineDuringPause$: boolean;
 	autoStartTimerDuringPausePaste$: boolean;
 	autoStartTimerDuringPause$: boolean;
-	flashOnMissedLine$: boolean;
 	preventGlobalDuplicate$: boolean;
+	mergeEqualLineStarts$: boolean;
+	flashOnMissedLine$: boolean;
 	displayVertical$: boolean;
 	reverseLineOrder$: boolean;
 	preserveWhitespace$: boolean;
