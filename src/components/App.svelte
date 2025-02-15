@@ -24,6 +24,7 @@
 		displayVertical$,
 		enabledReplacements$,
 		enablePaste$,
+		filterNonCJKLines$,
 		flashOnMissedLine$,
 		flashOnPauseTimeout$,
 		fontSize$,
@@ -76,6 +77,8 @@
 	let wakeLock = null;
 
 	const wakeLockAvailable = 'wakeLock' in navigator;
+
+	const cjkCharacters = /[\p{scx=Hira}\p{scx=Kana}\p{scx=Han}]/imu;
 
 	const uniqueLines$ = preventGlobalDuplicate$.pipe(
 		map((preventGlobalDuplicate) =>
@@ -301,43 +304,6 @@
 		selectedLineIds = [];
 	}
 
-	function onApplyReplacements() {
-		if (!$enabledReplacements$.length) {
-			return;
-		}
-
-		$showSpinner$ = true;
-
-		let changed = 0;
-
-		try {
-			for (let index = 0, { length } = $lineData$; index < length; index += 1) {
-				const line = $lineData$[index];
-				const newText = transformLine(line.text);
-
-				if (newText) {
-					$uniqueLines$.delete(line.text);
-
-					$lineData$[index] = { ...line, text: newText };
-					changed += 1;
-				}
-			}
-
-			$openDialog$ = {
-				message: `${changed} line(s) changed`,
-				showCancel: false,
-			};
-		} catch ({ message }) {
-			$openDialog$ = {
-				type: 'error',
-				message: `An Error occured: ${message} (after ${changed} changed lines)`,
-				showCancel: false,
-			};
-		}
-
-		$showSpinner$ = false;
-	}
-
 	function executeUpdateScroll() {
 		updateScroll(window, lineContainer, $reverseLineOrder$, $displayVertical$);
 	}
@@ -366,9 +332,13 @@
 
 	function transformLine(text: string, useReplacements = true) {
 		const textToAppend = useReplacements ? applyReplacements(text, $enabledReplacements$) : text;
-		const lineToAppend = $removeAllWhitespace$ ? textToAppend.replace(/\s/gm, '').trim() : textToAppend;
 
 		let canAppend = true;
+		let lineToAppend = $removeAllWhitespace$ ? textToAppend.replace(/\s/gm, '').trim() : textToAppend;
+
+		if ($filterNonCJKLines$ && !lineToAppend.match(cjkCharacters)) {
+			lineToAppend = '';
+		}
 
 		if (!lineToAppend) {
 			canAppend = false;
@@ -435,6 +405,42 @@
 		return remainingLineData;
 	}
 
+	function updateLineData(executeUpdate: boolean) {
+		if (!executeUpdate) {
+			return;
+		}
+
+		$showSpinner$ = true;
+
+		try {
+			for (let index = 0, { length } = $lineData$; index < length; index += 1) {
+				const line = $lineData$[index];
+				const newText = transformLine(line.text);
+
+				if (newText && newText !== line.text) {
+					$uniqueLines$.delete(line.text);
+
+					$lineData$[index] = { ...line, text: newText };
+				}
+			}
+
+			$openDialog$ = {
+				message: `Operation executed`,
+				showCancel: false,
+			};
+		} catch ({ message }) {
+			$openDialog$ = {
+				type: 'error',
+				message: `An Error occured: ${message}`,
+				showCancel: false,
+			};
+		}
+
+		$lineData$ = applyEqualLineStartMerge(applyMaxLinesAndGetRemainingLineData());
+
+		$showSpinner$ = false;
+	}
+
 	function applyEqualLineStartMerge(currentLineData: LineItem[]) {
 		if (!$mergeEqualLineStarts$ || currentLineData.length < 2) {
 			return currentLineData;
@@ -447,6 +453,10 @@
 
 		if (lastLine.text.startsWith(comparisonLine)) {
 			$uniqueLines$.delete(comparisonLine);
+
+			selectedLineIds = selectedLineIds.filter(
+				(selectedLineId) => selectedLineId !== currentLineData[comparisonIndex].id,
+			);
 
 			currentLineData.splice(comparisonIndex, 2, lastLine);
 		}
@@ -534,7 +544,7 @@
 		bind:settingsOpen
 		bind:selectedLineIds
 		bind:this={settingsComponent}
-		on:applyReplacements={onApplyReplacements}
+		on:applyReplacements={() => updateLineData(!!$enabledReplacements$.length)}
 		on:layoutChange={executeUpdateScroll}
 		on:maxLinesChange={() => ($lineData$ = applyMaxLinesAndGetRemainingLineData())}
 	/>

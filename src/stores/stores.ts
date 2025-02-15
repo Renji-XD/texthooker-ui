@@ -45,6 +45,7 @@ export const defaultSettings: Settings = {
 	autoStartTimerDuringPause$: false,
 	preventGlobalDuplicate$: false,
 	mergeEqualLineStarts$: false,
+	filterNonCJKLines: false,
 	flashOnMissedLine$: true,
 	displayVertical$: false,
 	reverseLineOrder$: false,
@@ -156,6 +157,11 @@ export const preventGlobalDuplicate$ = writableBooleanSubject()(
 
 export const mergeEqualLineStarts$ = writableBooleanSubject()(
 	'bannou-texthooker-mergeEqualLineStarts',
+	defaultSettings.mergeEqualLineStarts$
+);
+
+export const filterNonCJKLines$ = writableBooleanSubject()(
+	'bannou-texthooker-filterNonCJKLines',
 	defaultSettings.mergeEqualLineStarts$
 );
 
@@ -319,6 +325,7 @@ export async function resetAllData() {
 	autoStartTimerDuringPause$.next(defaultSettings.autoStartTimerDuringPause$);
 	preventGlobalDuplicate$.next(defaultSettings.preventGlobalDuplicate$);
 	mergeEqualLineStarts$.next(defaultSettings.mergeEqualLineStarts$);
+	filterNonCJKLines$.next(defaultSettings.filterNonCJKLines);
 	flashOnMissedLine$.next(defaultSettings.flashOnMissedLine$);
 	displayVertical$.next(defaultSettings.displayVertical$);
 	reverseLineOrder$.next(defaultSettings.reverseLineOrder$);

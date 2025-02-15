@@ -29,6 +29,7 @@
 		enableExternalClipboardMonitor$,
 		enableLineAnimation$,
 		enablePaste$,
+		filterNonCJKLines$,
 		flashOnMissedLine$,
 		fontSize$,
 		lastSettingPreset$,
@@ -883,6 +884,8 @@
 		/>
 		<span class="label-text">Merge equal Line Starts</span>
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$mergeEqualLineStarts$} />
+		<span class="label-text">Filter lines without jp content</span>
+		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$filterNonCJKLines$} />
 		<span class="label-text">Flash on missed Line</span>
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$flashOnMissedLine$} />
 		<span class="label-text">Display Text vertically</span>

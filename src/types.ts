@@ -64,6 +64,7 @@ export interface Settings {
 	autoStartTimerDuringPause$: boolean;
 	preventGlobalDuplicate$: boolean;
 	mergeEqualLineStarts$: boolean;
+	filterNonCJKLines: boolean;
 	flashOnMissedLine$: boolean;
 	displayVertical$: boolean;
 	reverseLineOrder$: boolean;
