@@ -18,6 +18,7 @@ export function updateScroll(
 	displayVertical: boolean,
 	behavior: ScrollBehavior = 'auto'
 ) {
+	console.log(scrollElement);
 	if (!scrollElement) {
 		return;
 	}

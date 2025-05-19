@@ -87,13 +87,19 @@
 	);
 
 	const handleLine$ = newLine$.pipe(
-		filter(([_, lineType]) => {
+		filter(([_, lineType, _1]) => {
+			const isResetCheckboxes = lineType === LineType.RESETCHECKBOXES;
 			const isPaste = lineType === LineType.PASTE;
 			const hasNoUserInteraction = !isPaste || (!$notesOpen$ && !$dialogOpen$ && !settingsOpen && !lineInEdit);
 			const skipExternalLine = blockNextExternalLine && lineType === LineType.EXTERNAL;
 
 			if (skipExternalLine) {
 				blockNextExternalLine = false;
+			}
+
+			if (isResetCheckboxes) {
+				resetCheckBoxes()
+				return false;
 			}
 
 			if (
@@ -119,14 +125,14 @@
 
 			return false;
 		}),
-		tap((newLine: [string, LineType]) => {
+		tap((newLine: [string, LineType, string]) => {
 			const [lineContent] = newLine;
 			const text = transformLine(lineContent);
 
 			if (text) {
 				$lineData$ = applyEqualLineStartMerge([
 					...applyMaxLinesAndGetRemainingLineData(1),
-					{ id: generateRandomUUID(), text },
+					{ id: newLine.at(2) || generateRandomUUID(), text },
 				]);
 			}
 		}),
@@ -135,7 +141,7 @@
 
 	const pasteHandler$ = enablePaste$.pipe(
 		switchMap((enablePaste) => (enablePaste ? fromEvent(document, 'paste') : NEVER)),
-		tap((event: ClipboardEvent) => newLine$.next([event.clipboardData.getData('text/plain'), LineType.PASTE])),
+		tap((event: ClipboardEvent) => newLine$.next([event.clipboardData.getData('text/plain'), LineType.PASTE, ''])),
 		reduceToEmptyString(),
 	);
 
@@ -223,6 +229,18 @@
 		} else if (event.altKey && event.key === 'q') {
 			settingsComponent.handleReset(true);
 		}
+	}
+
+	// Assuming 'lineData' is a correctly defined array for this vanilla JS example
+	function resetCheckBoxes() {
+		$lineData$.forEach((line) => {
+			const checkboxElement = document.getElementById(`multi-line-checkbox-${line.id}`);
+			if (checkboxElement && typeof checkboxElement.checked === 'boolean') { // Check if element exists and is a checkbox
+				checkboxElement.checked = false;
+			} else {
+				console.warn(`Checkbox with ID 'multi-line-checkbox-${line.id}' not found or is not a valid checkbox element.`);
+			}
+		});
 	}
 
 	async function undoLastAction() {

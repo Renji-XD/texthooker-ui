@@ -22,7 +22,7 @@ export const defaultSettings: Settings = {
 	theme$: Theme.BUSINESS,
 	replacements$: [],
 	windowTitle$: '',
-	websocketUrl$: 'ws://localhost:6677',
+	websocketUrl$: 'ws://localhost:55001',
 	secondaryWebsocketUrl$: '',
 	fontSize$: 24,
 	onlineFont$: OnlineFont.OFF,
@@ -40,7 +40,7 @@ export const defaultSettings: Settings = {
 	enablePaste$: false,
 	blockCopyOnPage$: false,
 	allowPasteDuringPause$: false,
-	allowNewLineDuringPause$: false,
+	allowNewLineDuringPause$: true,
 	autoStartTimerDuringPausePaste$: false,
 	autoStartTimerDuringPause$: false,
 	preventGlobalDuplicate$: false,
@@ -59,7 +59,7 @@ export const defaultSettings: Settings = {
 	enableLineAnimation$: false,
 	enableAfkBlur$: false,
 	enableAfkBlurRestart$: false,
-	continuousReconnect$: false,
+	continuousReconnect$: true,
 	showConnectionErrors$: true,
 	customCSS$: '',
 };
@@ -261,7 +261,7 @@ export const flashOnPauseTimeout$ = writable<number>(undefined);
 
 export const isPaused$ = writableSubject<boolean>(true);
 
-export const newLine$ = new Subject<[string, LineType]>();
+export const newLine$ = new Subject<[string, LineType, string]>();
 
 export const reconnectSocket$ = new Subject<void>();
 

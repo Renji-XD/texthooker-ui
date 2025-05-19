@@ -168,7 +168,7 @@
 				const addedNode = addedNodes[index] as HTMLElement;
 
 				if (addedNode?.tagName === 'P') {
-					newLine$.next([addedNode.textContent, LineType.EXTERNAL]);
+					newLine$.next([addedNode.textContent, LineType.EXTERNAL, '']);
 					addedNode.remove();
 				}
 			}

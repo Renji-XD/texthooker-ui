@@ -101,12 +101,18 @@ export class SocketConnection {
 	private handleMessage(event: MessageEvent) {
 		let line = event.data;
 
+
+
 		try {
+			if (JSON.parse(event.data)?.event === "reset_checkboxes") {
+				newLine$.next(['', LineType.RESETCHECKBOXES, '']);
+			}
 			line = JSON.parse(event.data)?.sentence || event.data;
 		} catch (_) {
 			// no-op
 		}
+		console.log(event.data);
 
-		newLine$.next([line, LineType.SOCKET]);
+		newLine$.next([line, LineType.SOCKET, JSON.parse(event.data)?.data.id || '']);
 	}
 }
