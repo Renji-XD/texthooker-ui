@@ -1,7 +1,13 @@
 <script lang="ts">
 	import { createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
 	import { fly } from 'svelte/transition';
-	import { displayVertical$, enableLineAnimation$, preserveWhitespace$, reverseLineOrder$ } from '../stores/stores';
+	import {
+		displayVertical$,
+		enableLineAnimation$,
+		preserveWhitespace$,
+		reverseLineOrder$,
+		lineIDs$
+	} from '../stores/stores';
 	import type { LineItem, LineItemEditEvent } from '../types';
 	import { dummyFn, newLineCharacter, updateScroll } from '../util';
 
@@ -75,7 +81,7 @@
 
 			dispatch('edit', {
 				inEdit: false,
-				data: { originalText, newText: paragraph.innerText, lineIndex: index, line },
+				data: { originalText, newText: paragraph.innerText, lineIndex: index, line }
 			});
 		}
 	}
@@ -120,11 +126,13 @@
 
 {#key line.text}
 	<div class="textline2">
-		<input type="checkbox"
-			   class="multi-line-checkbox"
-			   id="multi-line-checkbox-{line.id}"
-			   aria-label="{line.id}"
-			   on:change={() => toggleCheckbox(line.id)}>
+		{#if $lineIDs$ && $lineIDs$.includes(line.id)}
+			<input type="checkbox"
+				   class="multi-line-checkbox"
+				   id="multi-line-checkbox-{line.id}"
+				   aria-label="{line.id}"
+				   on:change={() => toggleCheckbox(line.id)}>
+		{/if}
 		<p
 			class="my-2 cursor-pointer border-2"
 			class:py-4={!$displayVertical$}
@@ -144,22 +152,26 @@
 		>
 			{line.text}
 		</p>
-		<div class="textline-buttons">
-			<button
-				on:click={() => buttonClick(line.id, 'Screenshot')}
-				title="Screenshot"
-				style="background-color: #333; color: #fff; border: 1px solid #555; padding: 6px 10px; font-size: 10px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;"
-			>
-				&#x1F4F7;
-			</button>
-			<button
-				on:click={() => buttonClick(line.id, 'Audio')}
-				title="Audio"
-				style="background-color: #333; color: #fff; border: 1px solid #555; padding: 6px 10px; font-size: 10px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;"
-			>
-				&#x1F50A;
-			</button>
-		</div>
+		{#if $lineIDs$ && $lineIDs$.includes(line.id)}
+			<div class="textline-buttons unselectable">
+				<button
+					on:click={() => buttonClick(line.id, 'Screenshot')}
+					title="Screenshot"
+					style="background-color: #333; color: #fff; border: 1px solid #555; padding: 6px 10px; font-size: 10px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;"
+					tabindex="-1"
+				>
+					&#x1F4F7;
+				</button>
+				<button
+					on:click={() => buttonClick(line.id, 'Audio')}
+					title="Audio"
+					style="background-color: #333; color: #fff; border: 1px solid #555; padding: 6px 10px; font-size: 10px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;"
+					tabindex="-1"
+				>
+					&#x1F50A;
+				</button>
+			</div>
+		{/if}
 	</div>
 {/key}
 {@html newLineCharacter}
@@ -206,5 +218,12 @@
 		display: flex;
 		align-items: center;
 		gap: 15px;
+	}
+
+	.unselectable, .unselectable * {
+		user-select: none !important;
+		-webkit-user-select: none !important;
+		-moz-user-select: none !important;
+		-ms-user-select: none !important;
 	}
 </style>

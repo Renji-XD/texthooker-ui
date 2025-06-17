@@ -251,6 +251,8 @@ export const lastSettingPreset$ = writableStringSubject()('bannou-texthooker-las
 
 export const lineData$ = writeableArraySubject<LineItem>()('bannou-texthooker-lineData', [], persistLines$);
 
+export const lineIDs$ = writeableArraySubject<string>()('bannou-texthooker-lineIDs', []);
+
 export const actionHistory$ = writeableArraySubject<LineItem[]>()(
 	'bannou-texthooker-actionHistory',
 	[],

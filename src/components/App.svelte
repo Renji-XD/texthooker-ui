@@ -7,7 +7,7 @@
 		mdiDeleteForever,
 		mdiNoteEdit,
 		mdiPause,
-		mdiPlay,
+		mdiPlay
 	} from '@mdi/js';
 	import { debounceTime, filter, fromEvent, map, NEVER, switchMap, tap } from 'rxjs';
 	import { onMount, tick } from 'svelte';
@@ -30,6 +30,7 @@
 		fontSize$,
 		isPaused$,
 		lineData$,
+		lineIDs$,
 		maxLines$,
 		mergeEqualLineStarts$,
 		newLine$,
@@ -44,15 +45,15 @@
 		secondaryWebsocketUrl$,
 		showSpinner$,
 		theme$,
-		websocketUrl$,
+		websocketUrl$
 	} from '../stores/stores';
-	import { LineType, OnlineFont, Theme, type LineItem, type LineItemEditEvent } from '../types';
+	import { type LineItem, type LineItemEditEvent, LineType, OnlineFont, Theme } from '../types';
 	import {
 		applyReplacements,
 		generateRandomUUID,
 		newLineCharacter,
 		reduceToEmptyString,
-		updateScroll,
+		updateScroll
 	} from '../util';
 	import DialogManager from './DialogManager.svelte';
 	import Icon from './Icon.svelte';
@@ -76,6 +77,8 @@
 	let blockNextExternalLine = false;
 	let wakeLock = null;
 
+	startIdPolling()
+
 	const wakeLockAvailable = 'wakeLock' in navigator;
 
 	const cjkCharacters = /[\p{scx=Hira}\p{scx=Kana}\p{scx=Han}]/imu;
@@ -85,7 +88,7 @@
 			preventGlobalDuplicate ? new Set<string>($lineData$.map((line) => line.text)) : new Set<string>(),
 		),
 	);
-
+I
 	const handleLine$ = newLine$.pipe(
 		filter(([_, lineType, _1]) => {
 			const isResetCheckboxes = lineType === LineType.RESETCHECKBOXES;
@@ -128,11 +131,14 @@
 		tap((newLine: [string, LineType, string]) => {
 			const [lineContent] = newLine;
 			const text = transformLine(lineContent);
+			const id = newLine.at(2) || generateRandomUUID()
+
+			$lineIDs$ = [...$lineIDs$, id];
 
 			if (text) {
 				$lineData$ = applyEqualLineStartMerge([
 					...applyMaxLinesAndGetRemainingLineData(1),
-					{ id: newLine.at(2) || generateRandomUUID(), text },
+					{ id: id, text },
 				]);
 			}
 		}),
@@ -229,6 +235,20 @@
 		} else if (event.altKey && event.key === 'q') {
 			settingsComponent.handleReset(true);
 		}
+	}
+
+	export function startIdPolling() {
+		setInterval(async () => {
+			try {
+				const response = await fetch('/get_ids');
+				if (!response.ok) {
+					throw new Error(`HTTP error! Status: ${response.status}`);
+				}
+				$lineIDs$ = await response.json();
+			} catch (error) {
+				console.error('Failed to fetch ids:', error);
+			}
+		}, 1000);
 	}
 
 	// Assuming 'lineData' is a correctly defined array for this vanilla JS example
