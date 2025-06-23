@@ -24,7 +24,7 @@ export const defaultSettings: Settings = {
 	windowTitle$: '',
 	websocketUrl$: 'ws://localhost:55001',
 	secondaryWebsocketUrl$: '',
-	fontSize$: 24,
+	fontSize$: 32,
 	onlineFont$: OnlineFont.OFF,
 	preventLastDuplicate$: 0,
 	maxLines$: 0,
@@ -60,7 +60,7 @@ export const defaultSettings: Settings = {
 	enableAfkBlur$: false,
 	enableAfkBlurRestart$: false,
 	continuousReconnect$: true,
-	showConnectionErrors$: true,
+	showConnectionErrors$: false,
 	customCSS$: '',
 };
 

@@ -88,7 +88,7 @@
 			preventGlobalDuplicate ? new Set<string>($lineData$.map((line) => line.text)) : new Set<string>(),
 		),
 	);
-I
+
 	const handleLine$ = newLine$.pipe(
 		filter(([_, lineType, _1]) => {
 			const isResetCheckboxes = lineType === LineType.RESETCHECKBOXES;
