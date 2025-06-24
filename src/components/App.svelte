@@ -197,7 +197,13 @@
 	}
 
 	function handleKeyPress(event: KeyboardEvent) {
-		if (event.key === 'Delete') {
+		if ($notesOpen$ || $dialogOpen$ || settingsOpen || lineInEdit) {
+			return;
+		}
+
+		const key = (event.key || '')?.toLowerCase();
+
+		if (key === 'delete') {
 			if (window.getSelection()?.toString().trim()) {
 				const range = window.getSelection().getRangeAt(0);
 
@@ -216,12 +222,14 @@
 			} else if (event.altKey) {
 				removeLastLine();
 			}
-		} else if (selectedLineIds.length && event.key === 'Escape') {
+		} else if (selectedLineIds.length && key === 'escape') {
 			deselectLines();
-		} else if (event.altKey && event.key === 'a') {
+		} else if (event.altKey && key === 'a') {
 			settingsComponent.handleReset(false);
-		} else if (event.altKey && event.key === 'q') {
+		} else if (event.altKey && key === 'q') {
 			settingsComponent.handleReset(true);
+		} else if ((event.ctrlKey || event.metaKey) && key === ' ') {
+			$isPaused$ = !$isPaused$;
 		}
 	}
 
