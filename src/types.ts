@@ -119,7 +119,8 @@ export enum LineType {
 	EXTERNAL = 'external',
 	EDIT = 'edit',
 	UNDO = 'undo',
-	RESETCHECKBOXES = 'resetcheckboxes'
+	RESETCHECKBOXES = 'resetcheckboxes',
+	TL = 'tl',
 }
 
 export interface LineItem {

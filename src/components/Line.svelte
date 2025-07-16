@@ -6,9 +6,10 @@
 		enableLineAnimation$,
 		preserveWhitespace$,
 		reverseLineOrder$,
-		lineIDs$
+		lineIDs$, newLine$,
+		lineData$,
 	} from '../stores/stores';
-	import type { LineItem, LineItemEditEvent } from '../types';
+	import { type LineItem, type LineItemEditEvent, LineType } from '../types';
 	import { dummyFn, newLineCharacter, updateScroll } from '../util';
 
 	export let line: LineItem;
@@ -103,7 +104,13 @@
 
 	function buttonClick(id: string, action: string) {
 		console.log(id);
-		const endpoint = action === 'Screenshot' ? '/get-screenshot' : '/play-audio';
+		// const endpoint = action === 'Screenshot' ? '/get-screenshot' : '/play-audio';
+		const endpoints: Record<string, string> = {
+			TL: '/translate-line',
+			Screenshot: '/get-screenshot',
+			Audio: '/play-audio'
+		};
+		let endpoint = endpoints[action] ?? '';
 		fetch(endpoint, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -116,6 +123,11 @@
 				return response.json();
 			})
 			.then((data) => {
+				if (action === "TL") {
+					// newLine$.next([data['TL'], LineType.TL, id]);
+					line.text = line.text + '\n' + data['TL'];
+					$lineData$[index] = line;
+				}
 				console.log(`${action} action completed for event ID: ${id}`, data);
 			})
 			.catch((error) => {
@@ -169,6 +181,14 @@
 					tabindex="-1"
 				>
 					&#x1F50A;
+				</button>
+				<button
+					on:click={() => buttonClick(line.id, "TL")}
+					title="Translate"
+					style="background-color: #333; color: #fff; border: 1px solid #555; padding: 6px 10px; font-size: 10px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;"
+					tabindex="-1"
+				>
+					🌐
 				</button>
 			</div>
 		{/if}
