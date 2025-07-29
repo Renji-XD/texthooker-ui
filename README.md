@@ -112,7 +112,7 @@ _Note_: By default, the undo history is stored in memory only. If you want to ke
 
 ### Will the floating Window remember the last Position?
 
--	Typically yes but some operations like moving the main window around or moving to an other screen may resets the position to an initial state
+-	Yes (as long as the page tab is not closed) but some operations like moving the main window around or moving to an other screen may resets the position to an initial state
 
 ### Can i further customize the floating Window?
 
