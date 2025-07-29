@@ -8,6 +8,7 @@
 	export let line: LineItem;
 	export let index: number;
 	export let isLast: boolean;
+	export let pipWindow: Window = undefined;
 
 	export function deselect() {
 		isSelected = false;
@@ -24,14 +25,16 @@
 	let isSelected = false;
 	let isEditable = false;
 
+	$: isVerticalDisplay = !pipWindow && $displayVertical$;
+
 	onMount(() => {
 		if (isLast) {
 			updateScroll(
-				window,
+				pipWindow || window,
 				paragraph.parentElement,
 				$reverseLineOrder$,
-				$displayVertical$,
-				$enableLineAnimation$ ? 'smooth' : 'auto'
+				isVerticalDisplay,
+				$enableLineAnimation$ ? 'smooth' : 'auto',
 			);
 		}
 	});
@@ -42,6 +45,10 @@
 	});
 
 	function handleDblClick(event: MouseEvent) {
+		if (pipWindow) {
+			return;
+		}
+
 		window.getSelection()?.removeAllRanges();
 
 		if (event.ctrlKey || event.metaKey) {
@@ -84,10 +91,10 @@
 {#key line.text}
 	<p
 		class="my-2 cursor-pointer border-2"
-		class:py-4={!$displayVertical$}
-		class:px-2={!$displayVertical$}
-		class:py-2={$displayVertical$}
-		class:px-4={$displayVertical$}
+		class:py-4={!isVerticalDisplay}
+		class:px-2={!isVerticalDisplay}
+		class:py-2={isVerticalDisplay}
+		class:px-4={isVerticalDisplay}
 		class:border-transparent={!isSelected}
 		class:cursor-text={isEditable}
 		class:border-primary={isSelected}
@@ -97,7 +104,7 @@
 		on:dblclick={handleDblClick}
 		on:keyup={dummyFn}
 		bind:this={paragraph}
-		in:fly={{ x: $displayVertical$ ? 100 : -100, duration: $enableLineAnimation$ ? 250 : 0 }}
+		in:fly={{ x: isVerticalDisplay ? 100 : -100, duration: $enableLineAnimation$ ? 250 : 0 }}
 	>
 		{line.text}
 	</p>

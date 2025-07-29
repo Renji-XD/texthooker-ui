@@ -19,10 +19,12 @@
 		enableExternalClipboardMonitor$,
 		enableLineAnimation$,
 		enablePaste$,
+		filterNonCJKLines$,
 		flashOnMissedLine$,
 		fontSize$,
 		lastSettingPreset$,
 		maxLines$,
+		maxPipLines$,
 		mergeEqualLineStarts$,
 		onlineFont$,
 		openDialog$,
@@ -70,6 +72,7 @@
 			onlineFont$: $onlineFont$,
 			preventLastDuplicate$: $preventLastDuplicate$,
 			maxLines$: $maxLines$,
+			maxPipLines$: $maxPipLines$,
 			afkTimer$: $afkTimer$,
 			adjustTimerOnAfk$: $adjustTimerOnAfk$,
 			enableExternalClipboardMonitor$: $enableExternalClipboardMonitor$,
@@ -87,6 +90,7 @@
 			autoStartTimerDuringPause$: $autoStartTimerDuringPause$,
 			preventGlobalDuplicate$: $preventGlobalDuplicate$,
 			mergeEqualLineStarts$: $mergeEqualLineStarts$,
+			filterNonCJKLines: $filterNonCJKLines$,
 			flashOnMissedLine$: $flashOnMissedLine$,
 			displayVertical$: $displayVertical$,
 			reverseLineOrder$: $reverseLineOrder$,
@@ -116,6 +120,7 @@
 		onlineFont$.next(preset.settings.onlineFont$ ?? defaultSettings.onlineFont$);
 		preventLastDuplicate$.next(preset.settings.preventLastDuplicate$ ?? defaultSettings.preventLastDuplicate$);
 		maxLines$.next(preset.settings.maxLines$ ?? defaultSettings.maxLines$);
+		maxPipLines$.next(preset.settings.maxPipLines$ ?? defaultSettings.maxPipLines$);
 		afkTimer$.next(preset.settings.afkTimer$ ?? defaultSettings.afkTimer$);
 		adjustTimerOnAfk$.next(preset.settings.adjustTimerOnAfk$ ?? defaultSettings.adjustTimerOnAfk$);
 		enableExternalClipboardMonitor$.next(
@@ -145,6 +150,7 @@
 			preset.settings.preventGlobalDuplicate$ ?? defaultSettings.preventGlobalDuplicate$,
 		);
 		mergeEqualLineStarts$.next(preset.settings.mergeEqualLineStarts$ ?? defaultSettings.mergeEqualLineStarts$);
+		filterNonCJKLines$.next(preset.settings.filterNonCJKLines ?? defaultSettings.filterNonCJKLines);
 		flashOnMissedLine$.next(preset.settings.flashOnMissedLine$ ?? defaultSettings.flashOnMissedLine$);
 		displayVertical$.next(preset.settings.displayVertical$ ?? defaultSettings.displayVertical$);
 		reverseLineOrder$.next(preset.settings.reverseLineOrder$ ?? defaultSettings.reverseLineOrder$);

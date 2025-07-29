@@ -11,6 +11,7 @@
 		tap,
 		throttleTime,
 	} from 'rxjs';
+	import { createEventDispatcher } from 'svelte';
 	import {
 		adjustTimerOnAfk$,
 		afkTimer$,
@@ -30,6 +31,8 @@
 
 	let lastTick = 0;
 	let idleTime = 0;
+
+	const dispatch = createEventDispatcher<{ afkBlur: boolean }>();
 
 	const isNotJapaneseRegex = /[^0-9A-Z○◯々-〇〻ぁ-ゖゝ-ゞァ-ヺー０-９Ａ-Ｚｦ-ﾝ\p{Radical}\p{Unified_Ideograph}]+/gimu;
 
@@ -111,8 +114,7 @@
 			}
 
 			if ($enableAfkBlur$) {
-				document.body.style.filter = 'blur(8px)';
-				document.body.style.pointerEvents = 'none';
+				dispatch('afkBlur', true);
 
 				document.addEventListener(
 					'dblclick',
@@ -121,8 +123,7 @@
 
 						window.getSelection().removeAllRanges();
 
-						document.body.style.filter = null;
-						document.body.style.pointerEvents = 'auto';
+						dispatch('afkBlur', false);
 
 						if ($enableAfkBlurRestart$) {
 							$isPaused$ = false;
