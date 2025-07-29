@@ -274,6 +274,10 @@ export const showSpinner$ = writable<boolean>(false);
 
 export const enabledReplacements$ = writable<ReplacementItem[]>([]);
 
+export const lastPipHeight$ = writableNumberSubject()('bannou-texthooker-lastPipHeight', 0);
+
+export const lastPipWidth$ = writableNumberSubject()('bannou-texthooker-lastPipWidth', 0);
+
 export async function resetAllData() {
 	if (!skipResetConfirmations$.getValue()) {
 		const { canceled } = await new Promise<DialogResult>((resolve) => {

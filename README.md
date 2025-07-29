@@ -112,7 +112,7 @@ _Note_: By default, the undo history is stored in memory only. If you want to ke
 
 ### Will the floating Window remember the last Position?
 
--	Yes (as long as the page tab is not closed) but some operations like moving the main window around or moving to an other screen may resets the position to an initial state
+-	In Terms of height and width the page will attempt to restore the last used dimensions but the browser may clamp or ignore the values as appropriate to provide a reasonable user experience. The window position itself typically resets when closing the tab or floating window
 
 ### Can i further customize the floating Window?
 

@@ -1,7 +1,11 @@
 declare global {
 	interface Window {
 		documentPictureInPicture: {
-			requestWindow: () => Promise<Window | undefined>;
+			requestWindow: (arg?: {
+				height?: number;
+				width?: number;
+				preferInitialWindowPlacement?: boolean;
+			}) => Promise<Window | undefined>;
 		};
 	}
 }
