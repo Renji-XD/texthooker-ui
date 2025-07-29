@@ -98,6 +98,27 @@ _Note_: By default, the undo history is stored in memory only. If you want to ke
 5.	Max Lines
 6.	Merge equal Line Starts
 
+### Can I use the floating window in other browsers except chrome / edge?
+-	No - (Desktop) Chromium Browser are currently the only browser having the required api implemented
+
+### What options / actions are applied to the floating Window?
+-	Applied: Font Size, Online Font, Max Lines (floating window),Reverse Line Order, Preserve Whitespace, Enable Line Animation, AFK Blur, Custom CSS
+-	Implicit: All Line related text adjustments like replacement patterns, duplicate management, line start merges, jp content filter etc.
+-	Not available: Vertical Display, Main window actions, timer / stats, keybinds, pasting and line actions like selecting or editing
+
+### Can i let my dictionary extension exceed the floating Window?
+
+-	No - technically the floating window behaves exactly as any other browser window and therefore it is not possible that content exceeds it
+
+### Will the floating Window remember the last Position?
+
+-	Typically yes but some operations like moving the main window around or moving to an other screen may resets the position to an initial state
+
+### Can i further customize the floating Window?
+
+-	You can apply custom styles as per standard settings. In order to target the floating window content you can use the id selector "#pip-container" (e.g. `#pip-container p {color: red;}` will only apply to paragraphs in the floating window and not the main window). Further customizations like exeeding height, transparency etc. is not possible
+
+
 ## Available Keybinds
 Note: The actions are only executed when settings/notes are closed, no (confirmation) dialog is displayed and no line is in edit mode.
 
