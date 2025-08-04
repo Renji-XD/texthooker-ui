@@ -191,7 +191,7 @@ The following section contains explanations and details on the settings you can 
 -   High number of displayed characters may slow down the page performance due to the current greedy way of counting characters etc.
 -   The horizontal reading mode performs overall better than the vertical one
 -   Line breaks added manually during editing a line are sometimes removed
--	The page was build with desktop usage in mind - following guides (e. g. like [this](https://rentry.co/android-texthook) one) to access the page via tablet or mobile devices may have a limited user experience or functionality
+-	The page was build with desktop / maximized window usage in mind - following guides (e. g. like [this](https://rentry.co/android-texthook) one) to access the page via tablet or mobile devices / using smaller window / screen sizes may have a limited user experience or functionality
 
 ## Acknowledgements
 
