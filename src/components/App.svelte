@@ -130,10 +130,13 @@
 		}),
 		tap((newLine: [string, LineType, string]) => {
 			const [lineContent] = newLine;
-			const text = transformLine(lineContent);
-			const id = newLine.at(2) || generateRandomUUID()
+			const type = newLine.at(1) || LineType.SOCKET;
+			const text = transformLine(lineContent, type !== LineType.TL);
+			const id = newLine.at(2) || generateRandomUUID();
 
-			$lineIDs$ = [...$lineIDs$, id];
+			if (type !== LineType.TL) {
+				$lineIDs$ = [...$lineIDs$, id];
+			}
 
 			if (text) {
 				$lineData$ = applyEqualLineStartMerge([
@@ -501,6 +504,36 @@
 
 		return currentLineData;
 	}
+
+	let numberOfLinesToTranslate = '';
+	
+	async function handleTranslate() {
+		if (!numberOfLinesToTranslate.trim()) return;
+
+		try {
+
+			let ids = $lineIDs$;
+			if (Number(numberOfLinesToTranslate) < ids.length) {
+				ids = ids.slice(-Number(numberOfLinesToTranslate));
+			}
+			
+			const response = await fetch('/translate-multiple', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ ids }),
+			});
+			
+			if (response.ok) {
+				const result = await response.text();
+				// Add the translation result as a normal websocket event without adding to lineIDs
+				newLine$.next([result, LineType.TL, '']);
+			}
+		} catch (error) {
+			console.error('Translation failed:', error);
+		}
+	}
 </script>
 
 <svelte:window on:keyup={handleKeyPress} />
@@ -615,7 +648,22 @@
 			on:edit={handleLineEdit}
 		/>
 	{/each}
+	
+	
 </main>
+
+<!-- Small translate textbox positioned at bottom right -->
+<div class="fixed bottom-2 right-2 z-50">
+	<input
+		type="text"
+		bind:value={numberOfLinesToTranslate}
+		on:keydown={(e) => e.key === 'Enter' && handleTranslate()}
+		placeholder="TL"
+		class="w-8 h-6 text-xs p-1 border border-gray-300 rounded text-center bg-base-100"
+		title="Press Enter to translate a number of lines"
+	/>
+</div>
+
 {#if $notesOpen$}
 	<div
 		class="bg-base-200 fixed top-0 right-0 z-[60] flex h-full w-full max-w-3xl flex-col justify-between"
