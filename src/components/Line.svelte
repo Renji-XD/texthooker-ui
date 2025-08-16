@@ -6,8 +6,10 @@
 		enableLineAnimation$,
 		preserveWhitespace$,
 		reverseLineOrder$,
-		lineIDs$, newLine$,
+		lineIDs$,
+		newLine$,
 		lineData$,
+		autoTranslateLines$,
 	} from '../stores/stores';
 	import { type LineItem, type LineItemEditEvent, LineType } from '../types';
 	import { dummyFn, newLineCharacter, updateScroll } from '../util';
@@ -38,8 +40,11 @@
 				paragraph.parentElement.parentElement,
 				$reverseLineOrder$,
 				$displayVertical$,
-				$enableLineAnimation$ ? 'smooth' : 'auto'
+				$enableLineAnimation$ ? 'smooth' : 'auto',
 			);
+		}
+		if ($lineIDs$ && $lineIDs$.includes(line.id) && $autoTranslateLines$) {
+			buttonClick(line.id, 'TL');
 		}
 	});
 
@@ -82,7 +87,7 @@
 
 			dispatch('edit', {
 				inEdit: false,
-				data: { originalText, newText: paragraph.innerText, lineIndex: index, line }
+				data: { originalText, newText: paragraph.innerText, lineIndex: index, line },
 			});
 		}
 	}
@@ -92,7 +97,7 @@
 			const res = await fetch('/update_checkbox', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ id })
+				body: JSON.stringify({ id }),
 			});
 			if (!res.ok) {
 				throw new Error(`HTTP error! Status: ${res.status}`);
@@ -102,19 +107,19 @@
 		}
 	}
 
-	function buttonClick(id: string, action: string) {
+	function buttonClick(id: string, action: string, blurTranslate: boolean = false) {
 		console.log(id);
 		// const endpoint = action === 'Screenshot' ? '/get-screenshot' : '/play-audio';
 		const endpoints: Record<string, string> = {
 			TL: '/translate-line',
 			Screenshot: '/get-screenshot',
-			Audio: '/play-audio'
+			Audio: '/play-audio',
 		};
 		let endpoint = endpoints[action] ?? '';
 		fetch(endpoint, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ id })
+			body: JSON.stringify({ id }),
 		})
 			.then((response) => {
 				if (!response.ok) {
@@ -123,9 +128,13 @@
 				return response.json();
 			})
 			.then((data) => {
-				if (action === "TL") {
+				if (action === 'TL') {
 					// newLine$.next([data['TL'], LineType.TL, id]);
-					line.text = line.text + '\n' + data['TL'];
+					if (blurTranslate) {
+						
+					} else {
+						line.text = line.text + '\n' + data['TL'];
+					}
 					$lineData$[index] = line;
 				}
 				console.log(`${action} action completed for event ID: ${id}`, data);
@@ -139,11 +148,13 @@
 {#key line.text}
 	<div class="textline2">
 		{#if $lineIDs$ && $lineIDs$.includes(line.id)}
-			<input type="checkbox"
-				   class="multi-line-checkbox"
-				   id="multi-line-checkbox-{line.id}"
-				   aria-label="{line.id}"
-				   on:change={() => toggleCheckbox(line.id)}>
+			<input
+				type="checkbox"
+				class="multi-line-checkbox"
+				id="multi-line-checkbox-{line.id}"
+				aria-label={line.id}
+				on:change={() => toggleCheckbox(line.id)}
+			/>
 		{/if}
 		<p
 			class="my-2 cursor-pointer border-2"
@@ -183,7 +194,7 @@
 					&#x1F50A;
 				</button>
 				<button
-					on:click={() => buttonClick(line.id, "TL")}
+					on:click={() => buttonClick(line.id, 'TL')}
 					title="Translate"
 					style="background-color: #333; color: #fff; border: 1px solid #555; padding: 6px 10px; font-size: 10px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;"
 					tabindex="-1"
@@ -196,7 +207,6 @@
 {/key}
 {@html newLineCharacter}
 
-
 <style>
 	p:focus-visible {
 		outline: none;
@@ -205,8 +215,8 @@
 	.multi-line-checkbox {
 		transform: scale(1.5);
 		margin-right: 10px;
-		background-color: #00FFFF !important; /* Cyan/Electric Blue */
-		border: 4px solid #00FFFF; /* Keep the border the same color */
+		background-color: #00ffff !important; /* Cyan/Electric Blue */
+		border: 4px solid #00ffff; /* Keep the border the same color */
 	}
 
 	.textline-buttons > button {
@@ -240,7 +250,8 @@
 		gap: 15px;
 	}
 
-	.unselectable, .unselectable * {
+	.unselectable,
+	.unselectable * {
 		user-select: none !important;
 		-webkit-user-select: none !important;
 		-moz-user-select: none !important;

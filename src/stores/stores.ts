@@ -273,6 +273,10 @@ export const showSpinner$ = writable<boolean>(false);
 
 export const enabledReplacements$ = writable<ReplacementItem[]>([]);
 
+export const autoTranslateLines$ = writable<boolean>(false);
+
+export const blurAutoTranslatedLines$ = writable<boolean>(false);
+
 export async function resetAllData() {
 	if (!skipResetConfirmations$.getValue()) {
 		const { canceled } = await new Promise<DialogResult>((resolve) => {

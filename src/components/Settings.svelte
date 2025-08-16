@@ -66,6 +66,8 @@
 		userNotes$,
 		websocketUrl$,
 		windowTitle$,
+		autoTranslateLines$,
+		blurAutoTranslatedLines$,
 	} from '../stores/stores';
 	import {
 		LineType,
@@ -939,6 +941,10 @@
 		/>
 		<span class="label-text">Show Connection Errors</span>
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$showConnectionErrors$} />
+		<span class="label-text">Auto Translate Lines:</span>
+		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$autoTranslateLines$} />
+		<span class="label-text">Blur Auto Translated Lines:</span>
+		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$blurAutoTranslatedLines$} />
 		<span class="label-text" style="grid-column: 1/5;">Custom CSS</span>
 		<textarea
 			class="p-1 min-h-[10rem] font-mono"
