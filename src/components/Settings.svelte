@@ -116,7 +116,14 @@
 	}
 
 	const dispatch = createEventDispatcher<{ layoutChange: void; maxLinesChange: void }>();
-	const onlineFonts = [OnlineFont.OFF, OnlineFont.NOTO, OnlineFont.KLEE, OnlineFont.SHIPPORI];
+	const onlineFonts = [
+		OnlineFont.OFF,
+		OnlineFont.NOTO,
+		OnlineFont.KLEE,
+		OnlineFont.SHIPPORI,
+		OnlineFont.ACKAISYO,
+		OnlineFont.CINECAPTION226,
+	];
 
 	let dataFileInput: HTMLInputElement;
 	let settingsFileInput: HTMLInputElement;
