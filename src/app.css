@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+	font-family: 'Ackaisyo';
+	src: url('./stores/Fonts/ackaisyo.ttf') format('truetype');
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'CineCaption226';
+	src: url('./stores/Fonts/cinecaption226.ttf') format('truetype');
+	font-display: swap;
+}
+
 body,
 html {
 	margin: 0;
