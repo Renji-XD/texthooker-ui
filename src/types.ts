@@ -35,6 +35,8 @@ export enum OnlineFont {
 	NOTO = 'Noto Serif JP',
 	KLEE = 'Klee One',
 	SHIPPORI = 'Shippori Mincho',
+	ACKAISYO = 'Ackaisyo',
+	CINECAPTION226 = 'CineCaption226',
 }
 
 export interface Settings {
