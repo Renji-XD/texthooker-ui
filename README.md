@@ -147,6 +147,7 @@ The following section contains explanations and details on the settings you can 
 | Primary WebSocket | URL of the primary WebSocket to which you want to connect. |
 | Secondary WebSocket | URL of the secondary WebSocket to which you want to connect. |
 | Font Size | The font size, in number of pixels. |
+| Character Milestone | Interval of Characters after which a milestone section will be inserted (< 2 = disabled) |
 | Online Font | Lets you select a font from a predefined selection. An internet connection is required in order for this work. |
 | Prevent Last Line Duplicate | This will prevent the insertion/pasting of a line if the text is equal to one of the last n configured lines. |
 | Max lines | Sets the maximum number of lines allowed. Once the limit is reached, the oldest line is automatically removed when a new one is added. The feature is active only when the limit is greater than 0. Undo Action will enforce this setting on execution. |

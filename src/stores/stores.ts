@@ -25,6 +25,7 @@ export const defaultSettings: Settings = {
 	websocketUrl$: 'ws://localhost:6677',
 	secondaryWebsocketUrl$: '',
 	fontSize$: 24,
+	characterMilestone$: 0,
 	onlineFont$: OnlineFont.OFF,
 	preventLastDuplicate$: 0,
 	maxLines$: 0,
@@ -81,6 +82,11 @@ export const secondaryWebsocketUrl$ = writableStringSubject()(
 );
 
 export const fontSize$ = writableNumberSubject()('bannou-texthooker-fontSize', defaultSettings.fontSize$);
+
+export const characterMilestone$ = writableNumberSubject()(
+	'bannou-texthooker-characterMilestone',
+	defaultSettings.characterMilestone$
+);
 
 export const onlineFont$ = writableStringSubject()('bannou-texthooker-onlineFont', defaultSettings.onlineFont$);
 
@@ -254,6 +260,8 @@ export const lastSettingPreset$ = writableStringSubject()('bannou-texthooker-las
 
 export const lineData$ = writeableArraySubject<LineItem>()('bannou-texthooker-lineData', [], persistLines$);
 
+export const milestoneLines$ = writable<Map<string, string>>(new Map<string, string>());
+
 export const actionHistory$ = writeableArraySubject<LineItem[]>()(
 	'bannou-texthooker-actionHistory',
 	[],
@@ -313,6 +321,7 @@ export async function resetAllData() {
 	websocketUrl$.next(defaultSettings.websocketUrl$);
 	secondaryWebsocketUrl$.next(defaultSettings.secondaryWebsocketUrl$);
 	fontSize$.next(defaultSettings.fontSize$);
+	characterMilestone$.next(defaultSettings.characterMilestone$);
 	onlineFont$.next(defaultSettings.onlineFont$);
 	preventLastDuplicate$.next(defaultSettings.preventLastDuplicate$);
 	maxPipLines$.next(defaultSettings.maxPipLines$);

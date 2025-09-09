@@ -16,10 +16,12 @@
 		adjustTimerOnAfk$,
 		afkTimer$,
 		blurStats$,
+		characterMilestone$,
 		enableAfkBlur$,
 		enableAfkBlurRestart$,
 		isPaused$,
 		lineData$,
+		milestoneLines$,
 		newLine$,
 		showCharacterCount$,
 		showLineCount$,
@@ -75,12 +77,28 @@
 	let characters = 0;
 	let statstring = '';
 
-	$: if ($showCharacterCount$ && $lineData$) {
+	$: if (($showCharacterCount$ || $characterMilestone$ > 1) && $lineData$) {
+		const newMilestoneLines = new Map<string, string>();
+
 		let newCount = 0;
+		let nextMilestone = $characterMilestone$ > 1 ? $characterMilestone$ : 0;
 
 		for (let index = 0, { length } = $lineData$; index < length; index += 1) {
 			newCount += getCharacterCount($lineData$[index].text);
+
+			if (nextMilestone && newCount >= nextMilestone) {
+				let currentCount = newCount;
+				let achievedMilestone = nextMilestone;
+
+				newMilestoneLines.set($lineData$[index].id, `Milestone ${achievedMilestone} (${newCount})`);
+
+				while (currentCount >= nextMilestone) {
+					nextMilestone += $characterMilestone$;
+				}
+			}
 		}
+
+		$milestoneLines$ = newMilestoneLines;
 
 		characters = newCount;
 		speed = $timeValue$ ? Math.ceil((3600 * characters) / $timeValue$) : 0;
