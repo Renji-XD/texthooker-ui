@@ -8,6 +8,8 @@ An online version of the page can be accessed [here](https://renji-xd.github.io/
 
 An offline version of the page can be downloaded from the [docs](https://github.com/Renji-XD/texthooker-ui/tree/main/docs) folder (make sure to also download the assets folder and content in case you want to use some of the custom online fonts) or build locally by your own.
 
+**Note:** If you are interested in persistent statistics, history and additional mining capabitilies / workflows you may want to checkout [GameSentenceMiner](https://github.com/bpwhelan/GameSentenceMiner) which runs a forked version of this web interface.
+
 ## Building
 
 ```
