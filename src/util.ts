@@ -91,4 +91,30 @@ export function applyReplacements(originalText: string, replacements: Replacemen
 	return adjustedText;
 }
 
+export function applyCustomCSS(document: Document, customCSS: string) {
+	const textNode = document.createTextNode(customCSS || '');
+
+	let styleElement = document.getElementById('user-css');
+
+	if (styleElement) {
+		styleElement.replaceChild(textNode, styleElement.firstChild);
+	} else {
+		styleElement = document.createElement('style');
+		styleElement.id = 'user-css';
+
+		styleElement.appendChild(textNode);
+		document.head.append(styleElement);
+	}
+}
+
+export function applyAfkBlur(document: Document, isAfk: boolean) {
+	if (isAfk) {
+		document.body.style.filter = 'blur(8px)';
+		document.body.style.pointerEvents = 'none';
+	} else {
+		document.body.style.filter = null;
+		document.body.style.pointerEvents = 'auto';
+	}
+}
+
 export const newLineCharacter = '\n';

@@ -7,7 +7,9 @@
 		mdiDeleteForever,
 		mdiNoteEdit,
 		mdiPause,
-		mdiPlay
+		mdiPlay,
+		mdiWindowMaximize,
+		mdiWindowRestore,
 	} from '@mdi/js';
 	import { debounceTime, filter, fromEvent, map, NEVER, switchMap, tap } from 'rxjs';
 	import { onMount, tick } from 'svelte';
@@ -20,6 +22,7 @@
 		autoStartTimerDuringPause$,
 		autoStartTimerDuringPausePaste$,
 		blockCopyOnPage$,
+		customCSS$,
 		dialogOpen$,
 		displayVertical$,
 		enabledReplacements$,
@@ -29,9 +32,12 @@
 		flashOnPauseTimeout$,
 		fontSize$,
 		isPaused$,
+		lastPipHeight$,
+		lastPipWidth$,
 		lineData$,
 		lineIDs$,
 		maxLines$,
+		maxPipLines$,
 		mergeEqualLineStarts$,
 		newLine$,
 		notesOpen$,
@@ -49,6 +55,8 @@
 	} from '../stores/stores';
 	import { type LineItem, type LineItemEditEvent, LineType, OnlineFont, Theme } from '../types';
 	import {
+		applyAfkBlur,
+		applyCustomCSS,
 		applyReplacements,
 		generateRandomUUID,
 		newLineCharacter,
@@ -76,6 +84,10 @@
 	let lineInEdit = false;
 	let blockNextExternalLine = false;
 	let wakeLock = null;
+	let pipContainer: HTMLElement;
+	let pipWindow: Window | undefined;
+	let pipResizeTimeout: number;
+	let hasPipFocus = false;
 
 	startIdPolling()
 
@@ -191,6 +203,16 @@
 
 	$: $enabledReplacements$ = $replacements$.filter((replacment) => replacment.enabled);
 
+	$: pipAvailable = 'documentPictureInPicture' in window && !!pipContainer;
+
+	$: pipLines = pipAvailable && $lineData$ ? $lineData$.slice(-$maxPipLines$) : [];
+
+	$: if (pipWindow) {
+		pipWindow.document.body.dataset.theme = $theme$;
+
+		applyCustomCSS(pipWindow.document, $customCSS$);
+	}
+
 	onMount(() => {
 		mountFunction();
 		if (wakeLockAvailable) {
@@ -212,7 +234,13 @@
 	}
 
 	function handleKeyPress(event: KeyboardEvent) {
-		if (event.key === 'Delete') {
+		if ($notesOpen$ || $dialogOpen$ || settingsOpen || lineInEdit) {
+			return;
+		}
+
+		const key = (event.key || '')?.toLowerCase();
+
+		if (key === 'delete') {
 			if (window.getSelection()?.toString().trim()) {
 				const range = window.getSelection().getRangeAt(0);
 
@@ -231,12 +259,14 @@
 			} else if (event.altKey) {
 				removeLastLine();
 			}
-		} else if (selectedLineIds.length && event.key === 'Escape') {
+		} else if (selectedLineIds.length && key === 'escape') {
 			deselectLines();
-		} else if (event.altKey && event.key === 'a') {
+		} else if (event.altKey && key === 'a') {
 			settingsComponent.handleReset(false);
-		} else if (event.altKey && event.key === 'q') {
+		} else if (event.altKey && key === 'q') {
 			settingsComponent.handleReset(true);
+		} else if ((event.ctrlKey || event.metaKey) && key === ' ') {
+			$isPaused$ = !$isPaused$;
 		}
 	}
 
@@ -345,8 +375,104 @@
 		selectedLineIds = [];
 	}
 
+	async function handlePipAction() {
+		if (pipWindow) {
+			return pipWindow.close();
+		}
+
+		pipWindow = await window.documentPictureInPicture
+			.requestWindow(
+				$lastPipHeight$ > 0 && $lastPipWidth$ > 0
+					? { height: $lastPipHeight$, width: $lastPipWidth$, preferInitialWindowPlacement: false }
+					: { preferInitialWindowPlacement: false },
+			)
+			.catch(({ message }) => {
+				$openDialog$ = {
+					message: `Error opening floating window: ${message}`,
+					showCancel: false,
+				};
+
+				return undefined;
+			});
+
+		if (!pipWindow) {
+			return;
+		}
+
+		pipWindow.document.body.appendChild(pipContainer);
+
+		pipWindow.addEventListener('pagehide', onPipHide, { once: true });
+		pipWindow.addEventListener('resize', onPipResize, false);
+		pipWindow.addEventListener('blur', onPipFocusBlur, false);
+		pipWindow.addEventListener('focus', onPipFocusBlur, false);
+
+		[...document.styleSheets].forEach((styleSheet) => {
+			if (styleSheet.ownerNode instanceof Element && styleSheet.ownerNode.id === 'user-css') {
+				return;
+			}
+
+			try {
+				const cssRules = [...styleSheet.cssRules].map((rule) => rule.cssText).join('');
+				const style = document.createElement('style');
+
+				style.textContent = cssRules;
+				pipWindow.document.head.appendChild(style);
+			} catch (_error) {
+				const link = document.createElement('link');
+
+				link.rel = 'stylesheet';
+				link.type = styleSheet.type;
+				link.media = styleSheet.media.toString();
+				link.href = styleSheet.href;
+				pipWindow.document.head.appendChild(link);
+			}
+		});
+	}
+
+	function onPipHide() {
+		updatePipDimensions();
+
+		pipWindow.removeEventListener('resize', onPipResize, false);
+		pipWindow.removeEventListener('blur', onPipFocusBlur, false);
+		pipWindow.removeEventListener('focus', onPipFocusBlur, false);
+
+		hasPipFocus = false;
+		pipWindow = undefined;
+	}
+
+	function onPipResize() {
+		window.clearTimeout(pipResizeTimeout);
+
+		pipResizeTimeout = window.setTimeout(updatePipDimensions, 500);
+	}
+
+	function updatePipDimensions() {
+		if (!pipWindow) {
+			return;
+		}
+
+		$lastPipHeight$ = pipWindow.document.body.clientHeight;
+		$lastPipWidth$ = pipWindow.document.body.clientWidth;
+	}
+
+	function onPipFocusBlur(event: Event) {
+		hasPipFocus = event.type === 'focus';
+	}
+
+	function onAfkBlur({ detail: isAfk }: CustomEvent<boolean>) {
+		applyAfkBlur(document, isAfk);
+
+		if (pipWindow) {
+			applyAfkBlur(pipWindow.document, isAfk);
+		}
+	}
+
 	function executeUpdateScroll() {
 		updateScroll(window, lineContainer, $reverseLineOrder$, $displayVertical$);
+
+		if (pipWindow) {
+			updateScroll(pipWindow, pipContainer, $reverseLineOrder$, false);
+		}
 	}
 
 	function handleMissedLine() {
@@ -551,7 +677,7 @@
 <DialogManager />
 
 <header class="fixed top-0 right-0 flex justify-end items-center p-2 bg-base-100" bind:this={settingsContainer}>
-	<Stats />
+	<Stats on:afkBlur={onAfkBlur} />
 	{#if $websocketUrl$}
 		<SocketConnector />
 	{/if}
@@ -602,6 +728,20 @@
 	<div role="button" title="Open Notes" class="mr-1 hover:text-primary sm:mr-2">
 		<Icon path={mdiNoteEdit} width={iconSize} height={iconSize} on:click={() => ($notesOpen$ = true)} />
 	</div>
+	{#if pipAvailable}
+		<div
+			role="button"
+			class="mr-1 hover:text-primary sm:mr-2"
+			title={pipWindow ? 'Close Floating Window' : 'Open Floating Window'}
+		>
+			<Icon
+				width={iconSize}
+				height={iconSize}
+				path={pipWindow ? mdiWindowMaximize : mdiWindowRestore}
+				on:click={handlePipAction}
+			/>
+		</div>
+	{/if}
 	<Icon
 		class="cursor-pointer mr-1 hover:text-primary md:mr-2"
 		path={mdiCog}
@@ -612,6 +752,7 @@
 	/>
 	<Settings
 		{settingsElement}
+		{pipAvailable}
 		bind:settingsOpen
 		bind:selectedLineIds
 		bind:this={settingsComponent}
@@ -672,3 +813,18 @@
 		<Notes />
 	</div>
 {/if}
+<div
+	id="pip-container"
+	class="flex flex-col flex-1 flex flex-col break-all px-4 w-full h-full overflow-auto"
+	class:flex-col-reverse={$reverseLineOrder$}
+	class:hidden={!pipWindow}
+	style:font-size={`${$fontSize$}px`}
+	style:font-family={$onlineFont$ !== OnlineFont.OFF ? $onlineFont$ : undefined}
+	bind:this={pipContainer}
+>
+	{#if pipWindow}
+		{#each pipLines as line, index (line.id)}
+			<Line {line} {index} {pipWindow} isLast={pipLines.length - 1 === index} />
+		{/each}
+	{/if}
+</div>
