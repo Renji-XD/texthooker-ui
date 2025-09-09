@@ -6,7 +6,7 @@ A web interface for using websocket-based interfaces, such as:
 
 An online version of the page can be accessed [here](https://renji-xd.github.io/texthooker-ui/).
 
-An offline version of the page can be downloaded from the [docs](https://raw.githubusercontent.com/Renji-XD/texthooker-ui/main/docs/index.html) folder or build locally by your own.
+An offline version of the page can be downloaded from the [docs](https://github.com/Renji-XD/texthooker-ui/tree/main/docs) folder (make sure to also download the assets folder and content in case you want to use some of the custom online fonts) or build locally by your own.
 
 ## Building
 
@@ -98,7 +98,30 @@ _Note_: By default, the undo history is stored in memory only. If you want to ke
 5.	Max Lines
 6.	Merge equal Line Starts
 
+### Can I use the floating window in other browsers except chrome / edge?
+-	No - (Desktop) Chromium Browser are currently the only browser having the required api implemented
+
+### What options / actions are applied to the floating Window?
+-	Applied: Font Size, Online Font, Max Lines (floating window),Reverse Line Order, Preserve Whitespace, Enable Line Animation, AFK Blur, Custom CSS
+-	Implicit: All Line related text adjustments like replacement patterns, duplicate management, line start merges, jp content filter etc.
+-	Not available: Vertical Display, Main window actions, timer / stats, keybinds, pasting and line actions like selecting or editing
+
+### Can i let my dictionary extension exceed the floating Window?
+
+-	No - technically the floating window behaves exactly as any other browser window and therefore it is not possible that content exceeds it
+
+### Will the floating Window remember the last Position?
+
+-	In Terms of height and width the page will attempt to restore the last used dimensions but the browser may clamp or ignore the values as appropriate to provide a reasonable user experience. The window position itself typically resets when closing the tab or floating window
+
+### Can i further customize the floating Window?
+
+-	You can apply custom styles as per standard settings. In order to target the floating window content you can use the id selector "#pip-container" (e.g. `#pip-container p {color: red;}` will only apply to paragraphs in the floating window and not the main window). Further customizations like exeeding height, transparency etc. is not possible
+
+
 ## Available Keybinds
+Note: The actions are only executed when settings/notes are closed, no (confirmation) dialog is displayed and no line is in edit mode.
+
 | Keybind | Description |
 |-|-|
 | <kbd>Delete</kbd> | Deletes current highlighted lines on the page. |
@@ -106,6 +129,7 @@ _Note_: By default, the undo history is stored in memory only. If you want to ke
 | <kbd>Alt</kbd> + <kbd>Delete</kbd> | Deletes last line if no lines are highlighted |
 | <kbd>Alt</kbd> + <kbd>a</kbd> | Deletes all Lines and resets the Timer to 00:00:00. |
 | <kbd>Alt</kbd> + <kbd>q</kbd> | Deletes all Lines. |
+| <kbd>Control</kbd> + <kbd>Space</kbd> | Toggles the Timer. |
 
 
 ## Available Settings
@@ -167,7 +191,7 @@ The following section contains explanations and details on the settings you can 
 -   High number of displayed characters may slow down the page performance due to the current greedy way of counting characters etc.
 -   The horizontal reading mode performs overall better than the vertical one
 -   Line breaks added manually during editing a line are sometimes removed
--	The page was build with desktop usage in mind - following guides (e. g. like [this](https://rentry.co/android-texthook) one) to access the page via tablet or mobile devices may have a limited user experience or functionality
+-	The page was build with desktop / maximized window usage in mind - following guides (e. g. like [this](https://rentry.co/android-texthook) one) to access the page via tablet or mobile devices / using smaller window / screen sizes may have a limited user experience or functionality
 
 ## Acknowledgements
 

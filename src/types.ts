@@ -35,6 +35,8 @@ export enum OnlineFont {
 	NOTO = 'Noto Serif JP',
 	KLEE = 'Klee One',
 	SHIPPORI = 'Shippori Mincho',
+	ACKAISYO = 'Ackaisyo',
+	CINECAPTION226 = 'CineCaption226',
 }
 
 export interface Settings {
@@ -47,6 +49,7 @@ export interface Settings {
 	onlineFont$: string;
 	preventLastDuplicate$: number;
 	maxLines$: number;
+	maxPipLines$: number;
 	afkTimer$: number;
 	adjustTimerOnAfk$: boolean;
 	enableExternalClipboardMonitor$: boolean;

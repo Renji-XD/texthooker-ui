@@ -35,6 +35,7 @@
 		lastSettingPreset$,
 		lineData$,
 		maxLines$,
+		maxPipLines$,
 		mergeEqualLineStarts$,
 		newLine$,
 		onlineFont$,
@@ -80,7 +81,7 @@
 		type SettingPreset,
 	} from '../types';
 	import { clickOutside } from '../use-click-outside';
-	import { dummyFn, timeStringToSeconds } from '../util';
+	import { applyCustomCSS, dummyFn, timeStringToSeconds } from '../util';
 	import Icon from './Icon.svelte';
 	import Presets from './Presets.svelte';
 	import ReplacementSettings from './ReplacementSettings.svelte';
@@ -88,6 +89,7 @@
 	export let selectedLineIds: string[];
 	export let settingsOpen: boolean;
 	export let settingsElement: SVGElement;
+	export let pipAvailable: boolean;
 
 	export async function handleReset(linesOnly: boolean) {
 		if (!$skipResetConfirmations$) {
@@ -116,7 +118,14 @@
 	}
 
 	const dispatch = createEventDispatcher<{ layoutChange: void; maxLinesChange: void }>();
-	const onlineFonts = [OnlineFont.OFF, OnlineFont.NOTO, OnlineFont.KLEE, OnlineFont.SHIPPORI];
+	const onlineFonts = [
+		OnlineFont.OFF,
+		OnlineFont.NOTO,
+		OnlineFont.KLEE,
+		OnlineFont.SHIPPORI,
+		OnlineFont.ACKAISYO,
+		OnlineFont.CINECAPTION226,
+	];
 
 	let dataFileInput: HTMLInputElement;
 	let settingsFileInput: HTMLInputElement;
@@ -132,7 +141,7 @@
 
 	$: updateExternalClipboardMonitor($enableExternalClipboardMonitor$);
 
-	$: updateCustomCSS($customCSS$);
+	$: applyCustomCSS(document, $customCSS$);
 
 	function handleSecondaryWebsocketChange(event: Event) {
 		const target = event.target as HTMLInputElement;
@@ -472,6 +481,19 @@
 		}
 	}
 
+	function handleMaxPipLinesBlur(event) {
+		const target = event.target as HTMLInputElement;
+		const value = Number.parseInt(target.value || '0');
+
+		if (!value || value < 0) {
+			$maxPipLines$ = 1;
+		} else {
+			$maxPipLines$ = value;
+		}
+
+		target.value = `${$maxPipLines$}`;
+	}
+
 	async function handleMaxLinesChange() {
 		const lineDiff = $lineData$.length - $maxLines$;
 
@@ -625,11 +647,11 @@
 	<input class="hidden" type="file" bind:this={settingsFileInput} on:change={handleSettingsFileChange} />
 	<input class="hidden" type="file" bind:this={presetFileInput} on:change={handlePresetFileChange} />
 	<div
-		class="grid grid-cols-[max-content,auto,max-content,auto] gap-3 absolute overflow-auto h-[90vh] top-11 z-10 py-4 pr-8 pl-4 border bg-base-200"
+		class="flex flex-col max-[800px]:w-[90vw] min-[800px]:grid grid-cols-[max-content,auto,max-content,auto] gap-3 absolute overflow-auto h-[90vh] top-11 z-10 py-4 pr-8 pl-4 border bg-base-200 overscroll-contain"
 		use:clickOutside={handleSettingsClick}
 	>
 		<div class="mb-2" style="grid-column: 1/5;">
-			<div class="flex justify-between text-sm gap-x-5">
+			<div class="flex text-sm gap-x-5 min-[600px]:justify-between max-[600px]:flex-wrap max-[600px]:gap-y-5">
 				<div
 					role="button"
 					class="flex flex-col items-center hover:text-primary"
@@ -809,6 +831,16 @@
 			value={$maxLines$}
 			on:blur={handleMaxLinesBlur}
 		/>
+		{#if pipAvailable}
+			<span class="label-text col-span-2">Max lines (floating window)</span>
+			<input
+				type="number"
+				class="input input-bordered h-8 mb-2 col-span-2"
+				min="0"
+				value={$maxPipLines$}
+				on:blur={handleMaxPipLinesBlur}
+			/>
+		{/if}
 		<span class="label-text col-span-2">AFK Timer (s)</span>
 		<input
 			type="number"
