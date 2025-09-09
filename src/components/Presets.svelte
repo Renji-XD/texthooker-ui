@@ -10,6 +10,7 @@
 		autoStartTimerDuringPausePaste$,
 		blockCopyOnPage$,
 		blurStats$,
+		characterMilestone$,
 		continuousReconnect$,
 		customCSS$,
 		defaultSettings,
@@ -26,6 +27,7 @@
 		maxLines$,
 		maxPipLines$,
 		mergeEqualLineStarts$,
+		milestoneLines$,
 		onlineFont$,
 		openDialog$,
 		persistActionHistory$,
@@ -69,6 +71,7 @@
 			websocketUrl$: $websocketUrl$,
 			secondaryWebsocketUrl$: $secondaryWebsocketUrl$,
 			fontSize$: $fontSize$,
+			characterMilestone$: $characterMilestone$,
 			onlineFont$: $onlineFont$,
 			preventLastDuplicate$: $preventLastDuplicate$,
 			maxLines$: $maxLines$,
@@ -117,6 +120,7 @@
 		websocketUrl$.next(preset.settings.websocketUrl$ ?? defaultSettings.websocketUrl$);
 		secondaryWebsocketUrl$.next(preset.settings.secondaryWebsocketUrl$ ?? '');
 		fontSize$.next(preset.settings.fontSize$ ?? defaultSettings.fontSize$);
+		characterMilestone$.next(preset.settings.characterMilestone$ ?? defaultSettings.characterMilestone$);
 		onlineFont$.next(preset.settings.onlineFont$ ?? defaultSettings.onlineFont$);
 		preventLastDuplicate$.next(preset.settings.preventLastDuplicate$ ?? defaultSettings.preventLastDuplicate$);
 		maxLines$.next(preset.settings.maxLines$ ?? defaultSettings.maxLines$);
@@ -170,6 +174,10 @@
 
 		if (updateLastPreset) {
 			$lastSettingPreset$ = preset.name;
+		}
+
+		if ($characterMilestone$ === 0) {
+			$milestoneLines$ = new Map<string, string>();
 		}
 
 		tick().then(() => {

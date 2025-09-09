@@ -20,6 +20,7 @@
 		autoStartTimerDuringPausePaste$,
 		blockCopyOnPage$,
 		blurStats$,
+		characterMilestone$,
 		continuousReconnect$,
 		customCSS$,
 		dialogOpen$,
@@ -37,6 +38,7 @@
 		maxLines$,
 		maxPipLines$,
 		mergeEqualLineStarts$,
+		milestoneLines$,
 		newLine$,
 		onlineFont$,
 		openDialog$,
@@ -404,6 +406,23 @@
 		if (!canceled) {
 			window.localStorage.removeItem(storageKey);
 		}
+	}
+
+	function handleCharacterMilestoneBlur(event) {
+		const target = event.target as HTMLInputElement;
+		const value = Number.parseInt(target.value || '0');
+
+		if (!value || value < 2) {
+			$characterMilestone$ = 0;
+		} else {
+			$characterMilestone$ = value;
+		}
+
+		if ($characterMilestone$ === 0) {
+			$milestoneLines$ = new Map<string, string>();
+		}
+
+		target.value = `${$characterMilestone$}`;
 	}
 
 	function handlePreventLastDuplicateBlur(event) {
@@ -804,6 +823,14 @@
 					$fontSize$ = 24;
 				}
 			}}
+		/>
+		<span class="label-text col-span-2">Character Milestone</span>
+		<input
+			type="number"
+			class="input input-bordered h-8 col-span-2"
+			min="0"
+			value={$characterMilestone$}
+			on:blur={handleCharacterMilestoneBlur}
 		/>
 		<span class="label-text mr-4 col-span-2">Online Font</span>
 		<select class="select col-span-2" bind:value={$onlineFont$}>

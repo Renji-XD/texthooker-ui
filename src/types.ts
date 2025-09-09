@@ -46,6 +46,7 @@ export interface Settings {
 	websocketUrl$: string;
 	secondaryWebsocketUrl$: string;
 	fontSize$: number;
+	characterMilestone$: number;
 	onlineFont$: string;
 	preventLastDuplicate$: number;
 	maxLines$: number;
