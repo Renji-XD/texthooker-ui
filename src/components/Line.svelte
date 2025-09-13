@@ -133,6 +133,7 @@
 			<span class:mt-2={$displayVertical$}>{$milestoneLines$.get(line.id)}</span>
 		</div>
 	</div>
+	{@html newLineCharacter}
 {/if}
 
 <style>
