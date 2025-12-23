@@ -61,6 +61,7 @@ export class SocketConnection {
 		this.socketState.next(0);
 
 		try {
+			console.log('[socket] attaching handlers');
 			this.socket = new WebSocket(this.websocketUrl);
 			this.socket.onopen = this.updateSocketState.bind(this);
 			this.socket.onclose = this.updateSocketState.bind(this);
@@ -99,6 +100,7 @@ export class SocketConnection {
 	}
 
 	private handleMessage(event: MessageEvent) {
+		console.log('[socket] received event', event);
 		let line = event.data;
 
 		try {

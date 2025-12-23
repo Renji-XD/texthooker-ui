@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { mdiTrophy } from '@mdi/js';
+	import { mdiGoogleCirclesExtended, mdiTrophy } from '@mdi/js';
 	import { createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
+	import { marked } from 'marked';
 	import { fly } from 'svelte/transition';
 	import {
 		displayVertical$,
@@ -81,6 +82,37 @@
 		}
 	}
 
+	let explanation = '';
+	let showExplanation = false;
+
+	async function handleGemini() {
+		showExplanation = !showExplanation;
+		if (!showExplanation) {
+			return;
+		}
+
+		explanation = 'Thinking...';
+
+		try {
+			const response = await fetch('/api/gemini', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ line: line.text }),
+			});
+
+			if (response.ok) {
+				const text = await response.text();
+				explanation = await marked.parse(text);
+			} else {
+				explanation = 'Error getting explanation.';
+			}
+		} catch (error) {
+			explanation = 'Error getting explanation.';
+		}
+	}
+
 	function clickOutsideHandler(event: MouseEvent) {
 		const target = event.target as Node;
 
@@ -97,25 +129,35 @@
 </script>
 
 {#key line.text}
-	<p
-		class="my-2 cursor-pointer border-2"
-		class:py-4={!isVerticalDisplay}
-		class:px-2={!isVerticalDisplay}
-		class:py-2={isVerticalDisplay}
-		class:px-4={isVerticalDisplay}
-		class:border-transparent={!isSelected}
-		class:cursor-text={isEditable}
-		class:border-primary={isSelected}
-		class:border-accent-focus={isEditable}
-		class:whitespace-pre-wrap={$preserveWhitespace$}
-		contenteditable={isEditable}
-		on:dblclick={handleDblClick}
-		on:keyup={dummyFn}
-		bind:this={paragraph}
-		in:fly={{ x: isVerticalDisplay ? 100 : -100, duration: $enableLineAnimation$ ? 250 : 0 }}
-	>
-		{line.text}
-	</p>
+	<div class="flex items-center">
+		<p
+			class="my-2 cursor-pointer border-2"
+			class:py-4={!isVerticalDisplay}
+			class:px-2={!isVerticalDisplay}
+			class:py-2={isVerticalDisplay}
+			class:px-4={isVerticalDisplay}
+			class:border-transparent={!isSelected}
+			class:cursor-text={isEditable}
+			class:border-primary={isSelected}
+			class:border-accent-focus={isEditable}
+			class:whitespace-pre-wrap={$preserveWhitespace$}
+			contenteditable={isEditable}
+			on:dblclick={handleDblClick}
+			on:keyup={dummyFn}
+			bind:this={paragraph}
+			in:fly={{ x: isVerticalDisplay ? 100 : -100, duration: $enableLineAnimation$ ? 250 : 0 }}
+		>
+			{line.text}
+		</p>
+		<button class="ml-2" on:click={handleGemini}>
+			<Icon path={mdiGoogleCirclesExtended} width="24" height="24" />
+		</button>
+	</div>
+	{#if showExplanation}
+		<div class="prose max-w-none mt-2">
+			{@html explanation}
+		</div>
+	{/if}
 {/key}
 {@html newLineCharacter}
 {#if $milestoneLines$.has(line.id)}
