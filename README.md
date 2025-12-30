@@ -8,6 +8,8 @@ An online version of the page can be accessed [here](https://renji-xd.github.io/
 
 An offline version of the page can be downloaded from the [docs](https://github.com/Renji-XD/texthooker-ui/tree/main/docs) folder (make sure to also download the assets folder and content in case you want to use some of the custom online fonts) or build locally by your own.
 
+When facing connection issues check the [FAQ](https://github.com/Renji-XD/texthooker-ui#faq) for common issues like ad blocker extensions (uBlock) or wrong websocket urls.
+
 **Note:** If you are interested in persistent statistics, history and additional mining capabitilies / workflows you may want to checkout [GameSentenceMiner](https://github.com/bpwhelan/GameSentenceMiner) which runs a forked version of this web interface.
 
 ## Building
@@ -41,6 +43,7 @@ The page can be opened via the index.html inside the "docs" folder and is usable
 ### I can't connect to the websocket with a different plugin/still can't connect to the websocket with one of the mentioned plugins.
 
 -   Make sure your firewall is not blocking the required ports. You can also check if another extension is interfering by trying out the page with a clean temporary profile and disabled extensions
+-	Adblocker extensions like uBlock may block connections to localhost / websocket addresses. Try to disable them for this page / running a clean temporary profile to verify the functionality
 -	**For Brave Users**: If you are using a hosted / online version of the page disable the brave shield for the domain to allow the usage of unsafe websocket connections. Alternatively try out the local / offline version which you can find in the [docs](https://raw.githubusercontent.com/Renji-XD/texthooker-ui/main/docs/index.html) folder
 
 ### Can I use this page with extensions like [Clipboard Inserter](https://github.com/kmltml/clipboard-inserter) or [lap-clipboard-inserter](https://github.com/laplus-sadness/lap-clipboard-inserter)?
