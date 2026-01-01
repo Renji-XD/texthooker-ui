@@ -84,6 +84,7 @@ export interface Settings {
 	enableAfkBlurRestart$: boolean;
 	continuousReconnect$: boolean;
 	showConnectionErrors$: boolean;
+	showConnectionIcon$: boolean;
 	customCSS$: string;
 }
 

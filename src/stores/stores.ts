@@ -63,6 +63,7 @@ export const defaultSettings: Settings = {
 	enableAfkBlurRestart$: false,
 	continuousReconnect$: false,
 	showConnectionErrors$: true,
+	showConnectionIcon$: true,
 	customCSS$: '',
 };
 
@@ -240,6 +241,11 @@ export const showConnectionErrors$ = writableBooleanSubject()(
 	defaultSettings.showConnectionErrors$
 );
 
+export const showConnectionIcon$ = writableBooleanSubject()(
+	'bannou-texthooker-showConnectionIcon',
+	defaultSettings.showConnectionIcon$
+);
+
 export const customCSS$ = writableStringSubject()('bannou-texthooker-customCSS', defaultSettings.customCSS$);
 
 export const timeValue$ = writableNumberSubject()('bannou-texthooker-timeValue', 0, persistStats$);
@@ -358,5 +364,6 @@ export async function resetAllData() {
 	enableAfkBlurRestart$.next(defaultSettings.enableAfkBlurRestart$);
 	continuousReconnect$.next(defaultSettings.continuousReconnect$);
 	showConnectionErrors$.next(defaultSettings.showConnectionErrors$);
+	showConnectionIcon$.next(defaultSettings.showConnectionIcon$);
 	customCSS$.next(defaultSettings.customCSS$);
 }

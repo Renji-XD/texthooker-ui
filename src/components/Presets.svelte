@@ -47,6 +47,7 @@
 		settingPresets$,
 		showCharacterCount$,
 		showConnectionErrors$,
+		showConnectionIcon$,
 		showLineCount$,
 		showPresetQuickSwitch$,
 		showSpeed$,
@@ -109,6 +110,7 @@
 			enableAfkBlurRestart$: $enableAfkBlurRestart$,
 			continuousReconnect$: $continuousReconnect$,
 			showConnectionErrors$: $showConnectionErrors$,
+			showConnectionIcon$: $showConnectionIcon$,
 			customCSS$: $customCSS$,
 		};
 	}
@@ -170,6 +172,7 @@
 		enableAfkBlurRestart$.next(preset.settings.enableAfkBlurRestart$ ?? defaultSettings.enableAfkBlurRestart$);
 		continuousReconnect$.next(preset.settings.continuousReconnect$ ?? defaultSettings.continuousReconnect$);
 		showConnectionErrors$.next(preset.settings.showConnectionErrors$ ?? defaultSettings.showConnectionErrors$);
+		showConnectionIcon$.next(preset.settings.showConnectionIcon$ ?? defaultSettings.showConnectionIcon$);
 		customCSS$.next(preset.settings.customCSS$ ?? defaultSettings.customCSS$);
 
 		if (updateLastPreset) {

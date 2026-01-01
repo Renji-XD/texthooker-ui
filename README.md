@@ -134,6 +134,7 @@ Note: The actions are only executed when settings/notes are closed, no (confirma
 | <kbd>Alt</kbd> + <kbd>Delete</kbd> | Deletes last line if no lines are highlighted |
 | <kbd>Alt</kbd> + <kbd>a</kbd> | Deletes all Lines and resets the Timer to 00:00:00. |
 | <kbd>Alt</kbd> + <kbd>q</kbd> | Deletes all Lines. |
+| <kbd>Alt</kbd> + <kbd>g</kbd> | Toggles Websocket Icon. |
 | <kbd>Control</kbd> + <kbd>Space</kbd> | Toggles the Timer. |
 
 
