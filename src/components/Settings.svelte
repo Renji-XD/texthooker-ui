@@ -58,6 +58,7 @@
 		settingPresets$,
 		showCharacterCount$,
 		showConnectionErrors$,
+		showConnectionIcon$,
 		showLineCount$,
 		showPresetQuickSwitch$,
 		showSpeed$,
@@ -998,6 +999,8 @@
 		/>
 		<span class="label-text">Show Connection Errors</span>
 		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$showConnectionErrors$} />
+		<span class="label-text">Show Connection Icon</span>
+		<input type="checkbox" class="checkbox checkbox-primary ml-2" bind:checked={$showConnectionIcon$} />
 		<span class="label-text" style="grid-column: 1/5;">Custom CSS</span>
 		<textarea
 			class="p-1 min-h-[10rem] font-mono"

@@ -48,6 +48,7 @@
 		replacements$,
 		reverseLineOrder$,
 		secondaryWebsocketUrl$,
+		showConnectionIcon$,
 		showSpinner$,
 		theme$,
 		websocketUrl$,
@@ -252,6 +253,8 @@
 			settingsComponent.handleReset(true);
 		} else if ((event.ctrlKey || event.metaKey) && key === ' ') {
 			$isPaused$ = !$isPaused$;
+		} else if (event.altKey && key === 'g') {
+			$showConnectionIcon$ = !$showConnectionIcon$;
 		}
 	}
 

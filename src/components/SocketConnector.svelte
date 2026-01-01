@@ -11,6 +11,7 @@
 		secondarySocketState$,
 		secondaryWebsocketUrl$,
 		showConnectionErrors$,
+		showConnectionIcon$,
 		socketState$,
 		websocketUrl$,
 	} from '../stores/stores';
@@ -107,10 +108,14 @@
 		class="hover:text-primary"
 		class:text-red-500={$socketState !== -1}
 		class:text-green-700={$socketState === 1}
+		class:hidden={!$showConnectionIcon$}
 		title={connectedWithLabel}
 	>
 		<Icon path={mdiConnection} class="cursor-pointer mx-2" on:click={toggleSocket} />
 	</div>
 {:else}
-	<span class="animate-ping relative inline-flex rounded-full h-3 w-3 mx-3 bg-primary" />
+	<span
+		class="animate-ping relative inline-flex rounded-full h-3 w-3 mx-3 bg-primary"
+		class:hidden={!$showConnectionIcon$}
+	/>
 {/if}
