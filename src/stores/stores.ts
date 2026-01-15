@@ -250,7 +250,7 @@ export const customCSS$ = writableStringSubject()('bannou-texthooker-customCSS',
 
 export const timeValue$ = writableNumberSubject()('bannou-texthooker-timeValue', 0, persistStats$);
 
-export const notesOpen$ = writableSubject<boolean>(false);
+export const notesOpen$ = writableBooleanSubject()('bannou-texthooker-notesOpen', false);
 
 export const userNotes$ = writableStringSubject()('bannou-texthooker-userNotes', '', persistNotes$);
 
