@@ -1,6 +1,6 @@
 # Current Development Status
 
-Please not that texthooker-ui is currently not actively worked on. Feel free to report further bugs / feature requests and / or open pull requests but don't expect (timely) responses on them
+Please note that texthooker-ui is currently not actively worked on. Feel free to report further bugs / feature requests and / or open pull requests but don't expect (timely) responses on them
 
 # Texthooker UI
 
