@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {
+		mdiBookOpenVariant,
 		mdiClose,
 		mdiDatabaseSync,
 		mdiDelete,
@@ -81,6 +82,7 @@
 		type LineItem,
 		type SettingPreset,
 	} from '../types';
+	import { buildEpub } from '../epub';
 	import { clickOutside } from '../use-click-outside';
 	import { applyCustomCSS, dummyFn, timeStringToSeconds } from '../util';
 	import Icon from './Icon.svelte';
@@ -277,6 +279,17 @@
 				'bannou-texthooker-lineData': $lineData$,
 				'bannou-texthooker-actionHistory': $actionHistory$,
 			});
+		}
+	}
+
+	function handleExportEpub() {
+		if ($lineData$.length) {
+			downloadBlob(
+				'texthooker-ui_lines.epub',
+				new Blob([buildEpub($lineData$.map((line) => line.text), $windowTitle$ || 'Texthooker UI')], {
+					type: 'application/epub+zip',
+				})
+			);
 		}
 	}
 
@@ -606,9 +619,13 @@
 	}
 
 	function handleExport<T>(fileName: string, exportData: T) {
+		downloadBlob(fileName, new Blob([JSON.stringify(exportData)], { type: `application/json` }));
+	}
+
+	function downloadBlob(fileName: string, blob: Blob) {
 		const a = document.createElement('a');
 
-		a.href = URL.createObjectURL(new Blob([JSON.stringify(exportData)], { type: `application/json` }));
+		a.href = URL.createObjectURL(blob);
 		a.rel = 'noopener';
 		a.download = fileName;
 
@@ -723,6 +740,17 @@
 				>
 					<Icon path={mdiDatabaseSync} />
 					<span class="label-text">Ex-/Import Data</span>
+				</div>
+				<div
+					role="button"
+					class="flex flex-col items-center hover:text-primary"
+					class:opacity-50={!$lineData$.length}
+					class:cursor-not-allowed={!$lineData$.length}
+					on:click={handleExportEpub}
+					on:keyup={dummyFn}
+				>
+					<Icon path={mdiBookOpenVariant} />
+					<span class="label-text">Export EPUB</span>
 				</div>
 				<div
 					role="button"
